@@ -1,0 +1,45 @@
+{
+    "name": "accompli/accompli",
+    "type": "library",
+    "description": "An easy to use and extendable deployment tool for PHP projects.",
+    "keywords": [
+        "Accompli", "Deployment",
+        "SSH", "SFTP", "FTP", "FTPS"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Niels Nijens",
+            "email": "nijens.niels@gmail.com"
+        },
+        {
+            "name": "Giso Stallenberg"
+        },
+        {
+            "name": "Reyo Stallenberg"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "herzult/php-ssh": "~1.1",
+        "justinrainbow/json-schema": "~1.3",
+        "seld/jsonlint": "~1.3",
+        "symfony/console": "~2.6",
+        "symfony/event-dispatcher": "~2.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.4",
+        "satooshi/php-coveralls": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Accompli\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Accompli\\": "tests/"
+        }
+    },
+    "bin": ["bin/accompli"]
+}
