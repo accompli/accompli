@@ -2,12 +2,14 @@
 
 namespace Accompli;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 /**
  * Accompli
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli
- * */
+ **/
 class Accompli
 {
     /**
@@ -37,4 +39,26 @@ class Accompli
      * @var string
      **/
     const VERSION = "0.1";
+
+    /**
+     * The event dispatcher instance
+     *
+     * @access private
+     * @var    EventDispatcherInterface
+     **/
+    private $dispatcher;
+
+    /**
+     * __construct
+     *
+     * Constructs a new Accompli instance
+     *
+     * @access public
+     * @param  EventDispatcherInterface $dispatcher
+     * @return null
+     **/
+    public function __construct(EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
 }
