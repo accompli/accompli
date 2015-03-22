@@ -13,7 +13,7 @@ use Symfony\Component\Console\Application as BaseApplication;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Console
- * */
+ **/
 class Application extends BaseApplication
 {
     /**

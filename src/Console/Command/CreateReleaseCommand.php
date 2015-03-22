@@ -9,7 +9,7 @@ use Symfony\Component\Console\Command\Command;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Console\Command
- * */
+ **/
 class CreateReleaseCommand extends Command
 {
     /**

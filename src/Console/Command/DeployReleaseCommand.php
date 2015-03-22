@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Console\Command
- * */
+ **/
 class DeployReleaseCommand extends Command
 {
     /**
