@@ -1,5 +1,7 @@
 # Accompli
-A deployment tool for PHP projects.
+An easy to use and extendable deployment tool for PHP projects.
+
+> *C'est fini. Accompli!*
 
 
 About
