@@ -1,12 +1,12 @@
 <?php
 
-namespace Accompli;
+namespace Accompli\Deployment;
 
 /**
  * Release
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli
+ * @package Accompli\Deployment
  * */
 class Release
 {
