@@ -7,7 +7,7 @@ namespace Accompli;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli
- * */
+ **/
 final class AccompliEvents
 {
     /**

@@ -7,7 +7,7 @@ namespace Accompli\Deployment;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Deployment
- * */
+ **/
 class Release
 {
     /**
