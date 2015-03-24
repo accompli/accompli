@@ -28,8 +28,8 @@ class DeployReleaseCommand extends Command
         $this
             ->setName("release:deploy")
             ->setDescription("Deploys a release to all configured hosts of a stage.")
-            ->addArgument("stage", InputArgument::REQUIRED, "The stage to deploy to.")
-            ->addArgument("release", InputArgument::REQUIRED, "The release number to deploy.");
+            ->addArgument("release", InputArgument::REQUIRED, "The release number to deploy.")
+            ->addArgument("stage", InputArgument::REQUIRED, "The stage to deploy to.");
     }
 
     /**
