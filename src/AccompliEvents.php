@@ -31,6 +31,16 @@ final class AccompliEvents
     const DEPLOYMENT_COMPLETE = "accompli.deployment_complete";
 
     /**
+     * The DEPLOYMENT_FAILED event is dispatched when deployment of a Release has failed.
+     *
+     * The event listener receives an
+     * Accompli\Event\DeploymentFailedEvent instance.
+     *
+     * @var string
+     **/
+    const DEPLOYMENT_FAILED = "accompli.deployment_failed";
+
+    /**
      * The INSTALL_RELEASE event is dispatched when a Release requires installation.
      *
      * The event listener receives an
@@ -89,4 +99,14 @@ final class AccompliEvents
      * @var string
      **/
     const ROLLBACK_DEPLOYMENT_COMPLETE = "accompli.rollback_deployment_complete";
+
+    /**
+     * The ROLLBACK_DEPLOYMENT_FAILED event is dispatched when deployment of a previous Release has failed.
+     *
+     * The event listener receives an
+     * Accompli\Event\RollbackDeploymentFailedEvent instance.
+     *
+     * @var string
+     **/
+    const ROLLBACK_DEPLOYMENT_FAILED = "accompli.rollback_deployment_failed";
 }
