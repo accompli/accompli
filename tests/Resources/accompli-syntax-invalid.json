@@ -1,0 +1,21 @@
+{
+    "hosts": [
+        {
+            "stage": "test",
+            "connection": "local",
+            "hostname": "",
+            "path": ""
+        }
+    ],
+    "events": {
+        "subscribers": [
+            "SetupTask"
+            {
+                "class": "ComposerTask",
+                "options": [
+                    "ignore-platform-reqs"
+                ]
+            }
+        ]
+    }
+}
