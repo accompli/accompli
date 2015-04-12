@@ -16,6 +16,9 @@
                     "ignore-platform-reqs"
                 ]
             }
-        ]
+        ],
+        "listeners": {
+            "accompli.prepare_server": ["SomeTask::someAction"]
+        }
     }
 }
