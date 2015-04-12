@@ -83,7 +83,7 @@ class Configuration implements ConfigurationInterface
             $this->validateSyntax($json);
             $this->validateSchema($json);
 
-            $this->data = json_decode($json, true);
+            $this->configuration = json_decode($json, true);
 
             return;
         }
@@ -151,7 +151,11 @@ class Configuration implements ConfigurationInterface
      **/
     public function getHosts()
     {
-        return $this->configuration["hosts"];
+        if (isset($this->configuration["hosts"]) ) {
+            return $this->configuration["hosts"];
+        }
+
+        return array();
     }
 
     /**
@@ -166,14 +170,16 @@ class Configuration implements ConfigurationInterface
      **/
     public function getHostsByStage($stage)
     {
-        if (in_array($stage, array("test", "acceptance", "production") ) === false) {
+        if (in_array($stage, array(ConfigurationInterface::STAGE_TEST, ConfigurationInterface::STAGE_ACCEPTANCE, ConfigurationInterface::STAGE_PRODUCTION) ) === false) {
             throw new UnexpectedValueException("'" . $stage . "' is not a valid stage.");
         }
 
         $hosts = array();
-        foreach ($this->configuration["host"] as $host) {
-            if ($host["stage"] === $stage) {
-                $hosts[] = $host;
+        if (isset($this->configuration["hosts"]) ) {
+            foreach ($this->configuration["hosts"] as $host) {
+                if ($host["stage"] === $stage) {
+                    $hosts[] = $host;
+                }
             }
         }
 
