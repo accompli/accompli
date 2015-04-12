@@ -1,0 +1,60 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Accompli configuration schema",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "strategy": {
+            "type": "string"
+        },
+        "hosts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "stage": {
+                        "type": "string",
+                        "pattern": "^test|acceptance|production$"
+                    },
+                    "connection": {
+                        "type": "string"
+                    },
+                    "hostname": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": ["stage", "connection", "hostname", "path"]
+            }
+        },
+        "events": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "include": {
+                    "type": "string"
+                },
+                "subscribers": {
+                    "type": "array",
+                    "items": {
+                        "type": ["string", "object"],
+                        "additionalProperties": true,
+                        "properties": {
+                            "class": {
+                                "type": "string"
+                            }
+                        },
+                        "required": ["class"]
+                    }
+                },
+                "listeners": {
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "required": ["hosts", "events"]
+}

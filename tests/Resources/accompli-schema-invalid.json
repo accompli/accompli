@@ -1,0 +1,20 @@
+{
+    "hosts": [
+        {
+            "stage": "online",
+            "connection": "local",
+            "hostname": "",
+            "path": ""
+        }
+    ],
+    "events": {
+        "subscribers": [
+            "SetupTask",
+            {
+                "options": [
+                    "ignore-platform-reqs"
+                ]
+            }
+        ]
+    }
+}
