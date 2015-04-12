@@ -98,8 +98,7 @@ class Configuration implements ConfigurationInterface
      *
      * @access private
      * @param  string $json
-     * @return boolean
-     * @throws UnexpectedValueException
+     * @return null
      * @throws ParsingException
      **/
     private function validateSyntax($json)
@@ -107,11 +106,7 @@ class Configuration implements ConfigurationInterface
         $parser = new JsonParser();
         $result = $parser->lint($json);
         if (null === $result) {
-            if (defined("JSON_ERROR_UTF8") && JSON_ERROR_UTF8 === json_last_error() ) {
-                throw new UnexpectedValueException("'" . $this->configurationFile . "' is not UTF-8, could not parse as JSON.");
-            }
-
-            return true;
+            return;
         }
 
         throw new ParsingException("'" . $this->configurationFile . "' does not contain valid JSON.\n" . $result->getMessage(), $result->getDetails() );
