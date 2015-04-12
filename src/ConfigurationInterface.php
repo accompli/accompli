@@ -11,6 +11,27 @@ namespace Accompli;
 interface ConfigurationInterface
 {
     /**
+     * The constant to identify a host in the test stage
+     *
+     * @var string
+     **/
+    const STAGE_TEST = "test";
+
+    /**
+     * The constant to identify a host in the acceptance stage
+     *
+     * @var string
+     **/
+    const STAGE_ACCEPTANCE = "acceptance";
+
+    /**
+     * The constant to identify a host in the production stage
+     *
+     * @var string
+     **/
+    const STAGE_PRODUCTION = "production";
+
+    /**
      * load
      *
      * Loads and validates the JSON configuration
