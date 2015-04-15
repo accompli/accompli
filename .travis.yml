@@ -5,7 +5,7 @@ php:
   - 5.5
 
 before_script:
-  - pecl install ssh2-beta < ./tests/.noninteractive
+  - pecl install ssh2-beta < ./tests/.non-interactive
   - composer self-update
   - composer install
   - mkdir -p build/logs
