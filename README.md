@@ -2,6 +2,7 @@
 An easy to use and extendable deployment tool for PHP projects.
 
 > *C'est fini. Accompli!*
+
 [![Build Status](https://travis-ci.org/accompli/accompli.svg?branch=master)](https://travis-ci.org/accompli/accompli)
 
 About
