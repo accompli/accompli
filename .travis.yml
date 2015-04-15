@@ -5,6 +5,7 @@ php:
   - 5.5
 
 before_script:
+  - pecl install ssh2
   - composer self-update
   - composer install
   - mkdir -p build/logs
