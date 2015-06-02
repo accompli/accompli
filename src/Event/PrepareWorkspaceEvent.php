@@ -3,12 +3,12 @@
 namespace Accompli\Event;
 
 /**
- * PrepareServerEvent
+ * PrepareWorkspaceEvent
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Event
- **/
-class PrepareServerEvent extends AbstractEvent
+ */
+class PrepareWorkspaceEvent extends AbstractEvent
 {
 
 }
