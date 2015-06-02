@@ -2,7 +2,10 @@
 
 namespace Accompli;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Accompli\Event\InstallReleaseEvent;
+use Accompli\Event\PrepareReleaseEvent;
+use Accompli\Event\PrepareWorkspaceEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Accompli
@@ -10,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli
  **/
-class Accompli
+class Accompli extends EventDispatcher
 {
     /**
      * The Accompli CLI text logo
@@ -41,12 +44,12 @@ class Accompli
     const VERSION = "0.1";
 
     /**
-     * The event dispatcher instance
+     * The configuration instance
      *
      * @access private
-     * @var    EventDispatcherInterface
+     * @var    ConfigurationInterface
      **/
-    private $dispatcher;
+    private $configuration;
 
     /**
      * __construct
@@ -54,11 +57,45 @@ class Accompli
      * Constructs a new Accompli instance
      *
      * @access public
-     * @param  EventDispatcherInterface $dispatcher
+     * @param  ConfigurationInterface $configuration
      * @return null
      **/
-    public function __construct(EventDispatcherInterface $dispatcher)
+    public function __construct(ConfigurationInterface $configuration)
     {
-        $this->dispatcher = $dispatcher;
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * getConfiguration
+     *
+     * Returns the configuration instance
+     *
+     * @access public
+     * @return ConfigurationInterface
+     **/
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
+
+    /**
+     * createRelease
+     *
+     * Dispatches release creation events
+     *
+     * @access public
+     * @return null
+     * @todo   Add DeploymentAdapter (connection)
+     **/
+    public function createRelease()
+    {
+        $prepareWorkspaceEvent = new PrepareWorkspaceEvent($this);
+        $this->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
+
+        $prepareReleaseEvent = new PrepareReleaseEvent($this);
+        $this->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
+
+        $installReleaseEvent = new InstallReleaseEvent($this);
+        $this->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
     }
 }
