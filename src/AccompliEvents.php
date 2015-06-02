@@ -71,14 +71,14 @@ final class AccompliEvents
     const PREPARE_RELEASE = "accompli.prepare_release";
 
     /**
-     * The PREPARE_SERVER event is dispatched when a server is being prepared for deployments.
+     * The PREPARE_WORKSPACE event is dispatched when a server or local path is being prepared for deployments.
      *
      * The event listener receives an
-     * Accompli\Event\PrepareServerEvent instance.
+     * Accompli\Event\PrepareWorkspaceEvent instance.
      *
      * @var string
      **/
-    const PREPARE_SERVER = "accompli.prepare_server";
+    const PREPARE_WORKSPACE = "accompli.prepare_workspace";
 
     /**
      * The ROLLBACK_DEPLOYMENT event is dispatched when a previous Release is being deployed.
