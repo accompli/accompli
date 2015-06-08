@@ -78,4 +78,39 @@ interface DeploymentAdapterInterface
      * @return null
      **/
     public function executeCommand($command);
+
+    /**
+     * putFile
+     *
+     * Uploads a file to a remote file
+     *
+     * @access public
+     * @param  string $localFilename
+     * @param  string $remoteFilename
+     * @return null
+     **/
+    public function putFile($localFilename, $remoteFilename);
+
+    /**
+     * putContents
+     *
+     * Uploads $contents to a remote file
+     *
+     * @access public
+     * @param  string $remoteFilename
+     * @param  mixed  $data
+     * @return null
+     **/
+    public function putContents($remoteFilename, $data);
+
+    /**
+     * getContents
+     *
+     * Returns the contents of a remote file
+     *
+     * @access public
+     * @param  string $remoteFilename
+     * @return mixed
+     **/
+    public function getContents($remoteFilename);
 }
