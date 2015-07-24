@@ -1,0 +1,13 @@
+{
+    "hosts": [],
+    "events": {
+        "subscribers": [
+            "WorkspaceTask"
+        ]
+    },
+    "deployment": {
+        "adapters": {
+            "local": "Accompli\\Deployment\\Adapter\\LocalDeploymentAdapter"
+        }
+    }
+}

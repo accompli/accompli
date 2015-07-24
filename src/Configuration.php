@@ -2,6 +2,7 @@
 
 namespace Accompli;
 
+use Accompli\Deployment\Host;
 use Accompli\Exception\JSONValidationException;
 use JsonSchema\Validator;
 use RuntimeException;
@@ -21,7 +22,7 @@ class Configuration implements ConfigurationInterface
      * The location of the configuration file
      *
      * @access private
-     * @var    string
+     * @var string
      **/
     private $configurationFile;
 
@@ -29,7 +30,7 @@ class Configuration implements ConfigurationInterface
      * The location of the configuration validation schema file
      *
      * @access private
-     * @var    string
+     * @var string
      **/
     private $configurationSchema;
 
@@ -37,9 +38,17 @@ class Configuration implements ConfigurationInterface
      * The array with configuration data
      *
      * @access private
-     * @var    array
+     * @var array
      **/
     private $configuration = array();
+
+    /**
+     * The array with Host instances
+     *
+     * @access private
+     * @var Host[]
+     **/
+    private $hosts = array();
 
     /**
      * __construct
@@ -55,8 +64,8 @@ class Configuration implements ConfigurationInterface
     {
         $this->configurationFile = $configurationFile;
 
-        if (empty($configurationSchema) ) {
-            $configurationSchema = __DIR__ . "/Resources/accompli-schema.json";
+        if (empty($configurationSchema)) {
+            $configurationSchema = __DIR__ . '/Resources/accompli-schema.json';
         }
 
         $this->configurationSchema = $configurationSchema;
@@ -68,13 +77,13 @@ class Configuration implements ConfigurationInterface
      * Loads and validates the JSON configuration
      *
      * @access public
-     * @param  string|null $configurationFile
+     * @param  string|null      $configurationFile
      * @return null
      * @throws RuntimeException
      **/
     public function load($configurationFile = null)
     {
-        if (isset($configurationFile) ) {
+        if (isset($configurationFile)) {
             $this->configurationFile = $configurationFile;
         }
 
@@ -83,12 +92,22 @@ class Configuration implements ConfigurationInterface
             $this->validateSyntax($json);
             $this->validateSchema($json);
 
+            $this->hosts = array();
             $this->configuration = json_decode($json, true);
+            if (isset($this->configuration["\$extend"])) {
+                $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $this->configuration["\$extend"]);
+                unset($this->configuration["\$extend"]);
+
+                $parentConfiguration = new static($extendConfigurationFile, $this->configurationSchema);
+                $parentConfiguration->load();
+
+                $this->configuration = array_merge_recursive($parentConfiguration->configuration, $this->configuration);
+            }
 
             return;
         }
 
-        throw new RuntimeException("'" . $this->configurationFile . "' could not be read.");
+        throw new RuntimeException(sprintf("'%s' could not be read.", $this->configurationFile));
     }
 
     /**
@@ -97,7 +116,7 @@ class Configuration implements ConfigurationInterface
      * Validates the syntax of $json
      *
      * @access private
-     * @param  string $json
+     * @param  string           $json
      * @return null
      * @throws ParsingException
      **/
@@ -105,11 +124,11 @@ class Configuration implements ConfigurationInterface
     {
         $parser = new JsonParser();
         $result = $parser->lint($json);
-        if (null === $result) {
+        if ($result === null) {
             return;
         }
 
-        throw new ParsingException("'" . $this->configurationFile . "' does not contain valid JSON.\n" . $result->getMessage(), $result->getDetails() );
+        throw new ParsingException(sprintf("'%s' does not contain valid JSON.\n%s", $this->configurationFile, $result->getMessage()), $result->getDetails());
     }
 
     /**
@@ -118,24 +137,28 @@ class Configuration implements ConfigurationInterface
      * Validates the $json content with the JSON schema
      *
      * @access private
-     * @param  string  $json
+     * @param  string                  $json
      * @return boolean
      * @throws JSONValidationException
      **/
     private function validateSchema($json)
     {
         $jsonData = json_decode($json);
-        $schemaData = json_decode(file_get_contents($this->configurationSchema) );
+        $schemaData = json_decode(file_get_contents($this->configurationSchema));
 
         $validator = new Validator();
         $validator->check($jsonData, $schemaData);
         if ($validator->isValid() === false) {
             $errors = array();
             foreach ($validator->getErrors() as $error) {
-                $errors[] = ($error["property"] ? $error["property"] . " : " : "") . $error["message"];
+                $errorMessage = $error['message'];
+                if (isset($error['property']) ) {
+                    $errorMessage = $error['property'] . ' : ' . $errorMessage;
+                }
+                $errors[] = $errorMessage;
             }
 
-            throw new JSONValidationException("'" . $this->configurationFile . "' does not match the expected JSON schema.", $errors);
+            throw new JSONValidationException(sprintf("'%s' does not match the expected JSON schema.", $this->configurationFile), $errors);
         }
 
         return true;
@@ -147,15 +170,17 @@ class Configuration implements ConfigurationInterface
      * Returns the configured hosts
      *
      * @access public
-     * @return array
+     * @return Host[]
      **/
     public function getHosts()
     {
-        if (isset($this->configuration["hosts"]) ) {
-            return $this->configuration["hosts"];
+        if (empty($this->hosts) && isset($this->configuration['hosts'])) {
+            foreach ($this->configuration['hosts'] as $host) {
+                $this->hosts[] = new Host($host['stage'], $host['connectionType'], $host['hostname'], $host['path']);
+            }
         }
 
-        return array();
+        return $this->hosts;
     }
 
     /**
@@ -164,22 +189,20 @@ class Configuration implements ConfigurationInterface
      * Returns the configured hosts for $stage
      *
      * @access public
-     * @param  string $stage
-     * @return array
-     * @throws UnexpectedValueException
+     * @param  string                   $stage
+     * @return Host[]
+     * @throws UnexpectedValueException when $stage is not a valid type
      **/
     public function getHostsByStage($stage)
     {
-        if (in_array($stage, array(ConfigurationInterface::STAGE_TEST, ConfigurationInterface::STAGE_ACCEPTANCE, ConfigurationInterface::STAGE_PRODUCTION) ) === false) {
-            throw new UnexpectedValueException("'" . $stage . "' is not a valid stage.");
+        if (Host::isValidStage($stage) === false) {
+            throw new UnexpectedValueException(sprintf("'%s' is not a valid stage.", $stage));
         }
 
         $hosts = array();
-        if (isset($this->configuration["hosts"]) ) {
-            foreach ($this->configuration["hosts"] as $host) {
-                if ($host["stage"] === $stage) {
-                    $hosts[] = $host;
-                }
+        foreach ($this->getHosts() as $host) {
+            if ($host->getStage() === $stage) {
+                $hosts[] = $host;
             }
         }
 
@@ -196,8 +219,8 @@ class Configuration implements ConfigurationInterface
      **/
     public function getEventSubscribers()
     {
-        if (isset($this->configuration["events"]["subscribers"]) ) {
-            return $this->configuration["events"]["subscribers"];
+        if (isset($this->configuration['events']['subscribers'])) {
+            return $this->configuration['events']['subscribers'];
         }
 
         return array();
@@ -213,10 +236,23 @@ class Configuration implements ConfigurationInterface
      **/
     public function getEventListeners()
     {
-        if (isset($this->configuration["events"]["listeners"]) ) {
-            return $this->configuration["events"]["listeners"];
+        if (isset($this->configuration['events']['listeners'])) {
+            return $this->configuration['events']['listeners'];
         }
 
         return array();
+    }
+
+    /**
+     * toArray
+     *
+     * Returns the entire configuration as array
+     *
+     * @access public
+     * @return array
+     **/
+    public function toArray()
+    {
+        return $this->configuration;
     }
 }

@@ -16,7 +16,7 @@ class JSONValidationException extends Exception
      * The array with JSON validation errors
      *
      * @access private
-     * @var    array
+     * @var array
      **/
     private $errors = array();
 
