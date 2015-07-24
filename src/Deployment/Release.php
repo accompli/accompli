@@ -11,10 +11,18 @@ namespace Accompli\Deployment;
 class Release
 {
     /**
+     * The Workspace instance
+     *
+     * @access private
+     * @var Workspace
+     **/
+    private $workspace;
+
+    /**
      * The unique identifier identifing this Release
      *
      * @access private
-     * @var    string
+     * @var string
      **/
     private $identifier;
 
@@ -33,6 +41,19 @@ class Release
     }
 
     /**
+     * getWorkspace
+     *
+     * Returns the Workspace instance
+     *
+     * @access public
+     * @return Workspace
+     **/
+    public function getWorkspace()
+    {
+        return $this->workspace;
+    }
+
+    /**
      * getIdenfifier
      *
      * Returns the release identifier
@@ -43,5 +64,32 @@ class Release
     public function getIdenfifier()
     {
         return $this->identifier;
+    }
+
+    /**
+     * getPath
+     *
+     * Returns the path of this Release
+     *
+     * @access public
+     * @return string
+     **/
+    public function getPath()
+    {
+        return sprintf('%s/%s', $this->workspace->getHost()->getPath(), $this->getIdenfifier());
+    }
+
+    /**
+     * setWorkspace
+     *
+     * Sets the Workspace instance
+     *
+     * @access public
+     * @param  Workspace $workspace
+     * @return null
+     **/
+    public function setWorkspace(Workspace $workspace)
+    {
+        $this->workspace = $workspace;
     }
 }
