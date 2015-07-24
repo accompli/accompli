@@ -152,7 +152,7 @@ class Configuration implements ConfigurationInterface
             $errors = array();
             foreach ($validator->getErrors() as $error) {
                 $errorMessage = $error['message'];
-                if (isset($error['property']) ) {
+                if (isset($error['property'])) {
                     $errorMessage = $error['property'] . ' : ' . $errorMessage;
                 }
                 $errors[] = $errorMessage;
