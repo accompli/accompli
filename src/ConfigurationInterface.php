@@ -11,33 +11,12 @@ namespace Accompli;
 interface ConfigurationInterface
 {
     /**
-     * The constant to identify a host in the test stage
-     *
-     * @var string
-     **/
-    const STAGE_TEST = "test";
-
-    /**
-     * The constant to identify a host in the acceptance stage
-     *
-     * @var string
-     **/
-    const STAGE_ACCEPTANCE = "acceptance";
-
-    /**
-     * The constant to identify a host in the production stage
-     *
-     * @var string
-     **/
-    const STAGE_PRODUCTION = "production";
-
-    /**
      * load
      *
      * Loads and validates the JSON configuration
      *
      * @access public
-     * @param  string|null $configurationFile
+     * @param  string|null      $configurationFile
      * @return null
      * @throws RuntimeException
      **/
@@ -49,7 +28,7 @@ interface ConfigurationInterface
      * Returns the configured hosts
      *
      * @access public
-     * @return array
+     * @return Host[]
      **/
     public function getHosts();
 
@@ -59,8 +38,8 @@ interface ConfigurationInterface
      * Returns the configured hosts for $stage
      *
      * @access public
-     * @param  string $stage
-     * @return array
+     * @param  string                   $stage
+     * @return Host[]
      * @throws UnexpectedValueException
      **/
     public function getHostsByStage($stage);
