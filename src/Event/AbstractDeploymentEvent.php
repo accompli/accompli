@@ -2,8 +2,8 @@
 
 namespace Accompli\Event;
 
-use Accompli\Accompli;
 use Accompli\Release;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * AbstractDeploymentEvent
@@ -11,30 +11,27 @@ use Accompli\Release;
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Event
  **/
-abstract class AbstractDeploymentEvent extends AbstractEvent
+abstract class AbstractDeploymentEvent extends Event
 {
     /**
      * The Release instance
      *
      * @access protected
-     * @var    Release
+     * @var Release
      **/
     protected $release;
 
     /**
      * __construct
      *
-     * Constructs a new AbstractReleaseEvent instance
+     * Constructs a new AbstractDeploymentEvent instance
      *
      * @access public
-     * @param  Accompli $accompli
-     * @param  Release  $release
+     * @param  Release $release
      * @return void
      **/
-    public function __construct(Accompli $accompli, Release $release)
+    public function __construct(Release $release)
     {
-        parent::__construct($accompli);
-
         $this->release = $release;
     }
 
