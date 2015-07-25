@@ -3,12 +3,11 @@
 namespace Accompli\Event;
 
 /**
- * RollbackDeploymentEvent
+ * RollbackReleaseCompleteEvent
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  * @package Accompli\Event
  **/
-class RollbackDeploymentEvent extends AbstractDeploymentEvent
+class RollbackReleaseCompleteEvent extends AbstractDeploymentEvent
 {
-
 }

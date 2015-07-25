@@ -11,34 +11,34 @@ namespace Accompli;
 final class AccompliEvents
 {
     /**
-     * The DEPLOY_DEPLOYMENT event is dispatched when a Release is ready for deployment.
+     * The DEPLOY_RELEASE event is dispatched when a Release is ready for deployment.
      *
      * The event listener receives an
-     * Accompli\Event\DeployDeploymentEvent instance.
+     * Accompli\Event\DeployReleaseEvent instance.
      *
      * @var string
      **/
-    const DEPLOY_DEPLOYMENT = 'accompli.deploy_deployment';
+    const DEPLOY_RELEASE = 'accompli.deploy_release';
 
     /**
-     * The DEPLOYMENT_COMPLETE event is dispatched when a Release succesfully deployed.
+     * The DEPLOY_RELEASE_COMPLETE event is dispatched when a Release succesfully deployed.
      *
      * The event listener receives an
-     * Accompli\Event\DeploymentCompleteEvent instance.
+     * Accompli\Event\DeployReleaseCompleteEvent instance.
      *
      * @var string
      **/
-    const DEPLOYMENT_COMPLETE = 'accompli.deployment_complete';
+    const DEPLOY_RELEASE_COMPLETE = 'accompli.deploy_release_complete';
 
     /**
-     * The DEPLOYMENT_FAILED event is dispatched when deployment of a Release has failed.
+     * The DEPLOY_RELEASE_FAILED event is dispatched when deployment of a Release has failed.
      *
      * The event listener receives an
-     * Accompli\Event\DeploymentFailedEvent instance.
+     * Accompli\Event\DeployReleaseFailedEvent instance.
      *
      * @var string
      **/
-    const DEPLOYMENT_FAILED = 'accompli.deployment_failed';
+    const DEPLOY_RELEASE_FAILED = 'accompli.deploy_release_failed';
 
     /**
      * The GATHER_FACTS event is dispatched when information from a host is required.
@@ -61,14 +61,14 @@ final class AccompliEvents
     const INSTALL_RELEASE = 'accompli.install_release';
 
     /**
-     * The PREPARE_DEPLOYMENT event is dispatched when a Release is prepared for deployment.
+     * The PREPARE_DEPLOY_RELEASE event is dispatched when a Release is prepared for deployment.
      *
      * The event listener receives an
-     * Accompli\Event\PrepareDeploymentEvent instance.
+     * Accompli\Event\PrepareDeployReleaseEvent instance.
      *
      * @var string
      **/
-    const PREPARE_DEPLOYMENT = 'accompli.prepare_deployment';
+    const PREPARE_DEPLOY_RELEASE = 'accompli.prepare_deploy_release';
 
     /**
      * The PREPARE_RELEASE event is dispatched when a Release is being prepared.
@@ -91,32 +91,32 @@ final class AccompliEvents
     const PREPARE_WORKSPACE = 'accompli.prepare_workspace';
 
     /**
-     * The ROLLBACK_DEPLOYMENT event is dispatched when a previous Release is being deployed.
+     * The ROLLBACK_RELEASE event is dispatched when a previous Release is being deployed.
      *
      * The event listener receives an
-     * Accompli\Event\RollbackDeploymentEvent instance.
+     * Accompli\Event\RollbackReleaseEvent instance.
      *
      * @var string
      **/
-    const ROLLBACK_DEPLOYMENT = 'accompli.rollback_deployment';
+    const ROLLBACK_RELEASE = 'accompli.rollback_release';
 
     /**
-     * The ROLLBACK_DEPLOYMENT_COMPLETE event is dispatched when a previous Release is successfully deployed.
+     * The ROLLBACK_RELEASE_COMPLETE event is dispatched when a previous Release is successfully deployed.
      *
      * The event listener receives an
-     * Accompli\Event\RollbackDeploymentCompleteEvent instance.
+     * Accompli\Event\RollbackReleaseCompleteEvent instance.
      *
      * @var string
      **/
-    const ROLLBACK_DEPLOYMENT_COMPLETE = 'accompli.rollback_deployment_complete';
+    const ROLLBACK_RELEASE_COMPLETE = 'accompli.rollback_release_complete';
 
     /**
-     * The ROLLBACK_DEPLOYMENT_FAILED event is dispatched when deployment of a previous Release has failed.
+     * The ROLLBACK_RELEASE_FAILED event is dispatched when deployment of a previous Release has failed.
      *
      * The event listener receives an
-     * Accompli\Event\RollbackDeploymentFailedEvent instance.
+     * Accompli\Event\RollbackReleaseFailedEvent instance.
      *
      * @var string
      **/
-    const ROLLBACK_DEPLOYMENT_FAILED = 'accompli.rollback_deployment_failed';
+    const ROLLBACK_RELEASE_FAILED = 'accompli.rollback_release_failed';
 }
