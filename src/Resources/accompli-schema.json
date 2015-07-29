@@ -37,9 +37,6 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "include": {
-                    "type": "string"
-                },
                 "subscribers": {
                     "type": "array",
                     "items": {
@@ -54,7 +51,8 @@
                     }
                 },
                 "listeners": {
-                    "type": "object"
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
