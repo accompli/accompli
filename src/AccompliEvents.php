@@ -119,4 +119,29 @@ final class AccompliEvents
      * @var string
      **/
     const ROLLBACK_RELEASE_FAILED = 'accompli.rollback_release_failed';
+
+    /**
+     * getEventNames
+     *
+     * Returns an array with all the event names (constants)
+     *
+     * @access public
+     * @return array
+     **/
+    public static function getEventNames()
+    {
+        return array(
+            self::DEPLOY_RELEASE,
+            self::DEPLOY_RELEASE_COMPLETE,
+            self::DEPLOY_RELEASE_FAILED,
+            self::GATHER_FACTS,
+            self::INSTALL_RELEASE,
+            self::PREPARE_DEPLOY_RELEASE,
+            self::PREPARE_RELEASE,
+            self::PREPARE_WORKSPACE,
+            self::ROLLBACK_RELEASE,
+            self::ROLLBACK_RELEASE_COMPLETE,
+            self::ROLLBACK_RELEASE_FAILED,
+        );
+    }
 }
