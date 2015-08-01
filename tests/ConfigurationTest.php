@@ -207,6 +207,25 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testGetEventSubscribersAlwaysReturnsArrayOfArraysWithClassKeyWhenConfigurationLoaded
+     *
+     * @depends testGetEventSubscribersReturnsArrayWhenConfigurationLoaded
+     *
+     * @access public
+     * @return null
+     **/
+    public function testGetEventSubscribersAlwaysReturnsArrayOfArraysWithClassKeyWhenConfigurationLoaded()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__ . '/Resources/accompli.json');
+
+        $result = $configuration->getEventSubscribers();
+        foreach ($result as $resultItem) {
+            $this->assertArrayHasKey('class', $resultItem);
+        }
+    }
+
+    /**
      * testGetEventListenersReturnsEmptyArrayWhenConfigurationNotLoaded
      *
      * @access public

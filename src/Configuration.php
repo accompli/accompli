@@ -80,6 +80,7 @@ class Configuration implements ConfigurationInterface
      * @param  string|null      $configurationFile
      * @return null
      * @throws RuntimeException
+     * @todo   Refactor
      **/
     public function load($configurationFile = null)
     {
@@ -102,6 +103,14 @@ class Configuration implements ConfigurationInterface
                 $parentConfiguration->load();
 
                 $this->configuration = array_merge_recursive($parentConfiguration->configuration, $this->configuration);
+            }
+
+            if (isset($this->configuration['events']['subscribers'])) {
+                foreach ($this->configuration['events']['subscribers'] as $i => $subscriber) {
+                    if (is_string($subscriber)) {
+                        $this->configuration['events']['subscribers'][$i] = array('class' => $subscriber);
+                    }
+                }
             }
 
             return;
