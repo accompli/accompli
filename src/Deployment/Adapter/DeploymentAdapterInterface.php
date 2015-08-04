@@ -15,28 +15,28 @@ interface DeploymentAdapterInterface
      *
      * @var string
      **/
-    const DEPLOYMENT_TYPE_REMOTE = "deployment_remote";
+    const DEPLOYMENT_TYPE_REMOTE = 'deployment_remote';
 
     /**
      * Local deployment type constant
      *
      * @var string
      **/
-    const DEPLOYMENT_TYPE_LOCAL = "deployent_local";
+    const DEPLOYMENT_TYPE_LOCAL = 'deployment_local';
 
     /**
      * Command Line Interface deployment method constant
      *
      * @var string
      **/
-    const DEPLOYMENT_METHOD_CLI = "cli_deployment";
+    const DEPLOYMENT_METHOD_CLI = 'cli_deployment';
 
     /**
      * Transfer deployment method constant
      *
      * @var string
      **/
-    const DEPLOYMENT_METHOD_TRANSFER = "transfer_deployment";
+    const DEPLOYMENT_METHOD_TRANSFER = 'transfer_deployment';
 
     /**
      * getDeploymentType
