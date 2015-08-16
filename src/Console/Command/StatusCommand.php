@@ -25,8 +25,8 @@ class StatusCommand extends Command
     protected function configure()
     {
         $this
-            ->setName("status")
-            ->setDescription("Displays the deployment status of all configured hosts.");
+            ->setName('status')
+            ->setDescription('Displays the deployment status of all configured hosts.');
     }
 
     /**

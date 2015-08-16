@@ -26,10 +26,10 @@ class DeployReleaseCommand extends Command
     protected function configure()
     {
         $this
-            ->setName("release:deploy")
-            ->setDescription("Deploys a release to all configured hosts of a stage.")
-            ->addArgument("release", InputArgument::REQUIRED, "The release number to deploy.")
-            ->addArgument("stage", InputArgument::REQUIRED, "The stage to deploy to.");
+            ->setName('deploy-release')
+            ->setDescription('Deploys a release to all configured hosts of a stage.')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version to deploy.')
+            ->addArgument('stage', InputArgument::REQUIRED, 'The stage to select hosts for.');
     }
 
     /**

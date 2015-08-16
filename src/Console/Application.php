@@ -26,7 +26,7 @@ class Application extends BaseApplication
      **/
     public function __construct()
     {
-        parent::__construct("Accompli", Accompli::VERSION);
+        parent::__construct('Accompli', Accompli::VERSION);
     }
 
     /**
