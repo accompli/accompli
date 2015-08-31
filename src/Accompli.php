@@ -3,6 +3,9 @@
 namespace Accompli;
 
 use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
+use Accompli\Event\FailedEvent;
 use Accompli\Event\InstallReleaseEvent;
 use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
@@ -127,10 +130,20 @@ class Accompli extends EventDispatcher
         $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
         $this->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
 
-        $prepareReleaseEvent = new PrepareReleaseEvent($prepareWorkspaceEvent->getWorkspace());
-        $this->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
+        $workspace = $prepareWorkspaceEvent->getWorkspace();
+        if ($workspace instanceof Workspace) {
+            $prepareReleaseEvent = new PrepareReleaseEvent($workspace);
+            $this->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
 
-        $installReleaseEvent = new InstallReleaseEvent($prepareReleaseEvent->getRelease());
-        $this->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
+            $release = $prepareReleaseEvent->getRelease();
+            if ($release instanceof Release) {
+                $installReleaseEvent = new InstallReleaseEvent($release);
+                $this->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
+
+                return;
+            }
+        }
+
+        $this->dispatch(AccompliEvents::CREATE_RELEASE_FAILED, new FailedEvent());
     }
 }
