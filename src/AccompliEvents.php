@@ -141,6 +141,7 @@ final class AccompliEvents
     public static function getEventNames()
     {
         return array(
+            self::CREATE_RELEASE_FAILED,
             self::DEPLOY_RELEASE,
             self::DEPLOY_RELEASE_COMPLETE,
             self::DEPLOY_RELEASE_FAILED,
