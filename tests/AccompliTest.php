@@ -36,7 +36,27 @@ class AccompliTest extends PHPUnit_Framework_TestCase
 
         $accompli = new Accompli($configurationMock);
 
-        $this->assertInstanceOf("Accompli\\ConfigurationInterface", $accompli->getConfiguration());
+        $this->assertInstanceOf('Accompli\\ConfigurationInterface', $accompli->getConfiguration());
         $this->assertSame($configurationMock, $accompli->getConfiguration());
+    }
+
+    /**
+     * Tests Accompli::getListeners returns the event listeners configured in the configuration after Accompli::initializeEventListeners
+     *
+     * @access public
+     */
+    public function testInitializeEventListeners()
+    {
+        $configurationMock = $this->getMockBuilder('Accompli\\ConfigurationInterface')->getMock();
+        $configurationMock->expects($this->once())->method('getEventListeners')->willReturn(array('listener_event' => array('Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener')));
+        $configurationMock->expects($this->once())->method('getEventSubscribers')->willReturn(array(array('class' => 'Accompli\\Test\\Mock\\EventListenerSubscriberMock')));
+
+        $accompli = new Accompli($configurationMock);
+        $accompli->initializeEventListeners();
+
+        $this->assertInternalType('array', $accompli->getListeners('listener_event'));
+        $this->assertCount(1, $accompli->getListeners('listener_event'));
+        $this->assertInternalType('array', $accompli->getListeners('subscribed_event'));
+        $this->assertCount(1, $accompli->getListeners('subscribed_event'));
     }
 }
