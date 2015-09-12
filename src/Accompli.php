@@ -12,6 +12,7 @@ use Accompli\Event\PrepareWorkspaceEvent;
 use Nijens\Utilities\ObjectFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Accompli
@@ -109,7 +110,7 @@ class Accompli extends EventDispatcher
 
         foreach ($configuration->getEventSubscribers() as $subscriber) {
             $subscriberInstance = ObjectFactory::getInstance()->newInstance($subscriber['class'], $subscriber);
-            if ($subscriberInstance instanceof EventDispatcherInterface) {
+            if ($subscriberInstance instanceof EventSubscriberInterface) {
                 $this->addSubscriber($subscriberInstance);
             }
         }
