@@ -6,15 +6,14 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * EventListenerSubscriberMock
+ * EventListenerSubscriberMock.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Test\Mock
  */
 class EventListenerSubscriberMock implements EventSubscriberInterface
 {
     /**
-     * {InheritDoc}
+     * {InheritDoc}.
      */
     public static function getSubscribedEvents()
     {
@@ -24,10 +23,9 @@ class EventListenerSubscriberMock implements EventSubscriberInterface
     }
 
     /**
-     * Test event listener
+     * Test event listener.
      */
     public function eventListener(Event $event)
     {
-
     }
 }

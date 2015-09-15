@@ -6,17 +6,14 @@ use Accompli\Accompli;
 use PHPUnit_Framework_TestCase;
 
 /**
- * AccompliTest
+ * AccompliTest.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Test
  */
 class AccompliTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * Tests instantiation of Accompli
-     *
-     * @access public
+     * Tests instantiation of Accompli.
      */
     public function testConstruct()
     {
@@ -26,9 +23,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if Accompli::getConfiguration returns the expected result
-     *
-     * @access public
+     * Tests if Accompli::getConfiguration returns the expected result.
      */
     public function testGetConfiguration()
     {
@@ -41,9 +36,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Accompli::getListeners returns the event listeners configured in the configuration after Accompli::initializeEventListeners
-     *
-     * @access public
+     * Tests Accompli::getListeners returns the event listeners configured in the configuration after Accompli::initializeEventListeners.
      */
     public function testInitializeEventListeners()
     {

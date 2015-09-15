@@ -8,19 +8,15 @@ use Accompli\Deployment\Workspace;
 use PHPUnit_Framework_TestCase;
 
 /**
- * WorkspaceTest
+ * WorkspaceTest.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Test
  */
 class WorkspaceTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * testGetHost
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetHost.
+     */
     public function testGetHost()
     {
         $host = $this->createHostInstance();
@@ -30,11 +26,8 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testAddReleaseSetsWorkspaceOnRelease
-     *
-     * @access public
-     * @return null
-     **/
+     * testAddReleaseSetsWorkspaceOnRelease.
+     */
     public function testAddReleaseSetsWorkspaceOnRelease()
     {
         $release = $this->createReleaseInstance();
@@ -45,11 +38,8 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testGetReleasesReturnsEmptyArray
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetReleasesReturnsEmptyArray.
+     */
     public function testGetReleasesReturnsEmptyArray()
     {
         $workspace = $this->createWorkspaceInstance($this->createHostInstance());
@@ -59,11 +49,8 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testGetReleasesReturnsArrayWithReleaseInstanceAfterAddRelease
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetReleasesReturnsArrayWithReleaseInstanceAfterAddRelease.
+     */
     public function testGetReleasesReturnsArrayWithReleaseInstanceAfterAddRelease()
     {
         $release = $this->createReleaseInstance();
@@ -77,29 +64,25 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * createWorkspaceInstance
+     * Constructs and returns a new Workspace instance.
      *
-     * Constructs and returns a new Workspace instance
+     * @param Host $host
      *
-     * @access private
-     * @param  Host      $host
      * @return Workspace
-     **/
+     */
     private function createWorkspaceInstance(Host $host)
     {
         return new Workspace($host);
     }
 
     /**
-     * createHostInstance
+     * Constructs and returns a new Host instance.
      *
-     * Constructs and returns a new Host instance
+     * @param string $stage
+     * @param string $connectionType
+     * @param string $hostname
+     * @param string $path
      *
-     * @access private
-     * @param  string $stage
-     * @param  string $connectionType
-     * @param  string $hostname
-     * @param  string $path
      * @return Host
      */
     private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www')
@@ -108,14 +91,12 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * createReleaseInstance
+     * Constructs and returns a new Release instance.
      *
-     * Constructs and returns a new Release instance
+     * @param string $identifier
      *
-     * @access private
-     * @param  string  $identifier
      * @return Release
-     **/
+     */
     private function createReleaseInstance($identifier = '1.0.0')
     {
         return new Release($identifier);

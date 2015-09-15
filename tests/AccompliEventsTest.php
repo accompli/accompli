@@ -7,23 +7,19 @@ use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
 /**
- * AccompliEventsTest
+ * AccompliEventsTest.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Test
  */
 class AccompliEventsTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * testLoadWithValidJSON
-     *
-     * @access public
-     * @return null
-     **/
+     * Tests if AccompliEvents::getEventNames returns an array with all defined constants.
+     */
     public function testGetEventNames()
     {
-        $reflectionClass = new ReflectionClass("Accompli\\AccompliEvents");
+        $reflectionClass = new ReflectionClass('Accompli\\AccompliEvents');
 
-        $this->assertSame(array_values($reflectionClass->getConstants() ), AccompliEvents::getEventNames());
+        $this->assertSame(array_values($reflectionClass->getConstants()), AccompliEvents::getEventNames());
     }
 }

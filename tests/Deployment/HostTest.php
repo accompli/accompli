@@ -7,36 +7,30 @@ use PHPUnit_Framework_TestCase;
 use UnexpectedValueException;
 
 /**
- * HostTest
+ * HostTest.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Test
  */
 class HostTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * testConstructWithInvalidStageThrowsUnexpectedValueException
+     * testConstructWithInvalidStageThrowsUnexpectedValueException.
      *
      * @expectedException UnexpectedValueException
-     *
-     * @access public
-     * @return null
-     **/
+     */
     public function testConstructWithInvalidStageThrowsUnexpectedValueException()
     {
         $this->createHostInstance('development');
     }
 
     /**
-     * testGetterMethods
+     * testGetterMethods.
      *
      * @dataProvider provideTestGetterMethods
      *
-     * @access public
-     * @param  string $getterMethod
-     * @param  mixed  $expectedValue
-     * @return null
-     **/
+     * @param string $getterMethod
+     * @param mixed  $expectedValue
+     */
     public function testGetterMethods($getterMethod, $expectedValue)
     {
         $host = $this->createHostInstance();
@@ -45,28 +39,23 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testIsValidStage
+     * testIsValidStage.
      *
      * @dataProvider provideTestIsValidStage
      *
-     * @access public
-     * @param  string  $stage
-     * @param  boolean $expectedResult
-     * @return null
-     **/
+     * @param string $stage
+     * @param bool   $expectedResult
+     */
     public function testIsValidStage($stage, $expectedResult)
     {
         $this->assertSame($expectedResult, Host::isValidStage($stage));
     }
 
     /**
-     * provideTestGetterMethods
+     * Returns an array with testvalues for testGetterMethods.
      *
-     * Returns an array with testvalues for testGetterMethods
-     *
-     * @access public
      * @return array
-     **/
+     */
     public function provideTestGetterMethods()
     {
         return array(
@@ -78,13 +67,10 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * provideTestGetterMethods
+     * Returns an array with testvalues for testIsValidStage.
      *
-     * Returns an array with testvalues for testIsValidStage
-     *
-     * @access public
      * @return array
-     **/
+     */
     public function provideTestIsValidStage()
     {
         return array(
@@ -96,15 +82,13 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * createHostInstance
+     * Constructs and returns a new Host instance.
      *
-     * Constructs and returns a new Host instance
+     * @param string $stage
+     * @param string $connectionType
+     * @param string $hostname
+     * @param string $path
      *
-     * @access private
-     * @param  string $stage
-     * @param  string $connectionType
-     * @param  string $hostname
-     * @param  string $path
      * @return Host
      */
     private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www')
