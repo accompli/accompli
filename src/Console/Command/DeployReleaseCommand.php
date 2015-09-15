@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DeployReleaseCommand extends Command
 {
     /**
-     * Configures this command
+     * Configures this command.
      */
     protected function configure()
     {
@@ -27,7 +27,7 @@ class DeployReleaseCommand extends Command
     }
 
     /**
-     * Executes this command
+     * Executes this command.
      *
      * @param InputInterface  $input
      * @param OutputInterface $output

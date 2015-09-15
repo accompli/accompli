@@ -61,7 +61,7 @@ class Host
     private $path;
 
     /**
-     * Constructs a new Host instance
+     * Constructs a new Host instance.
      *
      * @param string $stage
      * @param string $connectionType
@@ -83,7 +83,7 @@ class Host
     }
 
     /**
-     * Returns the stage of this host
+     * Returns the stage of this host.
      *
      * @return string
      */
@@ -93,7 +93,7 @@ class Host
     }
 
     /**
-     * Returns the connection type of this host
+     * Returns the connection type of this host.
      *
      * @return string
      */
@@ -103,7 +103,7 @@ class Host
     }
 
     /**
-     * Returns the hostname of this host
+     * Returns the hostname of this host.
      *
      * @return string
      */
@@ -113,7 +113,7 @@ class Host
     }
 
     /**
-     * Returns the base workspace path of this host
+     * Returns the base workspace path of this host.
      *
      * @return string
      */
@@ -123,7 +123,7 @@ class Host
     }
 
     /**
-     * Returns true if $stage is a valid stage type
+     * Returns true if $stage is a valid stage type.
      *
      * @param string $stage
      *

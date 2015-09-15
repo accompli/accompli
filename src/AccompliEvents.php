@@ -130,7 +130,7 @@ final class AccompliEvents
     const ROLLBACK_RELEASE_FAILED = 'accompli.rollback_release_failed';
 
     /**
-     * Returns an array with all the event names (constants)
+     * Returns an array with all the event names (constants).
      *
      * @return array
      **/

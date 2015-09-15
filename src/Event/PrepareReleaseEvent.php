@@ -28,7 +28,7 @@ class PrepareReleaseEvent extends Event
     protected $release;
 
     /**
-     * Constructs a new PrepareReleaseEvent
+     * Constructs a new PrepareReleaseEvent.
      *
      * @param Workspace $workspace
      */
@@ -38,7 +38,7 @@ class PrepareReleaseEvent extends Event
     }
 
     /**
-     * Sets a Release instance
+     * Sets a Release instance.
      *
      * @param Release $release
      */
@@ -48,7 +48,7 @@ class PrepareReleaseEvent extends Event
     }
 
     /**
-     * Returns the Release instance
+     * Returns the Release instance.
      *
      * @return Release
      */

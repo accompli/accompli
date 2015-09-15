@@ -10,7 +10,7 @@ namespace Accompli;
 interface ConfigurationInterface
 {
     /**
-     * Loads and validates the JSON configuration
+     * Loads and validates the JSON configuration.
      *
      * @param string|null $configurationFile
      *
@@ -19,14 +19,14 @@ interface ConfigurationInterface
     public function load($configurationFile = null);
 
     /**
-     * Returns the configured hosts
+     * Returns the configured hosts.
      *
      * @return Host[]
      */
     public function getHosts();
 
     /**
-     * Returns the configured hosts for $stage
+     * Returns the configured hosts for $stage.
      *
      * @param string $stage
      *
@@ -37,14 +37,14 @@ interface ConfigurationInterface
     public function getHostsByStage($stage);
 
     /**
-     * Returns the configured event subscribers
+     * Returns the configured event subscribers.
      *
      * @return array
      */
     public function getEventSubscribers();
 
     /**
-     * Returns the configured event listeners
+     * Returns the configured event listeners.
      *
      * @return array
      */

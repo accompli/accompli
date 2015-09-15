@@ -31,7 +31,7 @@ class Workspace
     private $userDataDirectories = array();
 
     /**
-     * Constructs a new Workspace instance
+     * Constructs a new Workspace instance.
      *
      * @param Host $host
      */
@@ -41,7 +41,7 @@ class Workspace
     }
 
     /**
-     * Returns the Host instance
+     * Returns the Host instance.
      *
      * @return Host
      */
@@ -51,7 +51,7 @@ class Workspace
     }
 
     /**
-     * Adds a Release instance to this Workspace
+     * Adds a Release instance to this Workspace.
      *
      * @param Release $release
      */
@@ -63,7 +63,7 @@ class Workspace
     }
 
     /**
-     * Returns the array with Release instances
+     * Returns the array with Release instances.
      *
      * @return Release[]
      */
@@ -73,7 +73,7 @@ class Workspace
     }
 
     /**
-     * Adds a user data directory
+     * Adds a user data directory.
      *
      * @param string $identifier
      * @param string $path
@@ -84,7 +84,7 @@ class Workspace
     }
 
     /**
-     * Returns a user data directory by identifier
+     * Returns a user data directory by identifier.
      *
      * @param string $identifier
      *
@@ -98,7 +98,7 @@ class Workspace
     }
 
     /**
-     * Unsets a user data directory by identifier
+     * Unsets a user data directory by identifier.
      *
      * @param string $identifier
      */

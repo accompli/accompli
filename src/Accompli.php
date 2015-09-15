@@ -57,7 +57,7 @@ class Accompli extends EventDispatcher
     private $configuration;
 
     /**
-     * Constructs a new Accompli instance
+     * Constructs a new Accompli instance.
      *
      * @param ConfigurationInterface $configuration
      */
@@ -67,7 +67,7 @@ class Accompli extends EventDispatcher
     }
 
     /**
-     * Returns the configuration instance
+     * Returns the configuration instance.
      *
      * @return ConfigurationInterface
      */
@@ -77,7 +77,7 @@ class Accompli extends EventDispatcher
     }
 
     /**
-     * Initializes the event listeners and subscribers configured in the configuration
+     * Initializes the event listeners and subscribers configured in the configuration.
      */
     public function initializeEventListeners()
     {
@@ -102,7 +102,7 @@ class Accompli extends EventDispatcher
     }
 
     /**
-     * Dispatches release creation events
+     * Dispatches release creation events.
      *
      * @param Host $host
      *

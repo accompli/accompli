@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
     private $hosts = array();
 
     /**
-     * Constructs a new Configuration instance
+     * Constructs a new Configuration instance.
      *
      * @param string|null $configurationFile
      * @param string|null $configurationSchema
@@ -63,7 +63,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Loads and validates the JSON configuration
+     * Loads and validates the JSON configuration.
      *
      * @param string|null $configurationFile
      *
@@ -109,7 +109,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Validates the syntax of $json
+     * Validates the syntax of $json.
      *
      * @param string $json
      *
@@ -127,7 +127,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Validates the $json content with the JSON schema
+     * Validates the $json content with the JSON schema.
      *
      * @param string $json
      *
@@ -159,7 +159,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Returns the configured hosts
+     * Returns the configured hosts.
      *
      * @return Host[]
      */
@@ -175,7 +175,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Returns the configured hosts for $stage
+     * Returns the configured hosts for $stage.
      *
      * @param string $stage
      *
@@ -200,7 +200,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Returns the configured event subscribers
+     * Returns the configured event subscribers.
      *
      * @return array
      */
@@ -230,7 +230,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Returns the entire configuration as array
+     * Returns the entire configuration as array.
      *
      * @return array
      */

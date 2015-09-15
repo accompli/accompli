@@ -19,7 +19,7 @@ class JSONValidationException extends Exception
     private $errors = array();
 
     /**
-     * Constructs a new JSONValidationException instance
+     * Constructs a new JSONValidationException instance.
      *
      * @param string    $message
      * @param array     $errors
@@ -33,7 +33,7 @@ class JSONValidationException extends Exception
     }
 
     /**
-     * Returns the JSON validation errors
+     * Returns the JSON validation errors.
      *
      * @return array
      */

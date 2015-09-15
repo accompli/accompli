@@ -38,33 +38,33 @@ interface DeploymentAdapterInterface
     const DEPLOYMENT_METHOD_TRANSFER = 'transfer_deployment';
 
     /**
-     * Returns the deployment type
+     * Returns the deployment type.
      *
      * @return string
      */
     public function getDeploymentType();
 
     /**
-     * Returns the deployment method
+     * Returns the deployment method.
      *
      * @return string
      */
     public function getDeploymentMethod();
 
     /**
-     * Connects the adapter
+     * Connects the adapter.
      */
     public function connect();
 
     /**
-     * Executes a command
+     * Executes a command.
      *
      * @param string $command
      */
     public function executeCommand($command);
 
     /**
-     * Uploads a file to a remote file
+     * Uploads a file to a remote file.
      *
      * @param string $localFilename
      * @param string $remoteFilename
@@ -72,7 +72,7 @@ interface DeploymentAdapterInterface
     public function putFile($localFilename, $remoteFilename);
 
     /**
-     * Uploads $contents to a remote file
+     * Uploads $contents to a remote file.
      *
      * @param string $remoteFilename
      * @param mixed  $data
@@ -80,7 +80,7 @@ interface DeploymentAdapterInterface
     public function putContents($remoteFilename, $data);
 
     /**
-     * Returns the contents of a remote file
+     * Returns the contents of a remote file.
      *
      * @param string $remoteFilename
      *

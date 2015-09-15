@@ -28,7 +28,7 @@ class PrepareWorkspaceEvent extends Event
     private $workspace;
 
     /**
-     * Constructs a new PrepareWorkspaceEvent
+     * Constructs a new PrepareWorkspaceEvent.
      *
      * @param Host $host
      */
@@ -38,7 +38,7 @@ class PrepareWorkspaceEvent extends Event
     }
 
     /**
-     * Sets a Workspace instance
+     * Sets a Workspace instance.
      *
      * @param Workspace $workspace
      */
@@ -48,7 +48,7 @@ class PrepareWorkspaceEvent extends Event
     }
 
     /**
-     * Returns the Workspace instance
+     * Returns the Workspace instance.
      *
      * @return Workspace|null
      */

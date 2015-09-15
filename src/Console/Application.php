@@ -16,7 +16,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 class Application extends BaseApplication
 {
     /**
-     * Constructs a new Application instance
+     * Constructs a new Application instance.
      */
     public function __construct()
     {
@@ -24,7 +24,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * Returns the help message
+     * Returns the help message.
      *
      * @return string
      */
@@ -34,7 +34,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * Returns the array with default commands
+     * Returns the array with default commands.
      *
      * @return array
      */

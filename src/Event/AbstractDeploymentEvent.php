@@ -20,7 +20,7 @@ abstract class AbstractDeploymentEvent extends Event
     protected $release;
 
     /**
-     * Constructs a new AbstractDeploymentEvent instance
+     * Constructs a new AbstractDeploymentEvent instance.
      *
      * @param Release $release
      */
@@ -30,7 +30,7 @@ abstract class AbstractDeploymentEvent extends Event
     }
 
     /**
-     * Returns the Release instance
+     * Returns the Release instance.
      *
      * @return Release
      */

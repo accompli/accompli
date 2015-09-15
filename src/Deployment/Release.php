@@ -24,7 +24,7 @@ class Release
     private $identifier;
 
     /**
-     * Constructs a new Release instance
+     * Constructs a new Release instance.
      *
      * @param string $identifier
      */
@@ -34,7 +34,7 @@ class Release
     }
 
     /**
-     * Returns the Workspace instance
+     * Returns the Workspace instance.
      *
      * @return Workspace
      */
@@ -44,7 +44,7 @@ class Release
     }
 
     /**
-     * Returns the release identifier
+     * Returns the release identifier.
      *
      * @return string
      */
@@ -54,7 +54,7 @@ class Release
     }
 
     /**
-     * Returns the path of this Release
+     * Returns the path of this Release.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class Release
     }
 
     /**
-     * Sets the Workspace instance
+     * Sets the Workspace instance.
      *
      * @param Workspace $workspace
      */
