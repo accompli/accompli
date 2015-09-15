@@ -11,77 +11,66 @@ use Seld\JsonLint\ParsingException;
 use UnexpectedValueException;
 
 /**
- * Configuration
+ * Configuration.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli
- **/
+ */
 class Configuration implements ConfigurationInterface
 {
     /**
-     * The location of the configuration file
+     * The location of the configuration file.
      *
-     * @access private
      * @var string
-     **/
+     */
     private $configurationFile;
 
     /**
-     * The location of the configuration validation schema file
+     * The location of the configuration validation schema file.
      *
-     * @access private
      * @var string
-     **/
+     */
     private $configurationSchema;
 
     /**
-     * The array with configuration data
+     * The array with configuration data.
      *
-     * @access private
      * @var array
-     **/
+     */
     private $configuration = array();
 
     /**
-     * The array with Host instances
+     * The array with Host instances.
      *
-     * @access private
      * @var Host[]
-     **/
+     */
     private $hosts = array();
 
     /**
-     * __construct
-     *
      * Constructs a new Configuration instance
      *
-     * @access public
-     * @param  string|null $configurationFile
-     * @param  string|null $configurationSchema
-     * @return null
-     **/
+     * @param string|null $configurationFile
+     * @param string|null $configurationSchema
+     */
     public function __construct($configurationFile = null, $configurationSchema = null)
     {
         $this->configurationFile = $configurationFile;
 
         if (empty($configurationSchema)) {
-            $configurationSchema = __DIR__ . '/Resources/accompli-schema.json';
+            $configurationSchema = __DIR__.'/Resources/accompli-schema.json';
         }
 
         $this->configurationSchema = $configurationSchema;
     }
 
     /**
-     * load
-     *
      * Loads and validates the JSON configuration
      *
-     * @access public
-     * @param  string|null      $configurationFile
-     * @return null
+     * @param string|null $configurationFile
+     *
      * @throws RuntimeException
+     *
      * @todo   Refactor
-     **/
+     */
     public function load($configurationFile = null)
     {
         if (isset($configurationFile)) {
@@ -120,15 +109,12 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * validateSyntax
-     *
      * Validates the syntax of $json
      *
-     * @access private
-     * @param  string           $json
-     * @return null
+     * @param string $json
+     *
      * @throws ParsingException
-     **/
+     */
     private function validateSyntax($json)
     {
         $parser = new JsonParser();
@@ -141,15 +127,14 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * validateSchema
-     *
      * Validates the $json content with the JSON schema
      *
-     * @access private
-     * @param  string                  $json
-     * @return boolean
+     * @param string $json
+     *
+     * @return bool
+     *
      * @throws JSONValidationException
-     **/
+     */
     private function validateSchema($json)
     {
         $jsonData = json_decode($json);
@@ -162,7 +147,7 @@ class Configuration implements ConfigurationInterface
             foreach ($validator->getErrors() as $error) {
                 $errorMessage = $error['message'];
                 if (isset($error['property'])) {
-                    $errorMessage = $error['property'] . ' : ' . $errorMessage;
+                    $errorMessage = $error['property'].' : '.$errorMessage;
                 }
                 $errors[] = $errorMessage;
             }
@@ -174,13 +159,10 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * getHosts
-     *
      * Returns the configured hosts
      *
-     * @access public
      * @return Host[]
-     **/
+     */
     public function getHosts()
     {
         if (empty($this->hosts) && isset($this->configuration['hosts'])) {
@@ -193,15 +175,14 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * getHostsByStage
-     *
      * Returns the configured hosts for $stage
      *
-     * @access public
-     * @param  string                   $stage
+     * @param string $stage
+     *
      * @return Host[]
+     *
      * @throws UnexpectedValueException when $stage is not a valid type
-     **/
+     */
     public function getHostsByStage($stage)
     {
         if (Host::isValidStage($stage) === false) {
@@ -219,13 +200,10 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * getEventSubscribers
-     *
      * Returns the configured event subscribers
      *
-     * @access public
      * @return array
-     **/
+     */
     public function getEventSubscribers()
     {
         if (isset($this->configuration['events']['subscribers'])) {
@@ -236,13 +214,12 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * getEventListeners
+     * getEventListeners.
      *
      * Returns the configured event listeners
      *
-     * @access public
      * @return array
-     **/
+     */
     public function getEventListeners()
     {
         if (isset($this->configuration['events']['listeners'])) {
@@ -253,13 +230,10 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * toArray
-     *
      * Returns the entire configuration as array
      *
-     * @access public
      * @return array
-     **/
+     */
     public function toArray()
     {
         return $this->configuration;

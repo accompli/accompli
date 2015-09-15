@@ -11,21 +11,15 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * CreateReleaseCommand
+ * CreateReleaseCommand.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Console\Command
- **/
+ */
 class CreateReleaseCommand extends Command
 {
     /**
-     * configure
-     *
      * Configures this command
-     *
-     * @access protected
-     * @return null
-     **/
+     */
     protected function configure()
     {
         $this
@@ -37,19 +31,15 @@ class CreateReleaseCommand extends Command
     }
 
     /**
-     * execute
-     *
      * Executes this command
      *
-     * @access protected
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return null
-     **/
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $configuration = new Configuration();
-        $configuration->load($input->getOption('project-dir') . DIRECTORY_SEPARATOR . 'accompli.json');
+        $configuration->load($input->getOption('project-dir').DIRECTORY_SEPARATOR.'accompli.json');
 
         $accompli = new Accompli($configuration);
         $accompli->initializeEventListeners();

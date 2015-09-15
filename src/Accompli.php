@@ -11,19 +11,17 @@ use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
 use Nijens\Utilities\ObjectFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Accompli
+ * Accompli.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli
  **/
 class Accompli extends EventDispatcher
 {
     /**
-     * The Accompli CLI text logo
+     * The Accompli CLI text logo.
      *
      * @var string
      **/
@@ -38,62 +36,49 @@ class Accompli extends EventDispatcher
 ";
 
     /**
-     * The Accompli CLI slogan text
+     * The Accompli CLI slogan text.
      *
      * @var string
      **/
     const SLOGAN = "C'est fini. Accompli!";
 
     /**
-     * The Accompli version
+     * The Accompli version.
      *
      * @var string
      **/
-    const VERSION = "0.1";
+    const VERSION = '0.1';
 
     /**
-     * The configuration instance
+     * The configuration instance.
      *
-     * @access private
-     * @var    ConfigurationInterface
+     * @var ConfigurationInterface
      **/
     private $configuration;
 
     /**
-     * __construct
-     *
      * Constructs a new Accompli instance
      *
-     * @access public
-     * @param  ConfigurationInterface $configuration
-     * @return null
-     **/
+     * @param ConfigurationInterface $configuration
+     */
     public function __construct(ConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
     }
 
     /**
-     * getConfiguration
-     *
      * Returns the configuration instance
      *
-     * @access public
      * @return ConfigurationInterface
-     **/
+     */
     public function getConfiguration()
     {
         return $this->configuration;
     }
 
     /**
-     * initializeEventListeners
-     *
      * Initializes the event listeners and subscribers configured in the configuration
-     *
-     * @access public
-     * @return null
-     **/
+     */
     public function initializeEventListeners()
     {
         $configuration = $this->getConfiguration();
@@ -103,7 +88,7 @@ class Accompli extends EventDispatcher
 
                 $listenerInstance = ObjectFactory::getInstance()->newInstance($listenerClassName);
                 if ($listenerInstance !== null) {
-                    $this->addListener($eventName, array($listenerInstance, $listenerMethodName) );
+                    $this->addListener($eventName, array($listenerInstance, $listenerMethodName));
                 }
             }
         }
@@ -117,13 +102,10 @@ class Accompli extends EventDispatcher
     }
 
     /**
-     * createRelease
-     *
      * Dispatches release creation events
      *
-     * @access public
-     * @param  Host $host
-     * @return null
+     * @param Host $host
+     *
      * @todo   Add DeploymentAdapter (connection)
      **/
     public function createRelease(Host $host)

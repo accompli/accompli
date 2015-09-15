@@ -3,11 +3,10 @@
 namespace Accompli\Event;
 
 /**
- * DeployReleaseFailedEvent
+ * DeployReleaseFailedEvent.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Event
- **/
+ */
 class DeployReleaseFailedEvent extends AbstractDeploymentEvent
 {
 }

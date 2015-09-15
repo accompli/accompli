@@ -3,10 +3,9 @@
 namespace Accompli;
 
 /**
- * AccompliEvents
+ * AccompliEvents.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli
  **/
 final class AccompliEvents
 {
@@ -131,11 +130,8 @@ final class AccompliEvents
     const ROLLBACK_RELEASE_FAILED = 'accompli.rollback_release_failed';
 
     /**
-     * getEventNames
-     *
      * Returns an array with all the event names (constants)
      *
-     * @access public
      * @return array
      **/
     public static function getEventNames()

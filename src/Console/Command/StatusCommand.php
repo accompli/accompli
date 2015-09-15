@@ -7,21 +7,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * StatusCommand
+ * StatusCommand.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Console\Command
- **/
+ */
 class StatusCommand extends Command
 {
     /**
-     * configure
-     *
      * Configures this command
-     *
-     * @access protected
-     * @return null
-     **/
+     */
     protected function configure()
     {
         $this
@@ -30,15 +24,11 @@ class StatusCommand extends Command
     }
 
     /**
-     * execute
-     *
      * Executes this command
      *
-     * @access protected
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return null
-     **/
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
