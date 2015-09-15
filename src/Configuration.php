@@ -84,9 +84,9 @@ class Configuration implements ConfigurationInterface
 
             $this->hosts = array();
             $this->configuration = json_decode($json, true);
-            if (isset($this->configuration["\$extend"])) {
-                $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $this->configuration["\$extend"]);
-                unset($this->configuration["\$extend"]);
+            if (isset($this->configuration['$extend'])) {
+                $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $this->configuration['$extend']);
+                unset($this->configuration['$extend']);
 
                 $parentConfiguration = new static($extendConfigurationFile, $this->configurationSchema);
                 $parentConfiguration->load();
