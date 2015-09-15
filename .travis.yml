@@ -1,16 +1,28 @@
 language: php
 
-php:
-  - 5.4
-  - 5.5
+sudo: false
 
-before_script:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y -qq libssh2-1-dev
+addons:
+  apt:
+    packages: libssh2-1-dev
+
+matrix:
+  include:
+    - php: 5.4
+    - php: 5.5
+    - php: 5.6
+    - php: nightly
+  allow_failures:
+    - php: nightly
+  fast_finish: true
+
+before_install: composer self-update
+
+install:
   - pecl install ssh2-beta < ./tests/.non-interactive
-  - composer self-update
   - composer install
-  - mkdir -p build/logs
+
+before_script: mkdir -p build/logs
 
 script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
