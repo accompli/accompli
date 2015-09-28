@@ -2,6 +2,7 @@
 
 namespace Accompli;
 
+use Accompli\Deployment\Host;
 use Accompli\Exception\JSONValidationException;
 use JsonSchema\Validator;
 use RuntimeException;
@@ -10,71 +11,69 @@ use Seld\JsonLint\ParsingException;
 use UnexpectedValueException;
 
 /**
- * Configuration
+ * Configuration.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli
- **/
+ */
 class Configuration implements ConfigurationInterface
 {
     /**
-     * The location of the configuration file
+     * The location of the configuration file.
      *
-     * @access private
-     * @var    string
-     **/
+     * @var string
+     */
     private $configurationFile;
 
     /**
-     * The location of the configuration validation schema file
+     * The location of the configuration validation schema file.
      *
-     * @access private
-     * @var    string
-     **/
+     * @var string
+     */
     private $configurationSchema;
 
     /**
-     * The array with configuration data
+     * The array with configuration data.
      *
-     * @access private
-     * @var    array
-     **/
+     * @var array
+     */
     private $configuration = array();
 
     /**
-     * __construct
+     * The array with Host instances.
      *
-     * Constructs a new Configuration instance
+     * @var Host[]
+     */
+    private $hosts = array();
+
+    /**
+     * Constructs a new Configuration instance.
      *
-     * @access public
-     * @param  string|null $configurationFile
-     * @param  string|null $configurationSchema
-     * @return null
-     **/
+     * @param string|null $configurationFile
+     * @param string|null $configurationSchema
+     */
     public function __construct($configurationFile = null, $configurationSchema = null)
     {
         $this->configurationFile = $configurationFile;
 
-        if (empty($configurationSchema) ) {
-            $configurationSchema = __DIR__ . "/Resources/accompli-schema.json";
+        if (empty($configurationSchema)) {
+            $configurationSchema = __DIR__.'/Resources/accompli-schema.json';
         }
 
         $this->configurationSchema = $configurationSchema;
     }
 
     /**
-     * load
+     * Loads and validates the JSON configuration.
      *
-     * Loads and validates the JSON configuration
+     * @param string|null $configurationFile
      *
-     * @access public
-     * @param  string|null $configurationFile
-     * @return null
      * @throws RuntimeException
-     **/
+     *
+     * @todo   Refactor
+     */
     public function load($configurationFile = null)
     {
-        if (isset($configurationFile) ) {
+        if (isset($configurationFile)) {
             $this->configurationFile = $configurationFile;
         }
 
@@ -83,103 +82,117 @@ class Configuration implements ConfigurationInterface
             $this->validateSyntax($json);
             $this->validateSchema($json);
 
+            $this->hosts = array();
             $this->configuration = json_decode($json, true);
+            if (isset($this->configuration['$extend'])) {
+                $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $this->configuration['$extend']);
+                unset($this->configuration['$extend']);
+
+                $parentConfiguration = new static($extendConfigurationFile, $this->configurationSchema);
+                $parentConfiguration->load();
+
+                $this->configuration = array_merge_recursive($parentConfiguration->configuration, $this->configuration);
+            }
+
+            if (isset($this->configuration['events']['subscribers'])) {
+                foreach ($this->configuration['events']['subscribers'] as $i => $subscriber) {
+                    if (is_string($subscriber)) {
+                        $this->configuration['events']['subscribers'][$i] = array('class' => $subscriber);
+                    }
+                }
+            }
 
             return;
         }
 
-        throw new RuntimeException("'" . $this->configurationFile . "' could not be read.");
+        throw new RuntimeException(sprintf("'%s' could not be read.", $this->configurationFile));
     }
 
     /**
-     * validateSyntax
+     * Validates the syntax of $json.
      *
-     * Validates the syntax of $json
+     * @param string $json
      *
-     * @access private
-     * @param  string $json
-     * @return null
      * @throws ParsingException
-     **/
+     */
     private function validateSyntax($json)
     {
         $parser = new JsonParser();
         $result = $parser->lint($json);
-        if (null === $result) {
+        if ($result === null) {
             return;
         }
 
-        throw new ParsingException("'" . $this->configurationFile . "' does not contain valid JSON.\n" . $result->getMessage(), $result->getDetails() );
+        throw new ParsingException(sprintf("'%s' does not contain valid JSON.\n%s", $this->configurationFile, $result->getMessage()), $result->getDetails());
     }
 
     /**
-     * validateSchema
+     * Validates the $json content with the JSON schema.
      *
-     * Validates the $json content with the JSON schema
+     * @param string $json
      *
-     * @access private
-     * @param  string  $json
-     * @return boolean
+     * @return bool
+     *
      * @throws JSONValidationException
-     **/
+     */
     private function validateSchema($json)
     {
         $jsonData = json_decode($json);
-        $schemaData = json_decode(file_get_contents($this->configurationSchema) );
+        $schemaData = json_decode(file_get_contents($this->configurationSchema));
 
         $validator = new Validator();
         $validator->check($jsonData, $schemaData);
         if ($validator->isValid() === false) {
             $errors = array();
             foreach ($validator->getErrors() as $error) {
-                $errors[] = ($error["property"] ? $error["property"] . " : " : "") . $error["message"];
+                $errorMessage = $error['message'];
+                if (isset($error['property'])) {
+                    $errorMessage = $error['property'].' : '.$errorMessage;
+                }
+                $errors[] = $errorMessage;
             }
 
-            throw new JSONValidationException("'" . $this->configurationFile . "' does not match the expected JSON schema.", $errors);
+            throw new JSONValidationException(sprintf("'%s' does not match the expected JSON schema.", $this->configurationFile), $errors);
         }
 
         return true;
     }
 
     /**
-     * getHosts
+     * Returns the configured hosts.
      *
-     * Returns the configured hosts
-     *
-     * @access public
-     * @return array
-     **/
+     * @return Host[]
+     */
     public function getHosts()
     {
-        if (isset($this->configuration["hosts"]) ) {
-            return $this->configuration["hosts"];
+        if (empty($this->hosts) && isset($this->configuration['hosts'])) {
+            foreach ($this->configuration['hosts'] as $host) {
+                $this->hosts[] = new Host($host['stage'], $host['connectionType'], $host['hostname'], $host['path']);
+            }
         }
 
-        return array();
+        return $this->hosts;
     }
 
     /**
-     * getHostsByStage
+     * Returns the configured hosts for $stage.
      *
-     * Returns the configured hosts for $stage
+     * @param string $stage
      *
-     * @access public
-     * @param  string $stage
-     * @return array
-     * @throws UnexpectedValueException
-     **/
+     * @return Host[]
+     *
+     * @throws UnexpectedValueException when $stage is not a valid type
+     */
     public function getHostsByStage($stage)
     {
-        if (in_array($stage, array(ConfigurationInterface::STAGE_TEST, ConfigurationInterface::STAGE_ACCEPTANCE, ConfigurationInterface::STAGE_PRODUCTION) ) === false) {
-            throw new UnexpectedValueException("'" . $stage . "' is not a valid stage.");
+        if (Host::isValidStage($stage) === false) {
+            throw new UnexpectedValueException(sprintf("'%s' is not a valid stage.", $stage));
         }
 
         $hosts = array();
-        if (isset($this->configuration["hosts"]) ) {
-            foreach ($this->configuration["hosts"] as $host) {
-                if ($host["stage"] === $stage) {
-                    $hosts[] = $host;
-                }
+        foreach ($this->getHosts() as $host) {
+            if ($host->getStage() === $stage) {
+                $hosts[] = $host;
             }
         }
 
@@ -187,36 +200,42 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * getEventSubscribers
+     * Returns the configured event subscribers.
      *
-     * Returns the configured event subscribers
-     *
-     * @access public
      * @return array
-     **/
+     */
     public function getEventSubscribers()
     {
-        if (isset($this->configuration["events"]["subscribers"]) ) {
-            return $this->configuration["events"]["subscribers"];
+        if (isset($this->configuration['events']['subscribers'])) {
+            return $this->configuration['events']['subscribers'];
         }
 
         return array();
     }
 
     /**
-     * getEventListeners
+     * getEventListeners.
      *
      * Returns the configured event listeners
      *
-     * @access public
      * @return array
-     **/
+     */
     public function getEventListeners()
     {
-        if (isset($this->configuration["events"]["listeners"]) ) {
-            return $this->configuration["events"]["listeners"];
+        if (isset($this->configuration['events']['listeners'])) {
+            return $this->configuration['events']['listeners'];
         }
 
         return array();
+    }
+
+    /**
+     * Returns the entire configuration as array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->configuration;
     }
 }

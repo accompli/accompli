@@ -4,6 +4,9 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+        "$extend": {
+            "type": "string"
+        },
         "strategy": {
             "type": "string"
         },
@@ -17,7 +20,7 @@
                         "type": "string",
                         "pattern": "^test|acceptance|production$"
                     },
-                    "connection": {
+                    "connectionType": {
                         "type": "string"
                     },
                     "hostname": {
@@ -27,16 +30,13 @@
                         "type": "string"
                     }
                 },
-                "required": ["stage", "connection", "hostname", "path"]
+                "required": ["stage", "connectionType", "hostname", "path"]
             }
         },
         "events": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "include": {
-                    "type": "string"
-                },
                 "subscribers": {
                     "type": "array",
                     "items": {
@@ -51,7 +51,18 @@
                     }
                 },
                 "listeners": {
-                    "type": "object"
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "deployment": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "adapters": {
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         }

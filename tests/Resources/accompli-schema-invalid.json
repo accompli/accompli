@@ -2,7 +2,7 @@
     "hosts": [
         {
             "stage": "online",
-            "connection": "local",
+            "connectionType": "local",
             "hostname": "",
             "path": ""
         }

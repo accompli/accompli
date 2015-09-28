@@ -3,219 +3,207 @@
 namespace Accompli\Test;
 
 use Accompli\Configuration;
-use Accompli\ConfigurationInterface;
+use Accompli\Deployment\Host;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
+use UnexpectedValueException;
 
 /**
- * ConfigurationTest
+ * ConfigurationTest.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Test
  */
 class ConfigurationTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * testLoadWithValidJSON
-     *
-     * @access public
-     * @return null
-     **/
+     * testLoadWithValidJSON.
+     */
     public function testLoadWithValidJSON()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli.json");
+        $configuration->load(__DIR__.'/Resources/accompli.json');
     }
 
     /**
-     * testLoadWithNonExistingJSONThrowsRuntimeException
+     * testLoadWithNonExistingJSONThrowsRuntimeException.
      *
      * @expectedException RuntimeException
-     *
-     * @access public
-     * @return null
-     **/
+     */
     public function testLoadWithNonExistingJSONThrowsRuntimeException()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli-non-existing.json");
+        $configuration->load(__DIR__.'/Resources/accompli-non-existing.json');
     }
 
     /**
-     * testLoadWithInvalidSyntaxJSONThrowsParsingException
+     * testLoadWithInvalidSyntaxJSONThrowsParsingException.
      *
      * @expectedException Seld\JsonLint\ParsingException
-     *
-     * @access public
-     * @return null
-     **/
+     */
     public function testLoadWithInvalidSyntaxJSONThrowsParsingException()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli-syntax-invalid.json");
+        $configuration->load(__DIR__.'/Resources/accompli-syntax-invalid.json');
     }
 
     /**
-     * testLoadWithInvalidSchemaJSONThrowsJSONValidationException
+     * testLoadWithInvalidSchemaJSONThrowsJSONValidationException.
      *
      * @expectedException Accompli\Exception\JSONValidationException
-     *
-     * @access public
-     * @return null
-     **/
+     */
     public function testLoadWithInvalidSchemaJSONThrowsJSONValidationException()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli-schema-invalid.json");
+        $configuration->load(__DIR__.'/Resources/accompli-schema-invalid.json');
     }
 
     /**
-     * testGetHostsReturnsArrayWhenConfigurationNotLoaded
-     *
-     * @access public
-     * @return null
-     **/
+     * testLoadWithExtendedSchema.
+     */
+    public function testLoadWithExtendedSchema()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/Resources/accompli-extended.json');
+
+        $this->assertArrayHasKey('deployment', $configuration->toArray());
+    }
+
+    /**
+     * testGetHostsReturnsArrayWhenConfigurationNotLoaded.
+     */
     public function testGetHostsReturnsArrayWhenConfigurationNotLoaded()
     {
         $configuration = new Configuration();
 
-        $this->assertInternalType("array", $configuration->getHosts() );
+        $this->assertInternalType('array', $configuration->getHosts());
     }
 
     /**
-     * testGetHostsReturnsArrayWhenConfigurationLoaded
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetHostsReturnsArrayWhenConfigurationLoaded.
+     */
     public function testGetHostsReturnsArrayWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli.json");
+        $configuration->load(__DIR__.'/Resources/accompli.json');
 
-        $this->assertInternalType("array", $configuration->getHosts() );
+        $this->assertInternalType('array', $configuration->getHosts());
+        $this->assertNotEmpty($configuration->getHosts());
+        $this->assertInstanceOf('Accompli\\Deployment\\Host', current($configuration->getHosts()));
     }
 
     /**
-     * testGetHostsByStageThrowsUnexpectedValueExceptionOnInvalidStage
+     * testGetHostsByStageThrowsUnexpectedValueExceptionOnInvalidStage.
      *
      * @expectedException        UnexpectedValueException
      * @expectedExceptionMessage 'invalid' is not a valid stage.
-     *
-     * @access public
-     * @return null
-     **/
+     */
     public function testGetHostsByStageThrowsUnexpectedValueExceptionOnInvalidStage()
     {
         $configuration = new Configuration();
-        $configuration->getHostsByStage("invalid");
+        $configuration->getHostsByStage('invalid');
     }
 
     /**
-     * testGetHostsByStageReturnsEmptyArrayWhenConfigurationNotLoaded
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetHostsByStageReturnsEmptyArrayWhenConfigurationNotLoaded.
+     */
     public function testGetHostsByStageReturnsEmptyArrayWhenConfigurationNotLoaded()
     {
         $configuration = new Configuration();
 
-        $result = $configuration->getHostsByStage(ConfigurationInterface::STAGE_TEST);
-        $this->assertInternalType("array", $result);
+        $result = $configuration->getHostsByStage(Host::STAGE_TEST);
+        $this->assertInternalType('array', $result);
         $this->assertCount(0, $result);
     }
 
     /**
-     * testGetHostsByStageReturnsEmptyArrayWhenConfigurationLoadedWithNoHostsConfiguredForStage
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetHostsByStageReturnsEmptyArrayWhenConfigurationLoadedWithNoHostsConfiguredForStage.
+     */
     public function testGetHostsByStageReturnsEmptyArrayWhenConfigurationLoadedWithNoHostsConfiguredForStage()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli.json");
+        $configuration->load(__DIR__.'/Resources/accompli.json');
 
-        $result = $configuration->getHostsByStage(ConfigurationInterface::STAGE_ACCEPTANCE);
-        $this->assertInternalType("array", $result);
+        $result = $configuration->getHostsByStage(Host::STAGE_ACCEPTANCE);
+        $this->assertInternalType('array', $result);
         $this->assertCount(0, $result);
     }
 
     /**
-     * testGetHostsByStageReturnsArrayWhenConfigurationLoadedWithHostConfiguredForStage
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetHostsByStageReturnsArrayWhenConfigurationLoadedWithHostConfiguredForStage.
+     */
     public function testGetHostsByStageReturnsArrayWhenConfigurationLoadedWithHostConfiguredForStage()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli.json");
+        $configuration->load(__DIR__.'/Resources/accompli.json');
 
-        $result = $configuration->getHostsByStage(ConfigurationInterface::STAGE_TEST);
-        $this->assertInternalType("array", $result);
-        $this->assertCount(1, $result);
+        $this->assertInternalType('array', $configuration->getHostsByStage(Host::STAGE_TEST));
+        $this->assertNotEmpty($configuration->getHostsByStage(Host::STAGE_TEST));
+        $this->assertInstanceOf('Accompli\\Deployment\\Host', current($configuration->getHostsByStage(Host::STAGE_TEST)));
     }
 
     /**
-     * testGetEventSubscribersReturnsEmptyArrayWhenConfigurationNotLoaded
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetEventSubscribersReturnsEmptyArrayWhenConfigurationNotLoaded.
+     */
     public function testGetEventSubscribersReturnsEmptyArrayWhenConfigurationNotLoaded()
     {
         $configuration = new Configuration();
 
         $result = $configuration->getEventSubscribers();
-        $this->assertInternalType("array", $result);
+        $this->assertInternalType('array', $result);
         $this->assertCount(0, $result);
     }
 
     /**
-     * testGetEventSubscribersReturnsArrayWhenConfigurationLoaded
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetEventSubscribersReturnsArrayWhenConfigurationLoaded.
+     */
     public function testGetEventSubscribersReturnsArrayWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli.json");
+        $configuration->load(__DIR__.'/Resources/accompli.json');
 
         $result = $configuration->getEventSubscribers();
-        $this->assertInternalType("array", $result);
+        $this->assertInternalType('array', $result);
         $this->assertCount(2, $result);
     }
 
     /**
-     * testGetEventListenersReturnsEmptyArrayWhenConfigurationNotLoaded
+     * testGetEventSubscribersAlwaysReturnsArrayOfArraysWithClassKeyWhenConfigurationLoaded.
      *
-     * @access public
-     * @return null
-     **/
+     * @depends testGetEventSubscribersReturnsArrayWhenConfigurationLoaded
+     */
+    public function testGetEventSubscribersAlwaysReturnsArrayOfArraysWithClassKeyWhenConfigurationLoaded()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/Resources/accompli.json');
+
+        $result = $configuration->getEventSubscribers();
+        foreach ($result as $resultItem) {
+            $this->assertArrayHasKey('class', $resultItem);
+        }
+    }
+
+    /**
+     * testGetEventListenersReturnsEmptyArrayWhenConfigurationNotLoaded.
+     */
     public function testGetEventListenersReturnsEmptyArrayWhenConfigurationNotLoaded()
     {
         $configuration = new Configuration();
 
         $result = $configuration->getEventListeners();
-        $this->assertInternalType("array", $result);
+        $this->assertInternalType('array', $result);
         $this->assertCount(0, $result);
     }
 
     /**
-     * testGetEventListenersReturnsArrayWhenConfigurationLoaded
-     *
-     * @access public
-     * @return null
-     **/
+     * testGetEventListenersReturnsArrayWhenConfigurationLoaded.
+     */
     public function testGetEventListenersReturnsArrayWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__ . "/Resources/accompli.json");
+        $configuration->load(__DIR__.'/Resources/accompli.json');
 
         $result = $configuration->getEventListeners();
-        $this->assertInternalType("array", $result);
+        $this->assertInternalType('array', $result);
         $this->assertCount(1, $result);
     }
 }

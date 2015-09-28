@@ -8,40 +8,30 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * DeployReleaseCommand
+ * DeployReleaseCommand.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli\Console\Command
- **/
+ */
 class DeployReleaseCommand extends Command
 {
     /**
-     * configure
-     *
-     * Configures this command
-     *
-     * @access protected
-     * @return null
-     **/
+     * Configures this command.
+     */
     protected function configure()
     {
         $this
-            ->setName("release:deploy")
-            ->setDescription("Deploys a release to all configured hosts of a stage.")
-            ->addArgument("release", InputArgument::REQUIRED, "The release number to deploy.")
-            ->addArgument("stage", InputArgument::REQUIRED, "The stage to deploy to.");
+            ->setName('deploy-release')
+            ->setDescription('Deploys a release to all configured hosts of a stage.')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version to deploy.')
+            ->addArgument('stage', InputArgument::REQUIRED, 'The stage to select hosts for.');
     }
 
     /**
-     * execute
+     * Executes this command.
      *
-     * Executes this command
-     *
-     * @access protected
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return null
-     **/
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);

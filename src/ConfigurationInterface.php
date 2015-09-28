@@ -3,85 +3,50 @@
 namespace Accompli;
 
 /**
- * ConfigurationInterface
+ * ConfigurationInterface.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
- * @package Accompli
- **/
+ */
 interface ConfigurationInterface
 {
     /**
-     * The constant to identify a host in the test stage
+     * Loads and validates the JSON configuration.
      *
-     * @var string
-     **/
-    const STAGE_TEST = "test";
-
-    /**
-     * The constant to identify a host in the acceptance stage
+     * @param string|null $configurationFile
      *
-     * @var string
-     **/
-    const STAGE_ACCEPTANCE = "acceptance";
-
-    /**
-     * The constant to identify a host in the production stage
-     *
-     * @var string
-     **/
-    const STAGE_PRODUCTION = "production";
-
-    /**
-     * load
-     *
-     * Loads and validates the JSON configuration
-     *
-     * @access public
-     * @param  string|null $configurationFile
-     * @return null
      * @throws RuntimeException
-     **/
+     */
     public function load($configurationFile = null);
 
     /**
-     * getHosts
+     * Returns the configured hosts.
      *
-     * Returns the configured hosts
-     *
-     * @access public
-     * @return array
-     **/
+     * @return Host[]
+     */
     public function getHosts();
 
     /**
-     * getHostsByStage
+     * Returns the configured hosts for $stage.
      *
-     * Returns the configured hosts for $stage
+     * @param string $stage
      *
-     * @access public
-     * @param  string $stage
-     * @return array
+     * @return Host[]
+     *
      * @throws UnexpectedValueException
-     **/
+     */
     public function getHostsByStage($stage);
 
     /**
-     * getEventSubscribers
+     * Returns the configured event subscribers.
      *
-     * Returns the configured event subscribers
-     *
-     * @access public
      * @return array
-     **/
+     */
     public function getEventSubscribers();
 
     /**
-     * getEventListeners
+     * Returns the configured event listeners.
      *
-     * Returns the configured event listeners
-     *
-     * @access public
      * @return array
-     **/
+     */
     public function getEventListeners();
 }
