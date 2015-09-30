@@ -3,8 +3,8 @@
 namespace Accompli\Console;
 
 use Accompli\Accompli;
-use Accompli\Console\Command\InstallReleaseCommand;
 use Accompli\Console\Command\DeployReleaseCommand;
+use Accompli\Console\Command\InstallReleaseCommand;
 use Accompli\Console\Command\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 
