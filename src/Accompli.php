@@ -102,13 +102,13 @@ class Accompli extends EventDispatcher
     }
 
     /**
-     * Dispatches release creation events.
+     * Dispatches release installation events.
      *
      * @param Host $host
      *
      * @todo   Add DeploymentAdapter (connection)
      **/
-    public function createRelease(Host $host)
+    public function installRelease(Host $host)
     {
         $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
         $this->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
@@ -127,6 +127,6 @@ class Accompli extends EventDispatcher
             }
         }
 
-        $this->dispatch(AccompliEvents::CREATE_RELEASE_FAILED, new FailedEvent());
+        $this->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
     }
 }

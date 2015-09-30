@@ -11,11 +11,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * CreateReleaseCommand.
+ * InstallReleaseCommand.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  */
-class CreateReleaseCommand extends Command
+class InstallReleaseCommand extends Command
 {
     /**
      * Configures this command.
@@ -23,9 +23,9 @@ class CreateReleaseCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('create-release')
-            ->setDescription('Creates a new release for deployment.')
-            ->addArgument('version', InputArgument::REQUIRED, 'The version to create a release for.')
+            ->setName('install-release')
+            ->setDescription('Installs a new release for deployment.')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version to install a release for.')
             ->addArgument('stage', InputArgument::OPTIONAL, 'The stage to select hosts for.')
             ->addOption('project-dir', null, InputOption::VALUE_OPTIONAL, 'The location of the project directory.', getcwd());
     }
@@ -50,7 +50,7 @@ class CreateReleaseCommand extends Command
         }
 
         foreach ($hosts as $host) {
-            $accompli->createRelease($host);
+            $accompli->installRelease($host);
         }
     }
 }
