@@ -127,6 +127,6 @@ class Accompli extends EventDispatcher
             }
         }
 
-        $this->dispatch(AccompliEvents::CREATE_RELEASE_FAILED, new FailedEvent());
+        $this->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
     }
 }

@@ -10,16 +10,6 @@ namespace Accompli;
 final class AccompliEvents
 {
     /**
-     * The CREATE_RELEASE_FAILED event is dispatched when creation of a Release has failed.
-     *
-     * The event listener receives an
-     * Accompli\Event\FailedEvent instance.
-     *
-     * @var string
-     **/
-    const CREATE_RELEASE_FAILED = 'accompli.create_release_failed';
-
-    /**
      * The DEPLOY_RELEASE event is dispatched when a Release is ready for deployment.
      *
      * The event listener receives an
@@ -68,6 +58,16 @@ final class AccompliEvents
      * @var string
      **/
     const INSTALL_RELEASE = 'accompli.install_release';
+
+    /**
+     * The INSTALL_RELEASE_FAILED event is dispatched when installation of a Release has failed.
+     *
+     * The event listener receives an
+     * Accompli\Event\FailedEvent instance.
+     *
+     * @var string
+     **/
+    const INSTALL_RELEASE_FAILED = 'accompli.create_release_failed';
 
     /**
      * The PREPARE_DEPLOY_RELEASE event is dispatched when a Release is prepared for deployment.
