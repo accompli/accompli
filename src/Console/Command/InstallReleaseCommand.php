@@ -50,7 +50,7 @@ class InstallReleaseCommand extends Command
         }
 
         foreach ($hosts as $host) {
-            $accompli->createRelease($host);
+            $accompli->installRelease($host);
         }
     }
 }
