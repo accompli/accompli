@@ -137,12 +137,12 @@ final class AccompliEvents
     public static function getEventNames()
     {
         return array(
-            self::CREATE_RELEASE_FAILED,
             self::DEPLOY_RELEASE,
             self::DEPLOY_RELEASE_COMPLETE,
             self::DEPLOY_RELEASE_FAILED,
             self::GATHER_FACTS,
             self::INSTALL_RELEASE,
+            self::INSTALL_RELEASE_FAILED,
             self::PREPARE_DEPLOY_RELEASE,
             self::PREPARE_RELEASE,
             self::PREPARE_WORKSPACE,
