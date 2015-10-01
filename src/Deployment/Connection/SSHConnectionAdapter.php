@@ -59,7 +59,9 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function getContents($filename)
     {
+        $sFtp = $this->connection->getSftp();
 
+        return $sFtp->read($filename);
     }
 
     /**
