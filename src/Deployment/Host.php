@@ -2,6 +2,7 @@
 
 namespace Accompli\Deployment;
 
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use UnexpectedValueException;
 
 /**
@@ -61,16 +62,24 @@ class Host
     private $path;
 
     /**
+     * The connection instance used to connect to and communicate with this Host.
+     *
+     * @var ConnectionAdapterInterface
+     */
+    private $connection;
+
+    /**
      * Constructs a new Host instance.
      *
-     * @param string $stage
-     * @param string $connectionType
-     * @param string $hostname
-     * @param string $path
+     * @param string                     $stage
+     * @param string                     $connectionType
+     * @param string                     $hostname
+     * @param string                     $path
+     * @param ConnectionAdapterInterface $connection
      *
      * @throws UnexpectedValueException when $stage is not a valid type
      */
-    public function __construct($stage, $connectionType, $hostname, $path)
+    public function __construct($stage, $connectionType, $hostname, $path, ConnectionAdapterInterface $connection)
     {
         if (self::isValidStage($stage) === false) {
             throw new UnexpectedValueException(sprintf("'%s' is not a valid stage.", $stage));
@@ -80,6 +89,7 @@ class Host
         $this->connectionType = $connectionType;
         $this->hostname = $hostname;
         $this->path = $path;
+        $this->connection = $connection;
     }
 
     /**
@@ -110,6 +120,16 @@ class Host
     public function getHostname()
     {
         return $this->hostname;
+    }
+
+    /**
+     * Returns the connection instance.
+     *
+     * @return ConnectionAdapterInterface
+     */
+    public function getConnection()
+    {
+        return $this->connection;
     }
 
     /**
