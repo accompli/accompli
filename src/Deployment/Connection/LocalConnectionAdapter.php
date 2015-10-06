@@ -3,14 +3,14 @@
 namespace Accompli\Deployment\Connection;
 
 /**
- * LocalConnectionAdapter
+ * LocalConnectionAdapter.
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class LocalConnectionAdapter implements ConnectionAdapterInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function connect()
     {
@@ -18,7 +18,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function executeCommand($command)
     {
@@ -26,7 +26,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContents($filename)
     {
@@ -34,7 +34,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function putContents($destinationFilename, $data)
     {
@@ -44,7 +44,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function putFile($sourceFilename, $destinationFilename)
     {
