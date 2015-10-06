@@ -66,7 +66,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function connect()
     {
@@ -84,7 +84,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function executeCommand($command)
     {
@@ -94,7 +94,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContents($filename)
     {
@@ -104,7 +104,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function putContents($destinationFilename, $data)
     {
@@ -115,7 +115,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function putFile($sourceFilename, $destinationFilename)
     {
