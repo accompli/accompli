@@ -3,17 +3,34 @@
 namespace Accompli\Deployment\Connection;
 
 use RuntimeException;
+use Ssh\Authentication;
 use Ssh\Authentication\Agent;
+use Ssh\Authentication\PublicKeyFile;
 use Ssh\Configuration;
 use Ssh\Session;
+use UnexpectedValueException;
 
 /**
- * SSHConnectionAdapter
+ * SSHConnectionAdapter.
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class SSHConnectionAdapter implements ConnectionAdapterInterface
 {
+    /**
+     * The SSH configuration instance.
+     *
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
+     * The SSH authentication instance.
+     *
+     * @var Authentication
+     **/
+    private $authentication;
+
     /**
      * The SSH Session instance.
      *
@@ -22,24 +39,46 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     private $connection;
 
     /**
+     * Constructs a new SSHConnectionAdapter instance.
+     *
+     * @param string      $hostname
+     * @param string      $authenticationType
+     * @param string|null $authenticationUsername
+     * @param string      $authenticationPublicKeyFile
+     * @param string      $authenticationPrivateKeyFile
+     */
+    public function __construct($hostname, $authenticationType, $authenticationUsername = null, $authenticationPublicKeyFile = '~/.ssh/id_rsa.pub', $authenticationPrivateKeyFile = '~/.ssh/id_rsa')
+    {
+        $this->configuration = new Configuration($hostname);
+
+        switch ($authenticationType) {
+            case 'publickey':
+                $authentication = new PublicKeyFile($authenticationUsername, $authenticationPublicKeyFile, $authenticationPrivateKeyFile);
+                break;
+            case 'agent':
+                $authentication = new Agent($authenticationUsername);
+                break;
+            default:
+                throw new UnexpectedValueException(sprintf('Invalid SSH authentication type: %s', $authenticationType));
+        }
+
+        $this->authentication = $authentication;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function connect()
     {
-        // @todo Add some way to add configuration options...
-
-        $host = "localhost";
-        $configuration = new Configuration($host);
-        $authentication = new Agent("username"); // Use username executing the accompli command
-
-        $this->connection = new Session($configuration);
+        $this->connection = new Session($this->configuration, $this->authentication);
 
         try {
             // Retrieve the Exec subsystem to force the connection
             $this->connection->getExec();
 
             return true;
-        } catch (RuntimeException $exception) { }
+        } catch (RuntimeException $exception) {
+        }
 
         return false;
     }
