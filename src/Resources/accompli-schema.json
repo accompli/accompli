@@ -60,7 +60,7 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "adapters": {
+                "connection": {
                     "type": "object",
                     "additionalProperties": true
                 }
