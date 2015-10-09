@@ -100,6 +100,16 @@ class Host
     }
 
     /**
+     * Returns true if this Host has a connection instance
+     *
+     * @return ConnectionAdapterInterface
+     */
+    public function hasConnection()
+    {
+        return ($this->connection instanceof ConnectionAdapterInterface);
+    }
+
+    /**
      * Returns the stage of this host.
      *
      * @return string
@@ -147,6 +157,16 @@ class Host
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Sets the connection instance.
+     *
+     * @param ConnectionAdapterInterface $connection
+     */
+    public function setConnection(ConnectionAdapterInterface $connection)
+    {
+        $this->connection = $connection;
     }
 
     /**
