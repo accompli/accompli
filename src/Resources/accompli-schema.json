@@ -28,6 +28,12 @@
                     },
                     "path": {
                         "type": "string"
+                    },
+                    "connectionOptions": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "properties": {
+                        }
                     }
                 },
                 "required": ["stage", "connectionType", "hostname", "path"]

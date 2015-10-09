@@ -62,6 +62,13 @@ class Host
     private $path;
 
     /**
+     * The array with connection options
+     *
+     * @var array
+     */
+    private $connectionOptions;
+
+    /**
      * The connection instance used to connect to and communicate with this Host.
      *
      * @var ConnectionAdapterInterface
@@ -71,15 +78,15 @@ class Host
     /**
      * Constructs a new Host instance.
      *
-     * @param string                     $stage
-     * @param string                     $connectionType
-     * @param string                     $hostname
-     * @param string                     $path
-     * @param ConnectionAdapterInterface $connection
+     * @param string $stage
+     * @param string $connectionType
+     * @param string $hostname
+     * @param string $path
+     * @param array  $connectionOptions
      *
      * @throws UnexpectedValueException when $stage is not a valid type
      */
-    public function __construct($stage, $connectionType, $hostname, $path, ConnectionAdapterInterface $connection)
+    public function __construct($stage, $connectionType, $hostname, $path, array $connectionOptions = array())
     {
         if (self::isValidStage($stage) === false) {
             throw new UnexpectedValueException(sprintf("'%s' is not a valid stage.", $stage));
@@ -89,7 +96,7 @@ class Host
         $this->connectionType = $connectionType;
         $this->hostname = $hostname;
         $this->path = $path;
-        $this->connection = $connection;
+        $this->connectionOptions = $connectionOptions;
     }
 
     /**
