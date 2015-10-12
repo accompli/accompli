@@ -2,6 +2,8 @@
 
 namespace Accompli\Deployment\Connection;
 
+use Symfony\Component\Process\Process;
+
 /**
  * LocalConnectionAdapter.
  *
@@ -22,7 +24,10 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
      */
     public function executeCommand($command)
     {
-        // Implement process component
+        $process = new Process($command);
+        $process->run();
+
+        return $process->getOutput(); // @todo change to status code and add reference argument?
     }
 
     /**
@@ -38,7 +43,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
      */
     public function putContents($destinationFilename, $data)
     {
-        $result = file_put_conents($destinationFilename, $data);
+        $result = file_put_contents($destinationFilename, $data);
 
         return ($result !== false);
     }
