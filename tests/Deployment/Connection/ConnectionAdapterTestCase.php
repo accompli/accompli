@@ -17,11 +17,11 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        if (file_exists(__DIR__ . '/test.txt')) {
-            unlink(__DIR__ . '/test.txt');
+        if (file_exists(__DIR__.'/test.txt')) {
+            unlink(__DIR__.'/test.txt');
         }
-        if (file_exists(__DIR__ . '/test2.txt')) {
-            unlink(__DIR__ . '/test2.txt');
+        if (file_exists(__DIR__.'/test2.txt')) {
+            unlink(__DIR__.'/test2.txt');
         }
     }
 
@@ -45,7 +45,7 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
         $connectionAdapter = $this->createConnectionAdapter();
         $connectionAdapter->connect();
 
-        $this->assertSame("test" . PHP_EOL, $connectionAdapter->executeCommand('echo test'));
+        $this->assertSame('test'.PHP_EOL, $connectionAdapter->executeCommand('echo test'));
     }
 
     /**
@@ -57,10 +57,10 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     {
         $connectionAdapter = $this->createConnectionAdapter();
         $connectionAdapter->connect();
-        $connectionAdapter->putContents(__DIR__ . '/test.txt', 'test');
+        $connectionAdapter->putContents(__DIR__.'/test.txt', 'test');
 
-        $this->assertFileExists(__DIR__ . '/test.txt');
-        $this->assertSame('test', file_get_contents(__DIR__ . '/test.txt'));
+        $this->assertFileExists(__DIR__.'/test.txt');
+        $this->assertSame('test', file_get_contents(__DIR__.'/test.txt'));
     }
 
     /**
@@ -73,9 +73,9 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     {
         $connectionAdapter = $this->createConnectionAdapter();
         $connectionAdapter->connect();
-        $connectionAdapter->putContents(__DIR__ . '/test.txt', 'test');
+        $connectionAdapter->putContents(__DIR__.'/test.txt', 'test');
 
-        $this->assertSame('test', $connectionAdapter->getContents(__DIR__ . '/test.txt'));
+        $this->assertSame('test', $connectionAdapter->getContents(__DIR__.'/test.txt'));
     }
 
     /**
@@ -85,14 +85,14 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
      */
     public function testPutFile()
     {
-        file_put_contents(__DIR__ . '/test.txt', 'test');
+        file_put_contents(__DIR__.'/test.txt', 'test');
 
         $connectionAdapter = $this->createConnectionAdapter();
         $connectionAdapter->connect();
-        $connectionAdapter->putFile(__DIR__ . '/test.txt', __DIR__ . '/test2.txt');
+        $connectionAdapter->putFile(__DIR__.'/test.txt', __DIR__.'/test2.txt');
 
-        $this->assertFileExists(__DIR__ . '/test2.txt');
-        $this->assertSame('test', file_get_contents(__DIR__ . '/test2.txt'));
+        $this->assertFileExists(__DIR__.'/test2.txt');
+        $this->assertSame('test', file_get_contents(__DIR__.'/test2.txt'));
     }
 
     /**
