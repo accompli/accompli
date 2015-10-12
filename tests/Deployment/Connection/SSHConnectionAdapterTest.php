@@ -13,7 +13,7 @@ use Accompli\Test\Deployment\Connection\ConnectionAdapterTestCase;
 class SSHConnectionAdapterTest extends ConnectionAdapterTestCase
 {
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     protected function createConnectionAdapter()
     {

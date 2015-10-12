@@ -13,7 +13,7 @@ use Accompli\Test\Deployment\Connection\ConnectionAdapterTestCase;
 class LocalConnectionAdapterTest extends ConnectionAdapterTestCase
 {
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     protected function createConnectionAdapter()
     {
