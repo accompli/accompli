@@ -22,7 +22,10 @@ install:
   - pecl install ssh2-beta < ./tests/.non-interactive
   - composer install
 
-before_script: mkdir -p build/logs
+before_script:
+  - ssh-keygen -q -f ~/.ssh/id_rsa -N ""
+  - cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+  - mkdir -p build/logs
 
 script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
