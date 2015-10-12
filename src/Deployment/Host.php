@@ -62,7 +62,7 @@ class Host
     private $path;
 
     /**
-     * The array with connection options
+     * The array with connection options.
      *
      * @var array
      */
@@ -100,7 +100,7 @@ class Host
     }
 
     /**
-     * Returns true if this Host has a connection instance
+     * Returns true if this Host has a connection instance.
      *
      * @return ConnectionAdapterInterface
      */
