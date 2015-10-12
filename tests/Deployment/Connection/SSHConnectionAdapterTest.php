@@ -17,6 +17,6 @@ class SSHConnectionAdapterTest extends ConnectionAdapterTestCase
      */
     protected function createConnectionAdapter()
     {
-        return new SSHConnectionAdapter('localhost', 'publickey', null);
+        return new SSHConnectionAdapter('localhost', 'publickey', get_current_user());
     }
 }
