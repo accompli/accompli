@@ -64,7 +64,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
                 break;
             case 'publickey':
                 $authentication = new RSA();
-                $authentication->loadKey($authenticationCredentials);
+                $authentication->loadKey(preg_replace('/^~/', $this->getUserDirectory(), $authenticationCredentials));
                 break;
             case 'agent':
                 $authentication = new Agent();
@@ -148,5 +148,23 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     public function renameFile($remoteSource, $remoteDestination)
     {
         return $this->connection->rename($remoteSource, $remoteDestination);
+    }
+
+    /**
+     * Returns the 'home' user directory of the user currently running the script.
+     *
+     * @return string|null
+     */
+    private function getUserDirectory()
+    {
+        $userDirectory = null;
+        if (isset($_SERVER['HOME'])) {
+            $userDirectory = $_SERVER['HOME'];
+        }
+        elseif (isset($_SERVER['HOMEPATH'])) {
+            $userDirectory = $_SERVER['HOMEPATH'];
+        }
+
+        return $userDirectory;
     }
 }
