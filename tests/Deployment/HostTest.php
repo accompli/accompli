@@ -39,6 +39,52 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if Host::getConnection returns null when no connection adapter instance has been set.
+     */
+    public function testGetConnectionReturnsNull()
+    {
+        $host = $this->createHostInstance();
+
+        $this->assertNull($host->getConnection());
+    }
+
+    /**
+     * Tests if Host::getConnection returns the connection adapter instance set with Host::setConnection.
+     */
+    public function testSetConnectionSetsConnectionAndIsReturnedByGetConnection()
+    {
+        $connectionMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+
+        $host = $this->createHostInstance();
+        $host->setConnection($connectionMock);
+
+        $this->assertSame($connectionMock, $host->getConnection());
+    }
+
+    /**
+     * Tests if Host::hasConnection returns false when no connection adapter instance has been set.
+     */
+    public function testHasConnectionReturnsFalse()
+    {
+        $host = $this->createHostInstance();
+
+        $this->assertFalse($host->hasConnection());
+    }
+
+    /**
+     * Tests if Host::hasConnection returns true when a connection adapter instance has been set with Host::setConnection.
+     */
+    public function testHasConnectionReturnsTrueWhenConnectionInstanceIsSet()
+    {
+        $connectionMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+
+        $host = $this->createHostInstance();
+        $host->setConnection($connectionMock);
+
+        $this->assertTrue($host->hasConnection());
+    }
+
+    /**
      * testIsValidStage.
      *
      * @dataProvider provideTestIsValidStage
