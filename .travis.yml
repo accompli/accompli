@@ -2,10 +2,6 @@ language: php
 
 sudo: false
 
-addons:
-  apt:
-    packages: libssh2-1-dev
-
 matrix:
   include:
     - php: 5.4
@@ -18,9 +14,7 @@ matrix:
 
 before_install: composer self-update
 
-install:
-  - pecl install ssh2-beta < ./tests/.non-interactive
-  - composer install
+install: composer install
 
 before_script: mkdir -p build/logs
 
