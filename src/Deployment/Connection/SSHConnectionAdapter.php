@@ -151,7 +151,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     }
 
     /**
-     * Returns the 'home' user directory of the user currently running the script.
+     * Returns the 'home' directory for the user.
      *
      * @return string|null
      */
@@ -160,10 +160,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         $userDirectory = null;
         if (isset($_SERVER['HOME'])) {
             $userDirectory = $_SERVER['HOME'];
+        } elseif (isset($_SERVER['USERPROFILE'])) {
+            $userDirectory = $_SERVER['USERPROFILE'];
         }
-        elseif (isset($_SERVER['HOMEPATH'])) {
-            $userDirectory = $_SERVER['HOMEPATH'];
-        }
+        $userDirectory = realpath($userDirectory.'/../');
+        $userDirectory .= '/'.$this->authenticationUsername;
 
         return $userDirectory;
     }
