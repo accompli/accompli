@@ -64,7 +64,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
                 break;
             case 'publickey':
                 $authentication = new RSA();
-                $authentication->loadKey(preg_replace('/^~/', $this->getUserDirectory(), $authenticationCredentials));
+                $authentication->loadKey(file_get_contents(preg_replace('/^~/', $this->getUserDirectory(), $authenticationCredentials)));
                 break;
             case 'agent':
                 $authentication = new Agent();
