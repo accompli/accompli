@@ -20,7 +20,7 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
         if (file_exists(__DIR__.'/test.txt')) {
             unlink(__DIR__.'/test.txt');
         }
-        if (file_exists(__DIR__.'/test2.txt')) {
+        if (file_exists(__DIR__.'/test2.txt') || is_link(__DIR__.'/test2.txt')) {
             unlink(__DIR__.'/test2.txt');
         }
     }
