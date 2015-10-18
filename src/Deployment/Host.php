@@ -2,6 +2,7 @@
 
 namespace Accompli\Deployment;
 
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use UnexpectedValueException;
 
 /**
@@ -61,16 +62,31 @@ class Host
     private $path;
 
     /**
+     * The array with connection options.
+     *
+     * @var array
+     */
+    private $connectionOptions;
+
+    /**
+     * The connection instance used to connect to and communicate with this Host.
+     *
+     * @var ConnectionAdapterInterface
+     */
+    private $connection;
+
+    /**
      * Constructs a new Host instance.
      *
      * @param string $stage
      * @param string $connectionType
      * @param string $hostname
      * @param string $path
+     * @param array  $connectionOptions
      *
      * @throws UnexpectedValueException when $stage is not a valid type
      */
-    public function __construct($stage, $connectionType, $hostname, $path)
+    public function __construct($stage, $connectionType, $hostname, $path, array $connectionOptions = array())
     {
         if (self::isValidStage($stage) === false) {
             throw new UnexpectedValueException(sprintf("'%s' is not a valid stage.", $stage));
@@ -80,6 +96,17 @@ class Host
         $this->connectionType = $connectionType;
         $this->hostname = $hostname;
         $this->path = $path;
+        $this->connectionOptions = $connectionOptions;
+    }
+
+    /**
+     * Returns true if this Host has a connection instance.
+     *
+     * @return ConnectionAdapterInterface
+     */
+    public function hasConnection()
+    {
+        return ($this->connection instanceof ConnectionAdapterInterface);
     }
 
     /**
@@ -113,6 +140,16 @@ class Host
     }
 
     /**
+     * Returns the connection instance.
+     *
+     * @return ConnectionAdapterInterface
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
      * Returns the base workspace path of this host.
      *
      * @return string
@@ -120,6 +157,16 @@ class Host
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Sets the connection instance.
+     *
+     * @param ConnectionAdapterInterface $connection
+     */
+    public function setConnection(ConnectionAdapterInterface $connection)
+    {
+        $this->connection = $connection;
     }
 
     /**

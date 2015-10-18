@@ -20,4 +20,9 @@
             <directory>./src/</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <env name='ssh.username' value=''/>
+        <env name='ssh.password' value='1234'/>
+    </php>
 </phpunit>

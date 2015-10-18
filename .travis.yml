@@ -2,10 +2,6 @@ language: php
 
 sudo: false
 
-addons:
-  apt:
-    packages: libssh2-1-dev
-
 matrix:
   include:
     - php: 5.4
@@ -18,11 +14,14 @@ matrix:
 
 before_install: composer self-update
 
-install:
-  - pecl install ssh2-beta < ./tests/.non-interactive
-  - composer install
+install: composer install
 
-before_script: mkdir -p build/logs
+before_script:
+  - ssh-keygen -q -f ~/.ssh/id_rsa -N ""
+  - cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+  - eval $(ssh-agent)
+  - ssh-add ~/.ssh/id_rsa
+  - mkdir -p build/logs
 
 script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
