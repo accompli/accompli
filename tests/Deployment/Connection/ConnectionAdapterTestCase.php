@@ -13,10 +13,29 @@ use PHPUnit_Framework_TestCase;
 abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
 {
     /**
-     * Unlinks created test files.
+     * The connection adapter instance implementing the ConnectionAdapterInterface.
+     *
+     * @var ConnectionAdapterInterface
+     */
+    protected $connectionAdapter;
+
+    /**
+     * Create a new connection adapter instance.
+     */
+    public function setUp()
+    {
+        $this->connectionAdapter = $this->createConnectionAdapter();
+    }
+
+    /**
+     * Disconnects a connection adapter instance and unlinks created test files.
      */
     public function tearDown()
     {
+        if ($this->connectionAdapter instanceof ConnectionAdapterInterface) {
+            $this->connectionAdapter->disconnect();
+        }
+
         if (file_exists(__DIR__.'/test.txt')) {
             unlink(__DIR__.'/test.txt');
         }
@@ -26,41 +45,49 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if LocalConnectionAdapter::connect returns true.
+     * Tests if ConnectionAdapterInterface::connect returns true.
      */
     public function testConnectReturnsTrue()
     {
-        $connectionAdapter = $this->createConnectionAdapter();
-
-        $this->assertTrue($connectionAdapter->connect());
+        $this->assertTrue($this->connectionAdapter->connect());
     }
 
     /**
-     * Tests if LocalConnectionAdapter::executeCommand returns the expected output.
+     * Tests if ConnectionAdapterInterface::disconnect returns true.
      *
      * @depends testConnectReturnsTrue
      */
+    public function testDisconnectReturnsTrue()
+    {
+        $this->connectionAdapter->connect();
+
+        $this->assertTrue($this->connectionAdapter->disconnect());
+    }
+
+    /**
+     * Tests if ConnectionAdapterInterface::executeCommand returns the expected output.
+     *
+     * @depends testDisconnectReturnsTrue
+     */
     public function testExecuteCommand()
     {
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
+        $this->connectionAdapter->connect();
 
-        $this->assertSame('test'.PHP_EOL, $connectionAdapter->executeCommand('echo test'));
+        $this->assertSame('test'.PHP_EOL, $this->connectionAdapter->executeCommand('echo test'));
     }
 
     /**
      * Tests if ConnectionAdapterInterface::getContents returns the data from a file.
      *
-     * @depends testConnectReturnsTrue
+     * @depends testDisconnectReturnsTrue
      */
     public function testGetContents()
     {
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
+        $this->connectionAdapter->connect();
 
         file_put_contents(__DIR__.'/test.txt', 'test');
 
-        $result = $connectionAdapter->getContents(__DIR__.'/test.txt');
+        $result = $this->connectionAdapter->getContents(__DIR__.'/test.txt');
 
         $this->assertSame('test', $result);
     }
@@ -68,14 +95,13 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     /**
      * Tests if ConnectionAdapterInterface::putContents puts data in a file.
      *
-     * @depends testConnectReturnsTrue
+     * @depends testDisconnectReturnsTrue
      */
     public function testPutContents()
     {
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
-        $connectionAdapter->putContents(__DIR__.'/test.txt', 'test');
+        $this->connectionAdapter->connect();
 
+        $this->assertTrue($this->connectionAdapter->putContents(__DIR__.'/test.txt', 'test'));
         $this->assertFileExists(__DIR__.'/test.txt');
         $this->assertSame('test', file_get_contents(__DIR__.'/test.txt'));
     }
@@ -83,18 +109,15 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     /**
      * Tests if ConnectionAdapterInterface::getFile returns a copy of a file.
      *
-     * @depends testConnectReturnsTrue
+     * @depends testDisconnectReturnsTrue
      */
     public function testGetFile()
     {
+        $this->connectionAdapter->connect();
+
         file_put_contents(__DIR__.'/test.txt', 'test');
 
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
-
-        $result = $connectionAdapter->getFile(__DIR__.'/test.txt', __DIR__.'/test2.txt');
-
-        $this->assertTrue($result);
+        $this->assertTrue($this->connectionAdapter->getFile(__DIR__.'/test.txt', __DIR__.'/test2.txt'));
         $this->assertFileExists(__DIR__.'/test2.txt');
         $this->assertSame('test', file_get_contents(__DIR__.'/test2.txt'));
     }
@@ -102,18 +125,15 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     /**
      * Tests if ConnectionAdapterInterface::putFile copies a file.
      *
-     * @depends testConnectReturnsTrue
+     * @depends testDisconnectReturnsTrue
      */
     public function testPutFile()
     {
+        $this->connectionAdapter->connect();
+
         file_put_contents(__DIR__.'/test.txt', 'test');
 
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
-
-        $result = $connectionAdapter->putFile(__DIR__.'/test.txt', __DIR__.'/test2.txt');
-
-        $this->assertTrue($result);
+        $this->assertTrue($this->connectionAdapter->putFile(__DIR__.'/test.txt', __DIR__.'/test2.txt'));
         $this->assertFileExists(__DIR__.'/test2.txt');
         $this->assertSame('test', file_get_contents(__DIR__.'/test2.txt'));
     }
@@ -121,36 +141,30 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     /**
      * Tests if ConnectionAdapterInterface::linkFile symlinks a remote file to a remote link.
      *
-     * @depends testConnectReturnsTrue
+     * @depends testDisconnectReturnsTrue
      */
     public function testLinkFile()
     {
+        $this->connectionAdapter->connect();
+
         file_put_contents(__DIR__.'/test.txt', 'test');
 
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
-
-        $result = $connectionAdapter->linkFile(__DIR__.'/test.txt', __DIR__.'/test2.txt');
-
-        $this->assertTrue($result);
+        $this->assertTrue($this->connectionAdapter->linkFile(__DIR__.'/test.txt', __DIR__.'/test2.txt'));
         $this->assertTrue(is_link(__DIR__.'/test2.txt'));
     }
 
     /**
      * Tests if ConnectionAdapterInterface::renameFile renames/moves a remote file to another name or remote location.
      *
-     * @depends testConnectReturnsTrue
+     * @depends testDisconnectReturnsTrue
      */
     public function testRenameFile()
     {
+        $this->connectionAdapter->connect();
+
         file_put_contents(__DIR__.'/test.txt', 'test');
 
-        $connectionAdapter = $this->createConnectionAdapter();
-        $connectionAdapter->connect();
-
-        $result = $connectionAdapter->renameFile(__DIR__.'/test.txt', __DIR__.'/test2.txt');
-
-        $this->assertTrue($result);
+        $this->assertTrue($this->connectionAdapter->renameFile(__DIR__.'/test.txt', __DIR__.'/test2.txt'));
         $this->assertFileNotExists(__DIR__.'/test.txt');
         $this->assertFileExists(__DIR__.'/test2.txt');
     }
