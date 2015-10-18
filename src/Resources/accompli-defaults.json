@@ -6,8 +6,9 @@
         ]
     },
     "deployment": {
-        "adapters": {
-            "local": "Accompli\\Deployment\\Adapter\\LocalDeploymentAdapter"
+        "connection": {
+            "local": "Accompli\\Deployment\\Connection\\LocalConnectionAdapter",
+            "ssh": "Accompli\\Deployment\\Connection\\SSHConnectionAdapter"
         }
     }
 }
