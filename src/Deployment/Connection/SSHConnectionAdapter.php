@@ -15,6 +15,21 @@ use UnexpectedValueException;
 class SSHConnectionAdapter implements ConnectionAdapterInterface
 {
     /**
+     * The password authentication type.
+     */
+    const AUTHENTICATION_PASSWORD = 'password';
+
+    /**
+     * The public key authentication type.
+     */
+    const AUTHENTICATION_PUBLIC_KEY = 'publickey';
+
+    /**
+     * The SSH agent authentication type.
+     */
+    const AUTHENTICATION_SSH_AGENT = 'agent';
+
+    /**
      * The hostname to connect to.
      *
      * @var string
@@ -50,7 +65,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      * @param string|null $authenticationUsername
      * @param string      $authenticationCredentials
      */
-    public function __construct($hostname, $authenticationType = 'publickey', $authenticationUsername = null, $authenticationCredentials = '~/.ssh/id_rsa')
+    public function __construct($hostname, $authenticationType = self::AUTHENTICATION_PUBLIC_KEY, $authenticationUsername = null, $authenticationCredentials = '~/.ssh/id_rsa')
     {
         $this->hostname = $hostname;
         $this->authenticationUsername = $authenticationUsername;
@@ -59,14 +74,14 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         }
 
         switch ($authenticationType) {
-            case 'password':
+            case self::AUTHENTICATION_PASSWORD:
                 $authentication = $authenticationCredentials;
                 break;
-            case 'publickey':
+            case self::AUTHENTICATION_PUBLIC_KEY:
                 $authentication = new RSA();
                 $authentication->loadKey(file_get_contents(preg_replace('/^~/', $this->getUserDirectory(), $authenticationCredentials)));
                 break;
-            case 'agent':
+            case self::AUTHENTICATION_SSH_AGENT:
                 $authentication = new Agent();
                 break;
             default:
@@ -91,7 +106,13 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function disconnect()
     {
-        return $this->connection->disconnect();
+        if ($this->connection instanceof SFTP) {
+            $this->connection->disconnect();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -99,7 +120,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function executeCommand($command)
     {
-        return $this->connection->exec($command);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->exec($command);
+        }
+
+        return false;
     }
 
     /**
@@ -107,7 +132,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function getContents($filename)
     {
-        return $this->connection->get($filename);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->get($filename);
+        }
+
+        return false;
     }
 
     /**
@@ -115,7 +144,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function putContents($destinationFilename, $data)
     {
-        return $this->connection->put($destinationFilename, $data, SFTP::SOURCE_STRING);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->put($destinationFilename, $data, SFTP::SOURCE_STRING);
+        }
+
+        return false;
     }
 
     /**
@@ -123,7 +156,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function getFile($sourceFilename, $destinationFilename)
     {
-        return $this->connection->get($sourceFilename, $destinationFilename);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->get($sourceFilename, $destinationFilename);
+        }
+
+        return false;
     }
 
     /**
@@ -131,7 +168,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function putFile($sourceFilename, $destinationFilename)
     {
-        return $this->connection->put($destinationFilename, $sourceFilename, SFTP::SOURCE_LOCAL_FILE);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->put($destinationFilename, $sourceFilename, SFTP::SOURCE_LOCAL_FILE);
+        }
+
+        return false;
     }
 
     /**
@@ -139,7 +180,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function linkFile($remoteTarget, $remoteLink)
     {
-        return $this->connection->symlink($remoteTarget, $remoteLink);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->symlink($remoteTarget, $remoteLink);
+        }
+
+        return false;
     }
 
     /**
@@ -147,7 +192,11 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function renameFile($remoteSource, $remoteDestination)
     {
-        return $this->connection->rename($remoteSource, $remoteDestination);
+        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+            return $this->connection->rename($remoteSource, $remoteDestination);
+        }
+
+        return false;
     }
 
     /**
