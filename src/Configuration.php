@@ -5,6 +5,7 @@ namespace Accompli;
 use Accompli\Deployment\Host;
 use Accompli\Exception\JSONValidationException;
 use JsonSchema\Validator;
+use Nijens\Utilities\ObjectFactory;
 use RuntimeException;
 use Seld\JsonLint\JsonParser;
 use Seld\JsonLint\ParsingException;
@@ -167,7 +168,7 @@ class Configuration implements ConfigurationInterface
     {
         if (empty($this->hosts) && isset($this->configuration['hosts'])) {
             foreach ($this->configuration['hosts'] as $host) {
-                $this->hosts[] = new Host($host['stage'], $host['connectionType'], $host['hostname'], $host['path']);
+                $this->hosts[] = ObjectFactory::getInstance()->newInstance('Accompli\Deployment\Host', $host);
             }
         }
 
