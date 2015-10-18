@@ -25,15 +25,25 @@ class SSHConnectionAdapterTest extends ConnectedConnectionAdapterTestCase
     }
 
     /**
+     * Tests if constructing a new SSHConnectionAdapter instance with username and password succeeds.
+     */
+    public function testConstructWithPasswordAuthenticationType()
+    {
+        $this->connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_PASSWORD, $this->getSSHUsername(), getenv('ssh.password'));
+    }
+
+    /**
      * Tests if SSHConnectionAdapter::connect returns true with password authentication type.
      */
     public function testConnectWithAuthenticationTypePasswordReturnsTrue()
     {
-        $connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_PASSWORD, $this->getSSHUsername(), getenv('ssh.password'));
+        $this->connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_PASSWORD, $this->getSSHUsername(), getenv('ssh.password'));
 
-        $this->assertTrue($connectionAdapter->connect());
+        if (get_current_user() === 'travis') {
+            $this->markTestSkipped('This test is not properly set up to be tested with Travis CI.');
+        }
 
-        $connectionAdapter->disconnect();
+        $this->assertTrue($this->connectionAdapter->connect());
     }
 
     /**
@@ -41,11 +51,9 @@ class SSHConnectionAdapterTest extends ConnectedConnectionAdapterTestCase
      */
     public function testConnectWithAuthenticationTypeSSHAgentReturnsTrue()
     {
-        $connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_SSH_AGENT, $this->getSSHUsername());
+        $this->connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_SSH_AGENT, $this->getSSHUsername());
 
-        $this->assertTrue($connectionAdapter->connect());
-
-        $connectionAdapter->disconnect();
+        $this->assertTrue($this->connectionAdapter->connect());
     }
 
     /**
