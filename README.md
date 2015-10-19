@@ -5,6 +5,7 @@
 [![Build Status][ico-build]][link-build]
 [![Coverage Status][ico-coverage]][link-coverage]
 [![SensioLabsInsight][ico-security]][link-security]
+[![StyleCI][ico-code-style]][link-code-style]
 
 An easy to use and extendable deployment tool for PHP projects.
 
@@ -37,8 +38,10 @@ Thanks to [Giso Stallenberg](https://github.com/gisostallenberg/) for supporting
 [ico-build]: https://travis-ci.org/accompli/accompli.svg?branch=master
 [ico-coverage]: https://coveralls.io/repos/accompli/accompli/badge.svg?branch=master
 [ico-security]: https://img.shields.io/sensiolabs/i/5b884e85-bb11-4847-b212-e3aaace39a26.svg
+[ico-code-style]: https://styleci.io/repos/32416744/shield?style=flat
 
 [link-version]: https://packagist.org/packages/accompli/accompli
 [link-build]: https://travis-ci.org/accompli/accompli
 [link-coverage]: https://coveralls.io/r/accompli/accompli?branch=master
 [link-security]: https://insight.sensiolabs.com/projects/5b884e85-bb11-4847-b212-e3aaace39a26
+[link-code-style]: https://styleci.io/repos/32416744
