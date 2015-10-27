@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli;
+namespace Accompli\Configuration;
 
 use Accompli\Deployment\Host;
 use Accompli\Exception\JSONValidationException;
