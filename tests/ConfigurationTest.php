@@ -2,7 +2,7 @@
 
 namespace Accompli\Test;
 
-use Accompli\Configuration;
+use Accompli\Configuration\Configuration;
 use Accompli\Deployment\Host;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -21,7 +21,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testLoadWithValidJSON()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
     }
 
     /**
@@ -32,7 +32,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testLoadWithNonExistingJSONThrowsRuntimeException()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli-non-existing.json');
+        $configuration->load(__DIR__.'/../Resources/accompli-non-existing.json');
     }
 
     /**
@@ -43,7 +43,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testLoadWithInvalidSyntaxJSONThrowsParsingException()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli-syntax-invalid.json');
+        $configuration->load(__DIR__.'/../Resources/accompli-syntax-invalid.json');
     }
 
     /**
@@ -54,7 +54,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testLoadWithInvalidSchemaJSONThrowsJSONValidationException()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli-schema-invalid.json');
+        $configuration->load(__DIR__.'/../Resources/accompli-schema-invalid.json');
     }
 
     /**
@@ -63,7 +63,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testLoadWithExtendedSchema()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli-extended.json');
+        $configuration->load(__DIR__.'/../Resources/accompli-extended.json');
 
         $this->assertArrayHasKey('deployment', $configuration->toArray());
     }
@@ -84,11 +84,11 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testGetHostsReturnsArrayWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
 
         $this->assertInternalType('array', $configuration->getHosts());
         $this->assertNotEmpty($configuration->getHosts());
-        $this->assertInstanceOf('Accompli\\Deployment\\Host', current($configuration->getHosts()));
+        $this->assertInstanceOf('Accompli\Deployment\Host', current($configuration->getHosts()));
     }
 
     /**
@@ -121,7 +121,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testGetHostsByStageReturnsEmptyArrayWhenConfigurationLoadedWithNoHostsConfiguredForStage()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
 
         $result = $configuration->getHostsByStage(Host::STAGE_ACCEPTANCE);
         $this->assertInternalType('array', $result);
@@ -134,11 +134,11 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testGetHostsByStageReturnsArrayWhenConfigurationLoadedWithHostConfiguredForStage()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
 
         $this->assertInternalType('array', $configuration->getHostsByStage(Host::STAGE_TEST));
         $this->assertNotEmpty($configuration->getHostsByStage(Host::STAGE_TEST));
-        $this->assertInstanceOf('Accompli\\Deployment\\Host', current($configuration->getHostsByStage(Host::STAGE_TEST)));
+        $this->assertInstanceOf('Accompli\Deployment\Host', current($configuration->getHostsByStage(Host::STAGE_TEST)));
     }
 
     /**
@@ -159,7 +159,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testGetEventSubscribersReturnsArrayWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
 
         $result = $configuration->getEventSubscribers();
         $this->assertInternalType('array', $result);
@@ -174,7 +174,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testGetEventSubscribersAlwaysReturnsArrayOfArraysWithClassKeyWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
 
         $result = $configuration->getEventSubscribers();
         foreach ($result as $resultItem) {
@@ -200,7 +200,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     public function testGetEventListenersReturnsArrayWhenConfigurationLoaded()
     {
         $configuration = new Configuration();
-        $configuration->load(__DIR__.'/Resources/accompli.json');
+        $configuration->load(__DIR__.'/../Resources/accompli.json');
 
         $result = $configuration->getEventListeners();
         $this->assertInternalType('array', $result);
