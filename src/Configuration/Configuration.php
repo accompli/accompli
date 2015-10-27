@@ -57,7 +57,7 @@ class Configuration implements ConfigurationInterface
         $this->configurationFile = $configurationFile;
 
         if (empty($configurationSchema)) {
-            $configurationSchema = __DIR__.'/Resources/accompli-schema.json';
+            $configurationSchema = __DIR__.'/../Resources/accompli-schema.json';
         }
 
         $this->configurationSchema = $configurationSchema;
