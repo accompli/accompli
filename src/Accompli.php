@@ -2,6 +2,8 @@
 
 namespace Accompli;
 
+use Accompli\Configuration\ConfigurationInterface;
+use Accompli\DependencyInjection\ContainerLoader;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
@@ -10,6 +12,8 @@ use Accompli\Event\InstallReleaseEvent;
 use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
 use Nijens\Utilities\ObjectFactory;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -50,30 +54,41 @@ class Accompli extends EventDispatcher
     const VERSION = '0.1';
 
     /**
-     * The configuration instance.
-     *
-     * @var ConfigurationInterface
-     **/
-    private $configuration;
+     * @var ParameterBagInterface
+     */
+    private $parameters;
+
+    /**
+     * @var ContainerBuilder
+     */
+    private $container;
 
     /**
      * Constructs a new Accompli instance.
      *
-     * @param ConfigurationInterface $configuration
+     * @param ParameterBagInterface $parameters
      */
-    public function __construct(ConfigurationInterface $configuration)
+    public function __construct(ParameterBagInterface $parameters)
     {
-        $this->configuration = $configuration;
+        $this->parameters = $parameters;
     }
 
     /**
-     * Returns the configuration instance.
-     *
-     * @return ConfigurationInterface
+     * Initializes Accompli.
      */
-    public function getConfiguration()
+    public function initialize()
     {
-        return $this->configuration;
+        $this->initializeContainer();
+        $this->initializeEventListeners();
+    }
+
+    /**
+     * Initializes the service container.
+     */
+    public function initializeContainer()
+    {
+        $this->container = $this->buildContainer();
+        $this->container->compile();
     }
 
     /**
@@ -99,6 +114,26 @@ class Accompli extends EventDispatcher
                 $this->addSubscriber($subscriberInstance);
             }
         }
+    }
+
+    /**
+     * Returns the service container.
+     *
+     * @return ContainerBuilder
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * Returns the configuration instance.
+     *
+     * @return ConfigurationInterface
+     */
+    public function getConfiguration()
+    {
+        return $this->container->get('configuration');
     }
 
     /**
@@ -128,5 +163,17 @@ class Accompli extends EventDispatcher
         }
 
         $this->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
+    }
+
+    /**
+     * Builds the service container.
+     *
+     * @return ContainerBuilder
+     */
+    protected function buildContainer()
+    {
+        $container = new ContainerBuilder($this->parameters);
+
+        return $container;
     }
 }
