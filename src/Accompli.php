@@ -173,6 +173,8 @@ class Accompli extends EventDispatcher
     protected function buildContainer()
     {
         $container = new ContainerBuilder($this->parameters);
+        $loader = new ContainerLoader($container);
+        $loader->load();
 
         return $container;
     }
