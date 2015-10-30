@@ -3,7 +3,6 @@
 namespace Accompli;
 
 use Accompli\Configuration\ConfigurationInterface;
-use Accompli\DependencyInjection\ContainerLoader;
 use Accompli\DependencyInjection\AwarenessCompilerPass;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Release;
@@ -13,7 +12,9 @@ use Accompli\Event\InstallReleaseEvent;
 use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
 use Nijens\Utilities\ObjectFactory;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -174,9 +175,10 @@ class Accompli extends EventDispatcher
     protected function buildContainer()
     {
         $container = new ContainerBuilder($this->parameters);
-        $loader = new ContainerLoader($container);
-        $loader->load();
         $container->addCompilerPass(new AwarenessCompilerPass());
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/Resources'));
+        $loader->load('services.yml');
 
         return $container;
     }
