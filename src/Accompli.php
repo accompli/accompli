@@ -4,13 +4,6 @@ namespace Accompli;
 
 use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\AwarenessCompilerPass;
-use Accompli\Deployment\Host;
-use Accompli\Deployment\Release;
-use Accompli\Deployment\Workspace;
-use Accompli\Event\FailedEvent;
-use Accompli\Event\InstallReleaseEvent;
-use Accompli\Event\PrepareReleaseEvent;
-use Accompli\Event\PrepareWorkspaceEvent;
 use Nijens\Utilities\ObjectFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -143,34 +136,15 @@ class Accompli
     }
 
     /**
-     * Dispatches release installation events.
+     * Triggers the install on the configured deployment strategy.
      *
-     * @param Host $host
-     *
-     * @todo   Add DeploymentAdapter (connection)
-     **/
-    public function installRelease(Host $host)
+     * @param string      $version
+     * @param string|null $stage
+     */
+    public function install($version, $stage = null)
     {
-        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
-
-        $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
-        $eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
-
-        $workspace = $prepareWorkspaceEvent->getWorkspace();
-        if ($workspace instanceof Workspace) {
-            $prepareReleaseEvent = new PrepareReleaseEvent($workspace);
-            $eventDispatcher->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
-
-            $release = $prepareReleaseEvent->getRelease();
-            if ($release instanceof Release) {
-                $installReleaseEvent = new InstallReleaseEvent($release);
-                $eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
-
-                return;
-            }
-        }
-
-        $eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
+        $deploymentStrategy = $this->container->get('deployment_strategy');
+        $deploymentStrategy->install($version, $stage);
     }
 
     /**

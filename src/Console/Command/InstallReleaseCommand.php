@@ -40,18 +40,10 @@ class InstallReleaseCommand extends Command
     {
         $parameters = new ParameterBag();
         $parameters->set('configuration.file', $input->getOption('project-dir').DIRECTORY_SEPARATOR.'accompli.json');
+        $parameters->set('console.output_interface', $output);
 
         $accompli = new Accompli($parameters);
         $accompli->initialize();
-
-        $configuration = $accompli->getConfiguration();
-        $hosts = $configuration->getHosts();
-        if ($input->getArgument('stage') !== null) {
-            $hosts = $configuration->getHostsByStage($input->getArgument('stage'));
-        }
-
-        foreach ($hosts as $host) {
-            $accompli->installRelease($host);
-        }
+        $accompli->install($input->getArgument('version'), $input->getArgument('stage'));
     }
 }
