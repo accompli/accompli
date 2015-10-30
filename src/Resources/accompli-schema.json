@@ -7,9 +7,6 @@
         "$extend": {
             "type": "string"
         },
-        "strategy": {
-            "type": "string"
-        },
         "hosts": {
             "type": "array",
             "items": {
@@ -66,11 +63,15 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "strategy": {
+                    "type": "string"
+                },
                 "connection": {
                     "type": "object",
                     "additionalProperties": true
                 }
-            }
+            },
+            "required": ["strategy"]
         }
     },
     "required": ["hosts", "events"]
