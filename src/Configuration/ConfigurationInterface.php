@@ -49,4 +49,18 @@ interface ConfigurationInterface
      * @return array
      */
     public function getEventListeners();
+
+    /**
+     * Returns the classname of the configured deployment strategy.
+     *
+     * @return string
+     */
+    public function getDeploymentStrategyClass();
+
+    /**
+     * Returns the classnames of the configured deployment connections.
+     *
+     * return array
+     */
+    public function getDeploymentConnectionClasses();
 }
