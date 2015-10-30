@@ -16,7 +16,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -24,7 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  **/
-class Accompli extends EventDispatcher
+class Accompli
 {
     /**
      * The Accompli CLI text logo.
@@ -99,13 +98,14 @@ class Accompli extends EventDispatcher
     public function initializeEventListeners()
     {
         $configuration = $this->getConfiguration();
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
         foreach ($configuration->getEventListeners() as $eventName => $listeners) {
             foreach ($listeners as $listener) {
                 list($listenerClassName, $listenerMethodName) = explode('::', $listener);
 
                 $listenerInstance = ObjectFactory::getInstance()->newInstance($listenerClassName);
                 if ($listenerInstance !== null) {
-                    $this->addListener($eventName, array($listenerInstance, $listenerMethodName));
+                    $eventDispatcher->addListener($eventName, array($listenerInstance, $listenerMethodName));
                 }
             }
         }
@@ -113,7 +113,7 @@ class Accompli extends EventDispatcher
         foreach ($configuration->getEventSubscribers() as $subscriber) {
             $subscriberInstance = ObjectFactory::getInstance()->newInstance($subscriber['class'], $subscriber);
             if ($subscriberInstance instanceof EventSubscriberInterface) {
-                $this->addSubscriber($subscriberInstance);
+                $eventDispatcher->addSubscriber($subscriberInstance);
             }
         }
     }
@@ -147,24 +147,26 @@ class Accompli extends EventDispatcher
      **/
     public function installRelease(Host $host)
     {
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
+
         $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
-        $this->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
+        $eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
 
         $workspace = $prepareWorkspaceEvent->getWorkspace();
         if ($workspace instanceof Workspace) {
             $prepareReleaseEvent = new PrepareReleaseEvent($workspace);
-            $this->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
+            $eventDispatcher->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
 
             $release = $prepareReleaseEvent->getRelease();
             if ($release instanceof Release) {
                 $installReleaseEvent = new InstallReleaseEvent($release);
-                $this->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
+                $eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
 
                 return;
             }
         }
 
-        $this->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
+        $eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
     }
 
     /**
