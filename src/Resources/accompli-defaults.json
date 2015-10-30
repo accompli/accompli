@@ -6,6 +6,7 @@
         ]
     },
     "deployment": {
+        "strategy": "Accompli\\Deployment\\Strategy\\RemoteInstallStrategy",
         "connection": {
             "local": "Accompli\\Deployment\\Connection\\LocalConnectionAdapter",
             "ssh": "Accompli\\Deployment\\Connection\\SSHConnectionAdapter"
