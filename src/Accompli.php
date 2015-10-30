@@ -55,11 +55,15 @@ class Accompli
     const VERSION = '0.1';
 
     /**
+     * The parameter bag instance containing parameters for the service container.
+     *
      * @var ParameterBagInterface
      */
     private $parameters;
 
     /**
+     * The service container instance.
+     *
      * @var ContainerBuilder
      */
     private $container;
