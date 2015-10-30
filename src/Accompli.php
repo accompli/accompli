@@ -4,6 +4,7 @@ namespace Accompli;
 
 use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\AwarenessCompilerPass;
+use Accompli\DependencyInjection\ConfigurationServiceRegistrationCompilerPass;
 use Nijens\Utilities\ObjectFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -155,6 +156,7 @@ class Accompli
     protected function buildContainer()
     {
         $container = new ContainerBuilder($this->parameters);
+        $container->addCompilerPass(new ConfigurationServiceRegistrationCompilerPass());
         $container->addCompilerPass(new AwarenessCompilerPass());
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/Resources'));
