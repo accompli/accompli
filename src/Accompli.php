@@ -139,7 +139,7 @@ class Accompli
      */
     public function getConfiguration()
     {
-        return $this->container->get('configuration');
+        return $this->getContainer()->get('configuration');
     }
 
     /**
