@@ -42,21 +42,5 @@ class ContainerLoader
 
         $this->container->register('event_dispatcher', 'Symfony\Component\EventDispatcher\EventDispatcher');
         $this->container->register('logger', 'Symfony\Component\Console\Logger\ConsoleLogger')->addArgument('%console.output_interface%');
-
-        foreach ($this->container->getDefinitions() as $definition) {
-            $interfaces = class_implements($definition->getClass());
-            foreach ($interfaces as $interface) {
-                if (substr($interface, -14) === 'AwareInterface') {
-                    $camelCasedServiceId = substr($interface, strrpos($interface, '\\') + 1, -14);
-                    $serviceId = Container::underscore($camelCasedServiceId);
-
-                    if ($this->container->hasDefinition($serviceId)) {
-                        $setterMethod = 'set'.$camelCasedServiceId;
-
-                        $definition->addMethodCall($setterMethod, array(new Reference($serviceId)));
-                    }
-                }
-            }
-        }
     }
 }

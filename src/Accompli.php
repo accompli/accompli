@@ -4,6 +4,7 @@ namespace Accompli;
 
 use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\ContainerLoader;
+use Accompli\DependencyInjection\AwarenessCompilerPass;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
@@ -175,6 +176,7 @@ class Accompli extends EventDispatcher
         $container = new ContainerBuilder($this->parameters);
         $loader = new ContainerLoader($container);
         $loader->load();
+        $container->addCompilerPass(new AwarenessCompilerPass());
 
         return $container;
     }
