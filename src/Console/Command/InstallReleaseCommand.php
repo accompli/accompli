@@ -3,12 +3,12 @@
 namespace Accompli\Console\Command;
 
 use Accompli\Accompli;
-use Accompli\Configuration;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 /**
  * InstallReleaseCommand.
@@ -38,12 +38,13 @@ class InstallReleaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configuration = new Configuration();
-        $configuration->load($input->getOption('project-dir').DIRECTORY_SEPARATOR.'accompli.json');
+        $parameters = new ParameterBag();
+        $parameters->set('configuration.file', $input->getOption('project-dir').DIRECTORY_SEPARATOR.'accompli.json');
 
-        $accompli = new Accompli($configuration);
-        $accompli->initializeEventListeners();
+        $accompli = new Accompli($parameters);
+        $accompli->initialize();
 
+        $configuration = $accompli->getConfiguration();
         $hosts = $configuration->getHosts();
         if ($input->getArgument('stage') !== null) {
             $hosts = $configuration->getHostsByStage($input->getArgument('stage'));

@@ -1,0 +1,18 @@
+{
+    "hosts": [
+        {
+            "stage": "test",
+            "connectionType": "local",
+            "hostname": "",
+            "path": ""
+        }
+    ],
+    "events": {
+        "subscribers": [
+            "Accompli\\Test\\Mock\\EventListenerSubscriberMock"
+        ],
+        "listeners": {
+            "listener_event": ["Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener"]
+        }
+    }
+}

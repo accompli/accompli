@@ -4,6 +4,7 @@ namespace Accompli\Test;
 
 use Accompli\Accompli;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 /**
  * AccompliTest.
@@ -13,43 +14,104 @@ use PHPUnit_Framework_TestCase;
 class AccompliTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * The array with service container parameters.
+     *
+     * @var array
+     */
+    private $serviceContainerParameters = array();
+
+    /**
+     * Creates a OutputInterface mock.
+     */
+    public function setUp()
+    {
+        $outputInterfaceMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
+
+        $this->serviceContainerParameters = array(
+            'configuration.file' => __DIR__.'/Resources/accompli-with-mock-listeners.json',
+            'console.output_interface' => $outputInterfaceMock,
+        );
+    }
+
+    /**
      * Tests instantiation of Accompli.
      */
     public function testConstruct()
     {
-        $configurationMock = $this->getMockBuilder('Accompli\\ConfigurationInterface')->getMock();
-
-        new Accompli($configurationMock);
+        new Accompli(new ParameterBag());
     }
 
     /**
-     * Tests if Accompli::getConfiguration returns the expected result.
+     * Tests if Accompli::getContainer returns a service container after Accompli::initializeContainer.
+     */
+    public function testGetContainer()
+    {
+        $accompli = new Accompli(new ParameterBag($this->serviceContainerParameters));
+        $accompli->initializeContainer();
+
+        $this->assertInstanceOf('Symfony\Component\DependencyInjection\ContainerInterface', $accompli->getContainer());
+    }
+
+    /**
+     * Tests if Accompli::initializeContainer initializes the required services in the service container.
+     *
+     * @depends testGetContainer
+     * @dataProvider provideServiceContainerServices
+     *
+     * @param string $serviceId
+     * @param string $serviceInterface
+     */
+    public function testInitializeContainer($serviceId, $serviceInterface)
+    {
+        $accompli = new Accompli(new ParameterBag($this->serviceContainerParameters));
+        $accompli->initializeContainer();
+
+        $this->assertTrue($accompli->getContainer()->has($serviceId));
+        $this->assertInstanceOf($serviceInterface, $accompli->getContainer()->get($serviceId));
+    }
+
+    /**
+     * Tests if Accompli::getConfiguration returns an instanceof Accompli\Configuration\ConfigurationInterface.
+     *
+     * @depends testInitializeContainer
      */
     public function testGetConfiguration()
     {
-        $configurationMock = $this->getMockBuilder('Accompli\\ConfigurationInterface')->getMock();
+        $accompli = new Accompli(new ParameterBag($this->serviceContainerParameters));
+        $accompli->initializeContainer();
 
-        $accompli = new Accompli($configurationMock);
-
-        $this->assertInstanceOf('Accompli\\ConfigurationInterface', $accompli->getConfiguration());
-        $this->assertSame($configurationMock, $accompli->getConfiguration());
+        $this->assertInstanceOf('Accompli\Configuration\ConfigurationInterface', $accompli->getConfiguration());
     }
 
     /**
-     * Tests Accompli::getListeners returns the event listeners configured in the configuration after Accompli::initializeEventListeners.
+     * Tests if Accompli::initializeEventListeners registers the event listeners configured in the configuration to the event dispatcher service.
+     *
+     * @depends testGetConfiguration
      */
     public function testInitializeEventListeners()
     {
-        $configurationMock = $this->getMockBuilder('Accompli\\ConfigurationInterface')->getMock();
-        $configurationMock->expects($this->once())->method('getEventListeners')->willReturn(array('listener_event' => array('Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener')));
-        $configurationMock->expects($this->once())->method('getEventSubscribers')->willReturn(array(array('class' => 'Accompli\\Test\\Mock\\EventListenerSubscriberMock')));
+        $accompli = new Accompli(new ParameterBag($this->serviceContainerParameters));
+        $accompli->initialize();
 
-        $accompli = new Accompli($configurationMock);
-        $accompli->initializeEventListeners();
+        $eventDispatcher = $accompli->getContainer()->get('event_dispatcher');
 
-        $this->assertInternalType('array', $accompli->getListeners('listener_event'));
-        $this->assertCount(1, $accompli->getListeners('listener_event'));
-        $this->assertInternalType('array', $accompli->getListeners('subscribed_event'));
-        $this->assertCount(1, $accompli->getListeners('subscribed_event'));
+        $this->assertInternalType('array', $eventDispatcher->getListeners('listener_event'));
+        $this->assertCount(1, $eventDispatcher->getListeners('listener_event'));
+        $this->assertInternalType('array', $eventDispatcher->getListeners('subscribed_event'));
+        $this->assertCount(1, $eventDispatcher->getListeners('subscribed_event'));
+    }
+
+    /**
+     * Returns an array with services that should be defined in the service container.
+     *
+     * @return array
+     */
+    public function provideServiceContainerServices()
+    {
+        return array(
+            array('configuration', 'Accompli\Configuration\ConfigurationInterface'),
+            array('event_dispatcher', 'Symfony\Component\EventDispatcher\EventDispatcherInterface'),
+            array('logger', 'Psr\Log\LoggerInterface'),
+        );
     }
 }

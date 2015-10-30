@@ -2,6 +2,8 @@
 
 namespace Accompli;
 
+use Accompli\Configuration\ConfigurationInterface;
+use Accompli\DependencyInjection\AwarenessCompilerPass;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
@@ -10,7 +12,10 @@ use Accompli\Event\InstallReleaseEvent;
 use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
 use Nijens\Utilities\ObjectFactory;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -18,7 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  **/
-class Accompli extends EventDispatcher
+class Accompli
 {
     /**
      * The Accompli CLI text logo.
@@ -50,20 +55,81 @@ class Accompli extends EventDispatcher
     const VERSION = '0.1';
 
     /**
-     * The configuration instance.
+     * The parameter bag instance containing parameters for the service container.
      *
-     * @var ConfigurationInterface
-     **/
-    private $configuration;
+     * @var ParameterBagInterface
+     */
+    private $parameters;
+
+    /**
+     * The service container instance.
+     *
+     * @var ContainerBuilder
+     */
+    private $container;
 
     /**
      * Constructs a new Accompli instance.
      *
-     * @param ConfigurationInterface $configuration
+     * @param ParameterBagInterface $parameters
      */
-    public function __construct(ConfigurationInterface $configuration)
+    public function __construct(ParameterBagInterface $parameters)
     {
-        $this->configuration = $configuration;
+        $this->parameters = $parameters;
+    }
+
+    /**
+     * Initializes Accompli.
+     */
+    public function initialize()
+    {
+        $this->initializeContainer();
+        $this->initializeEventListeners();
+    }
+
+    /**
+     * Initializes the service container.
+     */
+    public function initializeContainer()
+    {
+        $this->container = $this->buildContainer();
+        $this->container->compile();
+    }
+
+    /**
+     * Initializes the event listeners and subscribers configured in the configuration.
+     */
+    public function initializeEventListeners()
+    {
+        $configuration = $this->getConfiguration();
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
+        foreach ($configuration->getEventListeners() as $eventName => $listeners) {
+            foreach ($listeners as $listener) {
+                list($listenerClassName, $listenerMethodName) = explode('::', $listener);
+
+                $listenerInstance = ObjectFactory::getInstance()->newInstance($listenerClassName);
+                if ($listenerInstance !== null) {
+                    $eventDispatcher->addListener($eventName, array($listenerInstance, $listenerMethodName));
+                }
+            }
+        }
+
+        foreach ($configuration->getEventSubscribers() as $subscriber) {
+            $subscriberInstance = ObjectFactory::getInstance()->newInstance($subscriber['class'], $subscriber);
+            if ($subscriberInstance instanceof EventSubscriberInterface) {
+                $eventDispatcher->addSubscriber($subscriberInstance);
+            }
+        }
+    }
+
+    /**
+     * Returns the service container.
+     *
+     * @return ContainerBuilder
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     /**
@@ -73,32 +139,7 @@ class Accompli extends EventDispatcher
      */
     public function getConfiguration()
     {
-        return $this->configuration;
-    }
-
-    /**
-     * Initializes the event listeners and subscribers configured in the configuration.
-     */
-    public function initializeEventListeners()
-    {
-        $configuration = $this->getConfiguration();
-        foreach ($configuration->getEventListeners() as $eventName => $listeners) {
-            foreach ($listeners as $listener) {
-                list($listenerClassName, $listenerMethodName) = explode('::', $listener);
-
-                $listenerInstance = ObjectFactory::getInstance()->newInstance($listenerClassName);
-                if ($listenerInstance !== null) {
-                    $this->addListener($eventName, array($listenerInstance, $listenerMethodName));
-                }
-            }
-        }
-
-        foreach ($configuration->getEventSubscribers() as $subscriber) {
-            $subscriberInstance = ObjectFactory::getInstance()->newInstance($subscriber['class'], $subscriber);
-            if ($subscriberInstance instanceof EventSubscriberInterface) {
-                $this->addSubscriber($subscriberInstance);
-            }
-        }
+        return $this->getContainer()->get('configuration');
     }
 
     /**
@@ -110,23 +151,41 @@ class Accompli extends EventDispatcher
      **/
     public function installRelease(Host $host)
     {
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
+
         $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
-        $this->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
+        $eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
 
         $workspace = $prepareWorkspaceEvent->getWorkspace();
         if ($workspace instanceof Workspace) {
             $prepareReleaseEvent = new PrepareReleaseEvent($workspace);
-            $this->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
+            $eventDispatcher->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
 
             $release = $prepareReleaseEvent->getRelease();
             if ($release instanceof Release) {
                 $installReleaseEvent = new InstallReleaseEvent($release);
-                $this->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
+                $eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
 
                 return;
             }
         }
 
-        $this->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
+        $eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
+    }
+
+    /**
+     * Builds the service container.
+     *
+     * @return ContainerBuilder
+     */
+    protected function buildContainer()
+    {
+        $container = new ContainerBuilder($this->parameters);
+        $container->addCompilerPass(new AwarenessCompilerPass());
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/Resources'));
+        $loader->load('services.yml');
+
+        return $container;
     }
 }

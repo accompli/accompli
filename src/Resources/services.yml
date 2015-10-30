@@ -1,0 +1,11 @@
+
+services:
+    configuration:
+        class: Accompli\Configuration\Configuration
+        calls:
+            - [load, ["%configuration.file%"]]
+    event_dispatcher:
+        class: Symfony\Component\EventDispatcher\EventDispatcher
+    logger:
+        class: Symfony\Component\Console\Logger\ConsoleLogger
+        arguments: ["%console.output_interface%"]

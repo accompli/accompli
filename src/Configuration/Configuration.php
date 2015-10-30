@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli;
+namespace Accompli\Configuration;
 
 use Accompli\Deployment\Host;
 use Accompli\Exception\JSONValidationException;
@@ -57,7 +57,7 @@ class Configuration implements ConfigurationInterface
         $this->configurationFile = $configurationFile;
 
         if (empty($configurationSchema)) {
-            $configurationSchema = __DIR__.'/Resources/accompli-schema.json';
+            $configurationSchema = __DIR__.'/../Resources/accompli-schema.json';
         }
 
         $this->configurationSchema = $configurationSchema;
