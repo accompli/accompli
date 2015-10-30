@@ -18,9 +18,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
      *
      * @var array
      */
-    private $serviceContainerParameters = array(
-        'configuration.file' => __DIR__.'/Resources/accompli-with-mock-listeners.json',
-    );
+    private $serviceContainerParameters = array();
 
     /**
      * Creates a OutputInterface mock.
@@ -29,7 +27,10 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     {
         $outputInterfaceMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
 
-        $this->serviceContainerParameters['console.output_interface'] = $outputInterfaceMock;
+        $this->serviceContainerParameters = array(
+            'configuration.file' => __DIR__.'/Resources/accompli-with-mock-listeners.json',
+            'console.output_interface' => $outputInterfaceMock,
+        );
     }
 
     /**
