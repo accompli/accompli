@@ -25,7 +25,8 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     /**
      * Creates a OutputInterface mock.
      */
-    public function setUp() {
+    public function setUp()
+    {
         $outputInterfaceMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
 
         $this->serviceContainerParameters['console.output_interface'] = $outputInterfaceMock;
@@ -40,7 +41,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if Accompli::getContainer returns a service container after Accompli::initializeContainer
+     * Tests if Accompli::getContainer returns a service container after Accompli::initializeContainer.
      */
     public function testGetContainer()
     {

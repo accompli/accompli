@@ -19,7 +19,8 @@ class AwarenessCompilerPass implements CompilerPassInterface
      *
      * @param ContainerBuilder $container
      */
-    public function process(ContainerBuilder $container) {
+    public function process(ContainerBuilder $container)
+    {
         foreach ($container->getDefinitions() as $definition) {
             $interfaces = class_implements($definition->getClass());
             foreach ($interfaces as $interface) {
