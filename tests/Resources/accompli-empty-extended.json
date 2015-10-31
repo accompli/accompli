@@ -1,0 +1,3 @@
+{
+    "$extend": "../../src/Resources/accompli-defaults.json"
+}
