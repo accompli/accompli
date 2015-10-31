@@ -4,9 +4,9 @@ namespace Accompli\Configuration;
 
 use Accompli\Deployment\Host;
 use Accompli\Exception\JSONValidationException;
+use InvalidArgumentException;
 use JsonSchema\Validator;
 use Nijens\Utilities\ObjectFactory;
-use RuntimeException;
 use Seld\JsonLint\JsonParser;
 use Seld\JsonLint\ParsingException;
 use UnexpectedValueException;
@@ -68,45 +68,31 @@ class Configuration implements ConfigurationInterface
      *
      * @param string|null $configurationFile
      *
-     * @throws RuntimeException
-     *
-     * @todo   Refactor
+     * @throws InvalidArgumentException
      */
     public function load($configurationFile = null)
     {
+        $this->hosts = array();
+        $this->configuration = array();
+
         if (isset($configurationFile)) {
             $this->configurationFile = $configurationFile;
         }
 
-        $json = @file_get_contents($this->configurationFile);
-        if ($json !== false) {
-            $this->validateSyntax($json);
-            $this->validateSchema($json);
-
-            $this->hosts = array();
-            $this->configuration = json_decode($json, true);
-            if (isset($this->configuration['$extend'])) {
-                $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $this->configuration['$extend']);
-                unset($this->configuration['$extend']);
-
-                $parentConfiguration = new static($extendConfigurationFile, $this->configurationSchema);
-                $parentConfiguration->load();
-
-                $this->configuration = array_merge_recursive($parentConfiguration->configuration, $this->configuration);
-            }
-
-            if (isset($this->configuration['events']['subscribers'])) {
-                foreach ($this->configuration['events']['subscribers'] as $i => $subscriber) {
-                    if (is_string($subscriber)) {
-                        $this->configuration['events']['subscribers'][$i] = array('class' => $subscriber);
-                    }
-                }
-            }
-
-            return;
+        if (file_exists($this->configurationFile) === false) {
+            throw new InvalidArgumentException(sprintf('The configuration file "%s" is not valid.', $this->configurationFile));
         }
 
-        throw new RuntimeException(sprintf("'%s' could not be read.", $this->configurationFile));
+        $json = file_get_contents($this->configurationFile);
+
+        $this->validateSyntax($json);
+
+        $json = $this->importExtendedConfiguration($json);
+        if ($this->validateSchema($json)) {
+            $this->configuration = json_decode($json, true);
+        }
+
+        $this->processEventSubscribers();
     }
 
     /**
@@ -124,7 +110,7 @@ class Configuration implements ConfigurationInterface
             return;
         }
 
-        throw new ParsingException(sprintf("'%s' does not contain valid JSON.\n%s", $this->configurationFile, $result->getMessage()), $result->getDetails());
+        throw new ParsingException(sprintf("The configuration file \"%s\" does not contain valid JSON.\n%s", $this->configurationFile, $result->getMessage()), $result->getDetails());
     }
 
     /**
@@ -153,10 +139,49 @@ class Configuration implements ConfigurationInterface
                 $errors[] = $errorMessage;
             }
 
-            throw new JSONValidationException(sprintf("'%s' does not match the expected JSON schema.", $this->configurationFile), $errors);
+            throw new JSONValidationException(sprintf('The configuration file "%s" does not match the expected JSON schema.', $this->configurationFile), $errors);
         }
 
         return true;
+    }
+
+    /**
+     * Imports the configuration file defined in the $extend key.
+     *
+     * @param string $json
+     *
+     * @return string
+     */
+    private function importExtendedConfiguration($json)
+    {
+        $configuration = json_decode($json, true);
+        if (isset($configuration['$extend'])) {
+            $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $configuration['$extend']);
+            unset($configuration['$extend']);
+
+            $parentConfiguration = new static($extendConfigurationFile, $this->configurationSchema);
+            $parentConfiguration->load();
+
+            $configuration = array_merge_recursive($parentConfiguration->configuration, $configuration);
+
+            $json = json_encode($configuration);
+        }
+
+        return $json;
+    }
+
+    /**
+     * Processes event subscriber configurations to match the same format.
+     */
+    private function processEventSubscribers()
+    {
+        if (isset($this->configuration['events']['subscribers'])) {
+            foreach ($this->configuration['events']['subscribers'] as $i => $subscriber) {
+                if (is_string($subscriber)) {
+                    $this->configuration['events']['subscribers'][$i] = array('class' => $subscriber);
+                }
+            }
+        }
     }
 
     /**
