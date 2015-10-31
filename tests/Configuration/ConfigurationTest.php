@@ -5,7 +5,6 @@ namespace Accompli\Test;
 use Accompli\Configuration\Configuration;
 use Accompli\Deployment\Host;
 use PHPUnit_Framework_TestCase;
-use RuntimeException;
 use UnexpectedValueException;
 
 /**
@@ -27,7 +26,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     /**
      * testLoadWithNonExistingJSONThrowsRuntimeException.
      *
-     * @expectedException RuntimeException
+     * @expectedException InvalidArgumentException
      */
     public function testLoadWithNonExistingJSONThrowsRuntimeException()
     {
@@ -58,14 +57,23 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testLoadWithExtendedSchema.
+     * Tests if Configuration::load imports the configuration extend.
      */
-    public function testLoadWithExtendedSchema()
+    public function testLoadWithExtendedConfiguration()
     {
         $configuration = new Configuration();
         $configuration->load(__DIR__.'/../Resources/accompli-extended.json');
 
         $this->assertArrayHasKey('deployment', $configuration->toArray());
+    }
+
+    /**
+     * Tests if Configuration::load first imports the configuration extend before validating the JSON schema.
+     */
+    public function testLoadWithEmptyExtendedConfiguration()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-empty-extended.json');
     }
 
     /**
