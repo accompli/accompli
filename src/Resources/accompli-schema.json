@@ -74,5 +74,5 @@
             "required": ["strategy"]
         }
     },
-    "required": ["hosts", "events"]
+    "required": ["hosts", "events", "deployment"]
 }

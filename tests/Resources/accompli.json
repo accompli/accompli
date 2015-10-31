@@ -20,5 +20,8 @@
         "listeners": {
             "accompli.prepare_server": ["SomeTask::someAction"]
         }
+    },
+    "deployment": {
+        "strategy": ""
     }
 }
