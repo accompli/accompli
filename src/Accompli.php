@@ -149,6 +149,18 @@ class Accompli
     }
 
     /**
+     * Triggers the deployment on the configured deployment strategy.
+     *
+     * @param string $version
+     * @param string $stage
+     */
+    public function deploy($version, $stage)
+    {
+        $deploymentStrategy = $this->container->get('deployment_strategy');
+        $deploymentStrategy->deploy($version, $stage);
+    }
+
+    /**
      * Builds the service container.
      *
      * @return ContainerBuilder

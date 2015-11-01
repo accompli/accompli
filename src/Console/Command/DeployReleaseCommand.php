@@ -23,7 +23,8 @@ class DeployReleaseCommand extends Command
             ->setName('deploy-release')
             ->setDescription('Deploys a release to all configured hosts of a stage.')
             ->addArgument('version', InputArgument::REQUIRED, 'The version to deploy.')
-            ->addArgument('stage', InputArgument::REQUIRED, 'The stage to select hosts for.');
+            ->addArgument('stage', InputArgument::REQUIRED, 'The stage to select hosts for.')
+            ->addOption('project-dir', null, InputOption::VALUE_OPTIONAL, 'The location of the project directory.', getcwd());
     }
 
     /**
@@ -34,6 +35,12 @@ class DeployReleaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        parent::execute($input, $output);
+        $parameters = new ParameterBag();
+        $parameters->set('configuration.file', $input->getOption('project-dir').DIRECTORY_SEPARATOR.'accompli.json');
+        $parameters->set('console.output_interface', $output);
+
+        $accompli = new Accompli($parameters);
+        $accompli->initialize();
+        $accompli->deploy($input->getArgument('version'), $input->getArgument('stage'));
     }
 }
