@@ -2,8 +2,8 @@
 
 namespace Accompli\Event;
 
+use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
-use Accompli\Release;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -54,6 +54,16 @@ class PrepareReleaseEvent extends Event
     public function setRelease(Release $release)
     {
         $this->release = $release;
+    }
+
+    /**
+     * Returns the version.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 
     /**
