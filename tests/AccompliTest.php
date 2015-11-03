@@ -3,6 +3,7 @@
 namespace Accompli\Test;
 
 use Accompli\Accompli;
+use Accompli\Deployment\Host;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -99,6 +100,66 @@ class AccompliTest extends PHPUnit_Framework_TestCase
         $this->assertCount(1, $eventDispatcher->getListeners('listener_event'));
         $this->assertInternalType('array', $eventDispatcher->getListeners('subscribed_event'));
         $this->assertCount(1, $eventDispatcher->getListeners('subscribed_event'));
+    }
+
+    /**
+     * Tests if Accompli::install calls the install method on the deployment strategy registered in the service container.
+     */
+    public function testInstall()
+    {
+        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\DeploymentStrategyInterface')->getMock();
+        $deploymentStrategyMock->expects($this->once())
+                ->method('install')
+                ->with(
+                    $this->equalTo('0.1.0'),
+                    $this->equalTo(null)
+                );
+
+        $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
+        $containerMock->expects($this->once())
+                ->method('get')
+                ->with($this->equalTo('deployment_strategy'))
+                ->willReturn($deploymentStrategyMock);
+
+        $parameterBagMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface')->getMock();
+
+        $accompli = $this->getMockBuilder('Accompli\Accompli')
+                ->setConstructorArgs(array($parameterBagMock))
+                ->setMethods(array('getContainer'))
+                ->getMock();
+        $accompli->expects($this->once())->method('getContainer')->willReturn($containerMock);
+
+        $accompli->install('0.1.0');
+    }
+
+    /**
+     * Tests if Accompli::deploy calls the deploy method on the deployment strategy registered in the service container.
+     */
+    public function testDeploy()
+    {
+        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\DeploymentStrategyInterface')->getMock();
+        $deploymentStrategyMock->expects($this->once())
+                ->method('deploy')
+                ->with(
+                    $this->equalTo('0.1.0'),
+                    $this->equalTo(Host::STAGE_TEST)
+                );
+
+        $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
+        $containerMock->expects($this->once())
+                ->method('get')
+                ->with($this->equalTo('deployment_strategy'))
+                ->willReturn($deploymentStrategyMock);
+
+        $parameterBagMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface')->getMock();
+
+        $accompli = $this->getMockBuilder('Accompli\Accompli')
+                ->setConstructorArgs(array($parameterBagMock))
+                ->setMethods(array('getContainer'))
+                ->getMock();
+        $accompli->expects($this->once())->method('getContainer')->willReturn($containerMock);
+
+        $accompli->deploy('0.1.0', Host::STAGE_TEST);
     }
 
     /**
