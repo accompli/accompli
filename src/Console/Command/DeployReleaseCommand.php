@@ -2,15 +2,18 @@
 
 namespace Accompli\Console\Command;
 
+use Accompli\Accompli;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 /**
  * DeployReleaseCommand.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class DeployReleaseCommand extends Command
 {
