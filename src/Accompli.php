@@ -144,7 +144,7 @@ class Accompli
      */
     public function install($version, $stage = null)
     {
-        $deploymentStrategy = $this->container->get('deployment_strategy');
+        $deploymentStrategy = $this->getContainer()->get('deployment_strategy');
         $deploymentStrategy->install($version, $stage);
     }
 
@@ -156,7 +156,7 @@ class Accompli
      */
     public function deploy($version, $stage)
     {
-        $deploymentStrategy = $this->container->get('deployment_strategy');
+        $deploymentStrategy = $this->getContainer()->get('deployment_strategy');
         $deploymentStrategy->deploy($version, $stage);
     }
 
