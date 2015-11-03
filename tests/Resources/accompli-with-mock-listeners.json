@@ -14,5 +14,8 @@
         "listeners": {
             "listener_event": ["Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener"]
         }
+    },
+    "deployment": {
+        "strategy": ""
     }
 }

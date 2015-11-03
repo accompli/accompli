@@ -256,6 +256,28 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDeploymentStrategyClass()
+    {
+        if (isset($this->configuration['deployment']['strategy'])) {
+            return $this->configuration['deployment']['strategy'];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeploymentConnectionClasses()
+    {
+        if (isset($this->configuration['deployment']['connection'])) {
+            return $this->configuration['deployment']['connection'];
+        }
+
+        return array();
+    }
+
+    /**
      * Returns the entire configuration as array.
      *
      * @return array

@@ -214,4 +214,49 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertCount(1, $result);
     }
+
+    /**
+     * Tests if Configuration::getDeploymentStrategyClass returns null when the configuration is not loaded.
+     */
+    public function testGetDeploymentStrategyClassReturnsNullWhenConfigurationNotLoaded()
+    {
+        $configuration = new Configuration();
+
+        $this->assertNull($configuration->getDeploymentStrategyClass());
+    }
+
+    /**
+     * Tests if Configuration::getDeploymentStrategyClass returns a valid classname when the configuration is loaded.
+     */
+    public function testGetDeploymentStrategyClassReturnsValidClassName()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-extended.json');
+
+        $this->assertInternalType('string', $configuration->getDeploymentStrategyClass());
+        $this->assertTrue(class_exists($configuration->getDeploymentStrategyClass()));
+    }
+
+    /**
+     * Tests if Configuration::getDeploymentConnectionClasses returns an empty array when the configuration is not loaded.
+     */
+    public function testGetDeploymentDeploymentConnectionClassesReturnsEmptyArrayWhenConfigurationNotLoaded()
+    {
+        $configuration = new Configuration();
+
+        $this->assertInternalType('array', $configuration->getDeploymentConnectionClasses());
+        $this->assertEmpty($configuration->getDeploymentConnectionClasses());
+    }
+
+    /**
+     * Tests if Configuration::getDeploymentConnectionClasses returns a filled array with at least the 'local' key.
+     */
+    public function testGetDeploymentDeploymentConnectionClassesReturnsArray()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-extended.json');
+
+        $this->assertInternalType('array', $configuration->getDeploymentConnectionClasses());
+        $this->assertArrayHasKey('local', $configuration->getDeploymentConnectionClasses());
+    }
 }

@@ -2,8 +2,8 @@
 
 namespace Accompli\Event;
 
+use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
-use Accompli\Release;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -21,6 +21,13 @@ class PrepareReleaseEvent extends Event
     private $workspace;
 
     /**
+     * The version string.
+     *
+     * @var string
+     */
+    private $version;
+
+    /**
      * The Release instance.
      *
      * @var Release
@@ -31,10 +38,12 @@ class PrepareReleaseEvent extends Event
      * Constructs a new PrepareReleaseEvent.
      *
      * @param Workspace $workspace
+     * @param string    $version
      */
-    public function __construct(Workspace $workspace)
+    public function __construct(Workspace $workspace, $version)
     {
         $this->workspace = $workspace;
+        $this->version = $version;
     }
 
     /**
@@ -45,6 +54,16 @@ class PrepareReleaseEvent extends Event
     public function setRelease(Release $release)
     {
         $this->release = $release;
+    }
+
+    /**
+     * Returns the version.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 
     /**
