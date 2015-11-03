@@ -48,6 +48,16 @@ class PrepareWorkspaceEvent extends Event
     }
 
     /**
+     * Returns the Host instance.
+     *
+     * @return Host
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
      * Returns the Workspace instance.
      *
      * @return Workspace|null
