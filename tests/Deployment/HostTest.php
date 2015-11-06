@@ -109,6 +109,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             array('getConnectionType', 'local'),
             array('getHostname', 'localhost'),
             array('getPath', '/var/www'),
+            array('getConnectionOptions', array('connectionOptionKey' => 'connectionOptionValue')),
         );
     }
 
@@ -137,8 +138,8 @@ class HostTest extends PHPUnit_Framework_TestCase
      *
      * @return Host
      */
-    private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www')
+    private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www', $connectionOptions = array('connectionOptionKey' => 'connectionOptionValue'))
     {
-        return new Host($stage, $connectionType, $hostname, $path);
+        return new Host($stage, $connectionType, $hostname, $path, $connectionOptions);
     }
 }
