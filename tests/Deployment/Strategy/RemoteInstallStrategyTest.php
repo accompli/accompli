@@ -103,6 +103,74 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if RemoteInstallStrategy::install dispatches all the events successfully for multiple hosts.
+     *
+     * @depends testInstallDispatchesEventsSuccessfully
+     */
+    public function testInstallDispatchesEventsSuccessfullyForMultipleHosts()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
+                ->getMock();
+
+        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock->expects($this->once())
+                ->method('getHostsByStage')
+                ->willReturn(array($hostMock, $hostMock));
+
+        $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(8))
+                ->method('dispatch')
+                ->withConsecutive(
+                    array(
+                        $this->equalTo(AccompliEvents::CREATE_CONNECTION),
+                        $this->callback(function ($event) {
+                            return ($event instanceof HostEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
+                        $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_RELEASE),
+                        $this->callback(array($this, 'provideDispatchCallbackForPrepareReleaseEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::INSTALL_RELEASE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof InstallReleaseEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::CREATE_CONNECTION),
+                        $this->callback(function ($event) {
+                            return ($event instanceof HostEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
+                        $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_RELEASE),
+                        $this->callback(array($this, 'provideDispatchCallbackForPrepareReleaseEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::INSTALL_RELEASE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof InstallReleaseEvent);
+                        }),
+                    )
+                );
+
+        $strategy = new RemoteInstallStrategy();
+        $strategy->setConfiguration($configurationMock);
+        $strategy->setEventDispatcher($eventDispatcherMock);
+        $strategy->install('0.1.0', Host::STAGE_TEST);
+    }
+
+    /**
      * Tests if RemoteInstallStrategy::install dispatches all the events untill after the PrepareWorkspaceEvent.
      *
      * @depends testInstallDispatchesEventsSuccessfully
