@@ -8,6 +8,8 @@ services:
         class: Accompli\Deployment\Connection\ConnectionManager
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
+        calls:
+            - [addListener, [accompli.create_connection, ["@connection_manager", onCreateConnection]]]
     logger:
         class: Symfony\Component\Console\Logger\ConsoleLogger
         arguments: ["%console.output_interface%"]
