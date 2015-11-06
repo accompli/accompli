@@ -4,6 +4,8 @@ services:
         class: Accompli\Configuration\Configuration
         calls:
             - [load, ["%configuration.file%"]]
+    connection_manager:
+        class: Accompli\Deployment\Connection\ConnectionManager
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
     logger:
