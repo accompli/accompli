@@ -44,7 +44,7 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
                     $installReleaseEvent = new InstallReleaseEvent($release);
                     $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
 
-                    return;
+                    continue;
                 }
             }
 
