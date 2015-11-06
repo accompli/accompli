@@ -4,6 +4,7 @@ namespace Accompli\Test;
 
 use Accompli\Deployment\Connection\ConnectionManager;
 use Accompli\Deployment\Host;
+use Accompli\Event\HostEvent;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -114,5 +115,23 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
         $returnedConnectionAdapter = $connectionManager->getConnectionAdapter($host);
 
         $this->assertNotSame($returnedConnectionAdapter, $connectionManager->getConnectionAdapter($hostTwo));
+    }
+
+    /**
+     * Tests if ConnectionManager::onCreateConnection listener method retrieves a connection adapter and sets it on the host.
+     */
+    public function testOnCreateConnection()
+    {
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+
+        $connectionManager = new ConnectionManager();
+        $connectionManager->registerConnectionAdapter('test', get_class($connectionAdapterMock));
+
+        $host = new Host('test', 'test', 'example.org', '');
+        $event = new HostEvent($host);
+
+        $connectionManager->onCreateConnection($event);
+
+        $this->assertInstanceOf('Accompli\Deployment\Connection\ConnectionAdapterInterface', $host->getConnection());
     }
 }

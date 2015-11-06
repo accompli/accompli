@@ -3,6 +3,7 @@
 namespace Accompli\Deployment\Connection;
 
 use Accompli\Deployment\Host;
+use Accompli\Event\HostEvent;
 use Nijens\Utilities\ObjectFactory;
 
 /**
@@ -52,6 +53,19 @@ class ConnectionManager implements ConnectionManagerInterface
             }
 
             return $this->connections[$connectionIdentifier];
+        }
+    }
+
+    /**
+     * Sets a connection adapter on a Host when an 'accompli.create_connection' event is dispatched.
+     *
+     * @param HostEvent $event
+     */
+    public function onCreateConnection(HostEvent $event)
+    {
+        $connectionAdapter = $this->getConnectionAdapter($event->getHost());
+        if ($connectionAdapter instanceof ConnectionAdapterInterface) {
+            $event->getHost()->setConnection($connectionAdapter);
         }
     }
 }
