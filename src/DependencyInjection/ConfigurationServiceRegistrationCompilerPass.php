@@ -3,6 +3,7 @@
 namespace Accompli\DependencyInjection;
 
 use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Deployment\Connection\ConnectionManagerInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,8 +26,11 @@ class ConfigurationServiceRegistrationCompilerPass implements CompilerPassInterf
         if ($configuration instanceof ConfigurationInterface) {
             $this->registerService($container, 'deployment_strategy', $configuration->getDeploymentStrategyClass());
 
-            foreach ($configuration->getDeploymentConnectionClasses() as $connectionId => $connectionClass) {
-                $this->registerService($container, $connectionId.'_connection', $connectionClass);
+            $connectionManager = $container->get('connection_manager', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+            if ($connectionManager instanceof ConnectionManagerInterface) {
+                foreach ($configuration->getDeploymentConnectionClasses() as $connectionType => $connectionAdapterClass) {
+                    $connectionManager->registerConnectionAdapter($connectionType, $connectionAdapterClass);
+                }
             }
         }
     }

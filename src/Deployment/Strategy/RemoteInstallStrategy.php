@@ -6,6 +6,7 @@ use Accompli\AccompliEvents;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
 use Accompli\Event\FailedEvent;
+use Accompli\Event\HostEvent;
 use Accompli\Event\InstallReleaseEvent;
 use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
@@ -28,6 +29,8 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
         }
 
         foreach ($hosts as $host) {
+            $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
+
             $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
             $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
 

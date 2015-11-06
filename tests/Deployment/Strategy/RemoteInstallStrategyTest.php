@@ -6,6 +6,7 @@ use Accompli\AccompliEvents;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Strategy\RemoteInstallStrategy;
 use Accompli\Event\FailedEvent;
+use Accompli\Event\HostEvent;
 use Accompli\Event\InstallReleaseEvent;
 use Accompli\Event\PrepareReleaseEvent;
 use Accompli\Event\PrepareWorkspaceEvent;
@@ -70,9 +71,15 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->willReturn(array($hostMock));
 
         $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))
+        $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
+                    array(
+                        $this->equalTo(AccompliEvents::CREATE_CONNECTION),
+                        $this->callback(function ($event) {
+                            return ($event instanceof HostEvent);
+                        }),
+                    ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
                         $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
@@ -113,9 +120,15 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->willReturn(array($hostMock));
 
         $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))
+        $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
+                    array(
+                        $this->equalTo(AccompliEvents::CREATE_CONNECTION),
+                        $this->callback(function ($event) {
+                            return ($event instanceof HostEvent);
+                        }),
+                    ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
                         $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
@@ -158,9 +171,15 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->willReturn(array($hostMock));
 
         $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))
+        $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch')
                 ->withConsecutive(
+                    array(
+                        $this->equalTo(AccompliEvents::CREATE_CONNECTION),
+                        $this->callback(function ($event) {
+                            return ($event instanceof HostEvent);
+                        }),
+                    ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
                         $this->callback(function ($event) {

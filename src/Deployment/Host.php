@@ -150,13 +150,23 @@ class Host
     }
 
     /**
-     * Returns the base workspace path of this host.
+     * Returns the base workspace path.
      *
      * @return string
      */
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Returns the connection options.
+     *
+     * @return array
+     */
+    public function getConnectionOptions()
+    {
+        return $this->connectionOptions;
     }
 
     /**
