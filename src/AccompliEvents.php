@@ -10,6 +10,16 @@ namespace Accompli;
 final class AccompliEvents
 {
     /**
+     * The CREATE_CONNECTION event is dispatched when a connection (connection adapter) needs to be created for a Host.
+     *
+     * The event listener receives an
+     * Accompli\Event\HostEvent instance.
+     *
+     * @var string
+     */
+    const CREATE_CONNECTION = 'accompli.create_connection';
+
+    /**
      * The DEPLOY_RELEASE event is dispatched when a Release is ready for deployment.
      *
      * The event listener receives an
@@ -137,6 +147,7 @@ final class AccompliEvents
     public static function getEventNames()
     {
         return array(
+            self::CREATE_CONNECTION,
             self::DEPLOY_RELEASE,
             self::DEPLOY_RELEASE_COMPLETE,
             self::DEPLOY_RELEASE_FAILED,
