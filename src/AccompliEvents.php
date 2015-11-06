@@ -77,7 +77,7 @@ final class AccompliEvents
      *
      * @var string
      **/
-    const INSTALL_RELEASE_FAILED = 'accompli.create_release_failed';
+    const INSTALL_RELEASE_FAILED = 'accompli.install_release_failed';
 
     /**
      * The PREPARE_DEPLOY_RELEASE event is dispatched when a Release is prepared for deployment.
