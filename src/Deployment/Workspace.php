@@ -5,7 +5,7 @@ namespace Accompli\Deployment;
 /**
  * Workspace.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class Workspace
 {
@@ -17,18 +17,39 @@ class Workspace
     private $host;
 
     /**
+     * The relative path to the directory containing the releases.
+     *
+     * @var string
+     */
+    private $releasesDirectory;
+
+    /**
+     * The relative path to the directory containing user data.
+     *
+     * @var string
+     */
+    private $dataDirectory;
+
+    /**
+     * The relative path to the directory containing cache data.
+     *
+     * @var string
+     */
+    private $cacheDirectory;
+
+    /**
+     * The array with other directories within the workspace.
+     *
+     * @var array
+     */
+    private $otherDirectories = array();
+
+    /**
      * The array with Release instances.
      *
      * @var Release[]
      */
     private $releases = array();
-
-    /**
-     * The array with user data directories.
-     *
-     * @var array
-     */
-    private $userDataDirectories = array();
 
     /**
      * Constructs a new Workspace instance.
@@ -51,15 +72,48 @@ class Workspace
     }
 
     /**
-     * Adds a Release instance to this Workspace.
+     * Returns the absolute path to the directory containing the releases.
      *
-     * @param Release $release
+     * @return string
      */
-    public function addRelease(Release $release)
+    public function getReleasesDirectory()
     {
-        $release->setWorkspace($this);
+        return sprintf('%s/%s', $this->getHost()->getPath(), $this->releasesDirectory);
+    }
 
-        $this->releases[] = $release;
+    /**
+     * Returns the absolute path to the directory containing the user data.
+     *
+     * @return string
+     */
+    public function getDataDirectory()
+    {
+        return sprintf('%s/%s', $this->getHost()->getPath(), $this->dataDirectory);
+    }
+
+    /**
+     * Returns the absolute path to the directory containing the cache data.
+     *
+     * @return string
+     */
+    public function getCacheDirectory()
+    {
+        return sprintf('%s/%s', $this->getHost()->getPath(), $this->cacheDirectory);
+    }
+
+    /**
+     * Returns the array with absolute paths to other directories.
+     *
+     * @return array
+     */
+    public function getOtherDirectories()
+    {
+        $directories = array();
+        foreach ($this->otherDirectories as $directory) {
+            $directories[] = sprintf('%s/%s', $this->getHost()->getPath(), $directory);
+        }
+
+        return $directories;
     }
 
     /**
@@ -73,37 +127,54 @@ class Workspace
     }
 
     /**
-     * Adds a user data directory.
+     * Sets the relative path to the directory containing the releases.
      *
-     * @param string $identifier
-     * @param string $path
+     * @param string $releasesDirectory
      */
-    public function addUserDataDirectory($identifier, $path)
+    public function setReleasesDirectory($releasesDirectory)
     {
-        $this->userDataDirectories[$identifier] = $path;
+        $this->releasesDirectory = $releasesDirectory;
     }
 
     /**
-     * Returns a user data directory by identifier.
+     * Sets the relative path to the directory containing user data.
      *
-     * @param string $identifier
-     *
-     * @return string|null
+     * @param string $dataDirectory
      */
-    public function getUserDataDirectory($identifier)
+    public function setDataDirectory($dataDirectory)
     {
-        if (isset($this->userDataDirectories[$identifier])) {
-            return $this->userDataDirectories[$identifier];
-        }
+        $this->dataDirectory = $dataDirectory;
     }
 
     /**
-     * Unsets a user data directory by identifier.
+     * Sets the relative path to the directory containing the cache.
      *
-     * @param string $identifier
+     * @param string $cacheDirectory
      */
-    public function unsetUserDataDirectory($identifier)
+    public function setCacheDirectory($cacheDirectory)
     {
-        unset($this->userDataDirectories[$identifier]);
+        $this->cacheDirectory = $cacheDirectory;
+    }
+
+    /**
+     * Sets the array with relative paths for other directories.
+     *
+     * @param array $directories
+     */
+    public function setOtherDirectories(array $directories)
+    {
+        $this->otherDirectories = $directories;
+    }
+
+    /**
+     * Adds a Release instance to this Workspace.
+     *
+     * @param Release $release
+     */
+    public function addRelease(Release $release)
+    {
+        $release->setWorkspace($this);
+
+        $this->releases[] = $release;
     }
 }
