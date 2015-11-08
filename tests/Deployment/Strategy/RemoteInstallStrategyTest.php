@@ -5,11 +5,11 @@ namespace Accompli\Test;
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Strategy\RemoteInstallStrategy;
-use Accompli\Event\FailedEvent;
-use Accompli\Event\HostEvent;
-use Accompli\Event\InstallReleaseEvent;
-use Accompli\Event\PrepareReleaseEvent;
-use Accompli\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\FailedEvent;
+use Accompli\EventDispatcher\Event\HostEvent;
+use Accompli\EventDispatcher\Event\InstallReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -70,7 +70,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
         $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -118,7 +118,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->method('getHostsByStage')
                 ->willReturn(array($hostMock, $hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
         $eventDispatcherMock->expects($this->exactly(8))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -187,7 +187,11 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->once())
+                ->method('getLastDispatchedEvent')
+                ->willReturn(new Event());
+
         $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -238,7 +242,11 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->once())
+                ->method('getLastDispatchedEvent')
+                ->willReturn(new Event());
+
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch')
                 ->withConsecutive(

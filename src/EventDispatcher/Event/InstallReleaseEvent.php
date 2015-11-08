@@ -1,14 +1,14 @@
 <?php
 
-namespace Accompli\Event;
+namespace Accompli\EventDispatcher\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * FailedEvent.
+ * InstallReleaseEvent.
  *
  * @author  Niels Nijens <nijens.niels@gmail.com>
  */
-class FailedEvent extends Event
+class InstallReleaseEvent extends Event
 {
 }

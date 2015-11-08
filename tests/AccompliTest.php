@@ -172,7 +172,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
         return array(
             array('configuration', 'Accompli\Configuration\ConfigurationInterface'),
             array('connection_manager', 'Accompli\Deployment\Connection\ConnectionManagerInterface'),
-            array('event_dispatcher', 'Symfony\Component\EventDispatcher\EventDispatcherInterface'),
+            array('event_dispatcher', 'Accompli\EventDispatcher\EventDispatcherInterface'),
             array('logger', 'Psr\Log\LoggerInterface'),
         );
     }

@@ -3,7 +3,7 @@
 namespace Accompli\Deployment\Connection;
 
 use Accompli\Deployment\Host;
-use Accompli\Event\HostEvent;
+use Accompli\EventDispatcher\Event\HostEvent;
 use Nijens\Utilities\ObjectFactory;
 
 /**

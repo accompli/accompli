@@ -7,7 +7,7 @@ services:
     connection_manager:
         class: Accompli\Deployment\Connection\ConnectionManager
     event_dispatcher:
-        class: Symfony\Component\EventDispatcher\EventDispatcher
+        class: Accompli\EventDispatcher\EventDispatcher
         calls:
             - [addListener, [accompli.create_connection, ["@connection_manager", onCreateConnection]]]
     logger:

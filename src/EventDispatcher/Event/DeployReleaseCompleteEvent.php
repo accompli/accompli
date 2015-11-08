@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Event;
+namespace Accompli\EventDispatcher\Event;
 
 /**
  * DeployReleaseCompleteEvent.

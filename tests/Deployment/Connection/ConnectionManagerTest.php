@@ -4,7 +4,7 @@ namespace Accompli\Test;
 
 use Accompli\Deployment\Connection\ConnectionManager;
 use Accompli\Deployment\Host;
-use Accompli\Event\HostEvent;
+use Accompli\EventDispatcher\Event\HostEvent;
 use PHPUnit_Framework_TestCase;
 
 /**

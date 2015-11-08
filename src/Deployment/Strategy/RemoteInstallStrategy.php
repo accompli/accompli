@@ -5,11 +5,12 @@ namespace Accompli\Deployment\Strategy;
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
-use Accompli\Event\FailedEvent;
-use Accompli\Event\HostEvent;
-use Accompli\Event\InstallReleaseEvent;
-use Accompli\Event\PrepareReleaseEvent;
-use Accompli\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\FailedEvent;
+use Accompli\EventDispatcher\Event\HostEvent;
+use Accompli\EventDispatcher\Event\InstallReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
+use Exception;
 
 /**
  * RemoteInstallStrategy.
@@ -29,26 +30,32 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
         }
 
         foreach ($hosts as $host) {
-            $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
+            $exception = null;
 
-            $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
-            $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
+            try {
+                $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
 
-            $workspace = $prepareWorkspaceEvent->getWorkspace();
-            if ($workspace instanceof Workspace) {
-                $prepareReleaseEvent = new PrepareReleaseEvent($workspace, $version);
-                $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
+                $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
+                $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
 
-                $release = $prepareReleaseEvent->getRelease();
-                if ($release instanceof Release) {
-                    $installReleaseEvent = new InstallReleaseEvent($release);
-                    $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
+                $workspace = $prepareWorkspaceEvent->getWorkspace();
+                if ($workspace instanceof Workspace) {
+                    $prepareReleaseEvent = new PrepareReleaseEvent($workspace, $version);
+                    $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);
 
-                    continue;
+                    $release = $prepareReleaseEvent->getRelease();
+                    if ($release instanceof Release) {
+                        $installReleaseEvent = new InstallReleaseEvent($release);
+                        $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE, $installReleaseEvent);
+
+                        continue;
+                    }
                 }
+            } catch (Exception $exception) {
             }
 
-            $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, new FailedEvent());
+            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
+            $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, $failedEvent);
         }
     }
 }
