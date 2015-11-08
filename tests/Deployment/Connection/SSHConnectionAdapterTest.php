@@ -57,6 +57,19 @@ class SSHConnectionAdapterTest extends ConnectedConnectionAdapterTestCase
     }
 
     /**
+     * Tests if SSHConnectionAdapter::connect returns true, but does not recreate the connection.
+     */
+    public function testCallingConnectTwiceDoesNotRecreateConnection()
+    {
+        $this->connectionAdapter->connect();
+
+        $connection = $this->getObjectAttribute($this->connectionAdapter, 'connection');
+
+        $this->assertTrue($this->connectionAdapter->connect());
+        $this->assertAttributeSame($connection, 'connection', $this->connectionAdapter);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function createConnectionAdapter()

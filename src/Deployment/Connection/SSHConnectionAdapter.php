@@ -96,6 +96,10 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function connect()
     {
+        if ($this->isConnected()) {
+            return true;
+        }
+
         $this->connection = new SFTP($this->hostname);
 
         return $this->connection->login($this->authenticationUsername, $this->authenticationCredentials);
@@ -118,9 +122,45 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function isConnected()
+    {
+        if ($this->connection instanceof SFTP) {
+            return $this->connection->isConnected();
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isFile($remoteFilename)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->is_file($remoteFilename);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isDirectory($remoteDirectory)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->is_dir($remoteDirectory);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function executeCommand($command)
     {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+        if ($this->isConnected()) {
             return $this->connection->exec($command);
         }
 
@@ -130,10 +170,121 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getContents($filename)
+    public function getDirectoryContentsList($remoteDirectory)
     {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
-            return $this->connection->get($filename);
+        if ($this->isConnected()) {
+            $contentsList = array_values(array_diff($this->connection->nlist($remoteDirectory), array('.', '..')));
+            sort($contentsList);
+
+            return $contentsList;
+        }
+
+        return array();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContents($remoteFilename)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->get($remoteFilename);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFile($remoteFilename, $localFilename)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->get($remoteFilename, $localFilename);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createDirectory($remoteDirectory, $fileMode = 0770, $recursive = false)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->mkdir($remoteDirectory, $fileMode, $recursive);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createFile($remoteFilename, $fileMode = 0770)
+    {
+        if ($this->isConnected()) {
+            return ($this->connection->touch($remoteFilename) && $this->changePermissions($remoteFilename, $fileMode));
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function link($remoteSource, $remoteTarget)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->symlink($remoteSource, $remoteTarget);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function move($remoteSource, $remoteDestination)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->rename($remoteSource, $remoteDestination);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function copy($remoteSource, $remoteDestination)
+    {
+        if ($this->isConnected()) {
+            $temporaryFile = tmpfile();
+
+            if ($this->getFile($remoteSource, $temporaryFile) === false) {
+                fclose($temporaryFile);
+
+                return false;
+            }
+
+            rewind($temporaryFile);
+
+            return $this->putContents($remoteDestination, $temporaryFile);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function changePermissions($remoteTarget, $fileMode, $recursive = false)
+    {
+        if ($this->isConnected()) {
+            $result = $this->connection->chmod($fileMode, $remoteTarget, $recursive);
+
+            return ($result !== false);
         }
 
         return false;
@@ -144,20 +295,8 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function putContents($destinationFilename, $data)
     {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+        if ($this->isConnected()) {
             return $this->connection->put($destinationFilename, $data, SFTP::SOURCE_STRING);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFile($sourceFilename, $destinationFilename)
-    {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
-            return $this->connection->get($sourceFilename, $destinationFilename);
         }
 
         return false;
@@ -168,7 +307,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     public function putFile($sourceFilename, $destinationFilename)
     {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
+        if ($this->isConnected()) {
             return $this->connection->put($destinationFilename, $sourceFilename, SFTP::SOURCE_LOCAL_FILE);
         }
 
@@ -178,22 +317,10 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function linkFile($remoteTarget, $remoteLink)
+    public function delete($remoteTarget, $recursive = false)
     {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
-            return $this->connection->symlink($remoteTarget, $remoteLink);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function renameFile($remoteSource, $remoteDestination)
-    {
-        if ($this->connection instanceof SFTP && $this->connection->isConnected() === true) {
-            return $this->connection->rename($remoteSource, $remoteDestination);
+        if ($this->isConnected()) {
+            return $this->connection->delete($remoteTarget, $recursive);
         }
 
         return false;
