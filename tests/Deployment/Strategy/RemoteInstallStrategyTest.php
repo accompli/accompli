@@ -5,11 +5,11 @@ namespace Accompli\Test;
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Strategy\RemoteInstallStrategy;
-use Accompli\Event\FailedEvent;
-use Accompli\Event\HostEvent;
-use Accompli\Event\InstallReleaseEvent;
-use Accompli\Event\PrepareReleaseEvent;
-use Accompli\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\FailedEvent;
+use Accompli\EventDispatcher\Event\HostEvent;
+use Accompli\EventDispatcher\Event\InstallReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\EventDispatcher\Event;
 

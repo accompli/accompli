@@ -13,7 +13,7 @@ final class AccompliEvents
      * The CREATE_CONNECTION event is dispatched when a connection (connection adapter) needs to be created for a Host.
      *
      * The event listener receives an
-     * Accompli\Event\HostEvent instance.
+     * Accompli\EventDispatcher\Event\HostEvent instance.
      *
      * @var string
      */
@@ -23,7 +23,7 @@ final class AccompliEvents
      * The DEPLOY_RELEASE event is dispatched when a Release is ready for deployment.
      *
      * The event listener receives an
-     * Accompli\Event\DeployReleaseEvent instance.
+     * Accompli\EventDispatcher\Event\DeployReleaseEvent instance.
      *
      * @var string
      **/
@@ -33,7 +33,7 @@ final class AccompliEvents
      * The DEPLOY_RELEASE_COMPLETE event is dispatched when a Release succesfully deployed.
      *
      * The event listener receives an
-     * Accompli\Event\DeployReleaseCompleteEvent instance.
+     * Accompli\EventDispatcher\Event\DeployReleaseCompleteEvent instance.
      *
      * @var string
      **/
@@ -43,7 +43,7 @@ final class AccompliEvents
      * The DEPLOY_RELEASE_FAILED event is dispatched when deployment of a Release has failed.
      *
      * The event listener receives an
-     * Accompli\Event\DeployReleaseFailedEvent instance.
+     * Accompli\EventDispatcher\Event\DeployReleaseFailedEvent instance.
      *
      * @var string
      **/
@@ -53,7 +53,7 @@ final class AccompliEvents
      * The GATHER_FACTS event is dispatched when information from a host is required.
      *
      * The event listener receives an
-     * Accompli\Event\GatherFactsEvent instance.
+     * Accompli\EventDispatcher\Event\GatherFactsEvent instance.
      *
      * @var string
      **/
@@ -63,7 +63,7 @@ final class AccompliEvents
      * The INSTALL_RELEASE event is dispatched when a Release requires installation.
      *
      * The event listener receives an
-     * Accompli\Event\InstallReleaseEvent instance.
+     * Accompli\EventDispatcher\Event\InstallReleaseEvent instance.
      *
      * @var string
      **/
@@ -73,7 +73,7 @@ final class AccompliEvents
      * The INSTALL_RELEASE_FAILED event is dispatched when installation of a Release has failed.
      *
      * The event listener receives an
-     * Accompli\Event\FailedEvent instance.
+     * Accompli\EventDispatcher\Event\FailedEvent instance.
      *
      * @var string
      **/
@@ -83,7 +83,7 @@ final class AccompliEvents
      * The PREPARE_DEPLOY_RELEASE event is dispatched when a Release is prepared for deployment.
      *
      * The event listener receives an
-     * Accompli\Event\PrepareDeployReleaseEvent instance.
+     * Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent instance.
      *
      * @var string
      **/
@@ -93,7 +93,7 @@ final class AccompliEvents
      * The PREPARE_RELEASE event is dispatched when a Release is being prepared.
      *
      * The event listener receives an
-     * Accompli\Event\PrepareReleaseEvent instance.
+     * Accompli\EventDispatcher\Event\PrepareReleaseEvent instance.
      *
      * @var string
      **/
@@ -103,7 +103,7 @@ final class AccompliEvents
      * The PREPARE_WORKSPACE event is dispatched when a server or local path is being prepared for deployments.
      *
      * The event listener receives an
-     * Accompli\Event\PrepareWorkspaceEvent instance.
+     * Accompli\EventDispatcher\Event\PrepareWorkspaceEvent instance.
      *
      * @var string
      **/
@@ -113,7 +113,7 @@ final class AccompliEvents
      * The ROLLBACK_RELEASE event is dispatched when a previous Release is being deployed.
      *
      * The event listener receives an
-     * Accompli\Event\RollbackReleaseEvent instance.
+     * Accompli\EventDispatcher\Event\RollbackReleaseEvent instance.
      *
      * @var string
      **/
@@ -123,7 +123,7 @@ final class AccompliEvents
      * The ROLLBACK_RELEASE_COMPLETE event is dispatched when a previous Release is successfully deployed.
      *
      * The event listener receives an
-     * Accompli\Event\RollbackReleaseCompleteEvent instance.
+     * Accompli\EventDispatcher\Event\RollbackReleaseCompleteEvent instance.
      *
      * @var string
      **/
@@ -133,7 +133,7 @@ final class AccompliEvents
      * The ROLLBACK_RELEASE_FAILED event is dispatched when deployment of a previous Release has failed.
      *
      * The event listener receives an
-     * Accompli\Event\RollbackReleaseFailedEvent instance.
+     * Accompli\EventDispatcher\Event\RollbackReleaseFailedEvent instance.
      *
      * @var string
      **/

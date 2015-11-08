@@ -5,11 +5,11 @@ namespace Accompli\Deployment\Strategy;
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
-use Accompli\Event\FailedEvent;
-use Accompli\Event\HostEvent;
-use Accompli\Event\InstallReleaseEvent;
-use Accompli\Event\PrepareReleaseEvent;
-use Accompli\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\FailedEvent;
+use Accompli\EventDispatcher\Event\HostEvent;
+use Accompli\EventDispatcher\Event\InstallReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
+use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
 
 /**
  * RemoteInstallStrategy.
