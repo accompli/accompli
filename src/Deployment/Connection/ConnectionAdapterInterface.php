@@ -24,6 +24,31 @@ interface ConnectionAdapterInterface
     public function disconnect();
 
     /**
+     * Returns true when the adapter is connected.
+     *
+     * @return bool
+     */
+    public function isConnected();
+
+    /**
+     * Returns true if $remoteFilename is a remote file.
+     *
+     * @param string $remoteFilename
+     *
+     * @return bool
+     */
+    public function isFile($remoteFilename);
+
+    /**
+     * Returns true if $remoteDirectory is a remote directory.
+     *
+     * @param string $remoteDirectory
+     *
+     * @return bool
+     */
+    public function isDirectory($remoteDirectory);
+
+    /**
      * Executes a command.
      *
      * @param string $command
@@ -33,61 +58,122 @@ interface ConnectionAdapterInterface
     public function executeCommand($command);
 
     /**
+     * Returns an array with files and directories within a remote directory.
+     *
+     * @param string $remoteDirectory
+     *
+     * @return array
+     */
+    public function getDirectoryContentsList($remoteDirectory);
+
+    /**
      * Returns the contents of a remote file.
      *
-     * @param string $filename
+     * @param string $remoteFilename
      *
      * @return string
      */
-    public function getContents($filename);
-
-    /**
-     * Set the $data to a file.
-     *
-     * @param string $destinationFilename
-     * @param mixed  $data
-     *
-     * @return bool
-     */
-    public function putContents($destinationFilename, $data);
+    public function getContents($remoteFilename);
 
     /**
      * Downloads a remote file to a local file.
      *
-     * @param string $sourceFilename
-     * @param string $destinationFilename
+     * @param string $remoteFilename
+     * @param string $localFilename
      *
      * @return bool
      */
-    public function getFile($sourceFilename, $destinationFilename);
+    public function getFile($remoteFilename, $localFilename);
 
     /**
-     * Uploads a local file to a remote file.
+     * Creates a remote directory.
      *
-     * @param string $sourceFilename
-     * @param string $destinationFilename
+     * @param string $remoteDirectory
+     * @param int    $fileMode
+     * @param bool   $recursive
      *
      * @return bool
      */
-    public function putFile($sourceFilename, $destinationFilename);
+    public function createDirectory($remoteDirectory, $fileMode = 0770, $recursive = false);
 
     /**
-     * Symlinks a remote file to a remote link.
+     * Creates an empty remote file.
      *
+     * @param string $remoteFilename
+     * @param int    $fileMode
+     *
+     * @return bool
+     */
+    public function createFile($remoteFilename, $fileMode = 0770);
+
+    /**
+     * Creates a symbolic link to an existing remote file or directory at a remote location.
+     *
+     * @param string $remoteSource
      * @param string $remoteTarget
-     * @param string $remoteLink
      *
      * @return bool
      */
-    public function linkFile($remoteTarget, $remoteLink);
+    public function link($remoteSource, $remoteTarget);
 
     /**
-     * Renames/moves a remote file or directory to another name or remote location.
+     * Moves/renames a remote file or directory to another name or remote location.
      *
      * @param string $remoteSource
      * @param string $remoteDestination
      *
      * @return bool
      */
-    public function renameFile($remoteSource, $remoteDestination);
+    public function move($remoteSource, $remoteDestination);
+
+    /**
+     * Copies a remote file or directory to another name or remote location.
+     *
+     * @param string $remoteSource
+     * @param string $remoteDestination
+     *
+     * @return bool
+     */
+    public function copy($remoteSource, $remoteDestination);
+
+    /**
+     * Changes the permissions of a remote file or directory.
+     *
+     * @param string $remoteTarget
+     * @param int    $fileMode
+     * @param bool   $recursive
+     *
+     * @return bool
+     */
+    public function changePermissions($remoteTarget, $fileMode, $recursive = false);
+
+    /**
+     * Sets the $data to a remote file.
+     *
+     * @param string $remoteFilename
+     * @param mixed  $data
+     *
+     * @return bool
+     */
+    public function putContents($remoteFilename, $data);
+
+    /**
+     * Uploads a local file to a remote file.
+     *
+     * @param string $localFilename
+     * @param string $remoteFilename
+     *
+     * @return bool
+     */
+    public function putFile($localFilename, $remoteFilename);
+
+    /**
+     * Deletes a remote file or directory.
+     *
+     * @param string $remoteTarget
+     * @param bool   $recursive
+     *
+     * @return bool
+     */
+    public function delete($remoteTarget, $recursive = false);
 }
