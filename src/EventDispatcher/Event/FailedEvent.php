@@ -17,7 +17,7 @@ class FailedEvent extends Event
      *
      * @var Event
      */
-    private $lastEvent;
+    private $event;
 
     /**
      * The exception that occurred during the last event.
@@ -29,12 +29,12 @@ class FailedEvent extends Event
     /**
      * Constructs a new FailedEvent.
      *
-     * @param Event     $lastEvent
+     * @param Event     $event
      * @param Exception $exception
      */
-    public function __construct(Event $lastEvent, Exception $exception = null)
+    public function __construct(Event $event, Exception $exception = null)
     {
-        $this->lastEvent = $lastEvent;
+        $this->event = $event;
         $this->exception = $exception;
     }
 
