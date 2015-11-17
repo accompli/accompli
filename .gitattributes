@@ -2,6 +2,7 @@
 * text eol=lf
 
 # Remove all test and documentation files from releases with 'export-ignore'.
+/docs               export-ignore
 /tests              export-ignore
 /.gitattributes     export-ignore
 /.gitignore         export-ignore
