@@ -80,6 +80,16 @@ final class AccompliEvents
     const INSTALL_RELEASE_FAILED = 'accompli.install_release_failed';
 
     /**
+     * The LOG event is dispatched whenever messages need to be logged to the logger service.
+     *
+     * The event listener receives an
+     * Accompli\EventDispatcher\Event\LogEvent instance.
+     *
+     * @var string
+     */
+    const LOG = 'accompli.log';
+
+    /**
      * The PREPARE_DEPLOY_RELEASE event is dispatched when a Release is prepared for deployment.
      *
      * The event listener receives an
@@ -154,6 +164,7 @@ final class AccompliEvents
             self::GATHER_FACTS,
             self::INSTALL_RELEASE,
             self::INSTALL_RELEASE_FAILED,
+            self::LOG,
             self::PREPARE_DEPLOY_RELEASE,
             self::PREPARE_RELEASE,
             self::PREPARE_WORKSPACE,
