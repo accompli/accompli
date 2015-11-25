@@ -5,7 +5,7 @@ namespace Accompli\Deployment;
 /**
  * Release.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class Release
 {
@@ -17,20 +17,20 @@ class Release
     private $workspace;
 
     /**
-     * The unique identifier identifing this Release.
+     * The version identifying this Release.
      *
      * @var string
      */
-    private $identifier;
+    private $version;
 
     /**
      * Constructs a new Release instance.
      *
-     * @param string $identifier
+     * @param string $version
      */
-    public function __construct($identifier)
+    public function __construct($version)
     {
-        $this->identifier = $identifier;
+        $this->version = $version;
     }
 
     /**
@@ -44,13 +44,13 @@ class Release
     }
 
     /**
-     * Returns the release identifier.
+     * Returns the version identifying this Release.
      *
      * @return string
      */
-    public function getIdenfifier()
+    public function getVersion()
     {
-        return $this->identifier;
+        return $this->version;
     }
 
     /**
@@ -60,7 +60,7 @@ class Release
      */
     public function getPath()
     {
-        return sprintf('%s/%s', $this->workspace->getHost()->getPath(), $this->getIdenfifier());
+        return sprintf('%s/%s', $this->workspace->getReleasesDirectory(), $this->getVersion());
     }
 
     /**
