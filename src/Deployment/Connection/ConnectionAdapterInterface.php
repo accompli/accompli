@@ -2,6 +2,8 @@
 
 namespace Accompli\Deployment\Connection;
 
+use Accompli\Chrono\Process\ProcessExecutionResult;
+
 /**
  * ConnectionAdapterInterface.
  *
@@ -53,7 +55,7 @@ interface ConnectionAdapterInterface
      *
      * @param string $command
      *
-     * @return bool
+     * @return ProcessExecutionResult
      */
     public function executeCommand($command);
 
