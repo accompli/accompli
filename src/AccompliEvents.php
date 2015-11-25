@@ -70,6 +70,16 @@ final class AccompliEvents
     const INSTALL_RELEASE = 'accompli.install_release';
 
     /**
+     * The INSTALL_RELEASE_COMPLETE event is dispatched when a Release is successfully installed.
+     *
+     * The event listener receives an
+     * Accompli\EventDispatcher\Event\InstallReleaseEvent instance.
+     *
+     * @var string
+     **/
+    const INSTALL_RELEASE_COMPLETE = 'accompli.install_release_complete';
+
+    /**
      * The INSTALL_RELEASE_FAILED event is dispatched when installation of a Release has failed.
      *
      * The event listener receives an
@@ -163,6 +173,7 @@ final class AccompliEvents
             self::DEPLOY_RELEASE_FAILED,
             self::GATHER_FACTS,
             self::INSTALL_RELEASE,
+            self::INSTALL_RELEASE_COMPLETE,
             self::INSTALL_RELEASE_FAILED,
             self::LOG,
             self::PREPARE_DEPLOY_RELEASE,
