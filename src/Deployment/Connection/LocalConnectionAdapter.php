@@ -2,6 +2,7 @@
 
 namespace Accompli\Deployment\Connection;
 
+use Accompli\Chrono\Process\ProcessExecutionResult;
 use Symfony\Component\Process\Process;
 
 /**
@@ -59,7 +60,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
         $process = new Process($command);
         $process->run();
 
-        return $process->getOutput(); // @todo change to status code and add reference argument?
+        return new ProcessExecutionResult($process->getExitCode(), $process->getOutput(), strval($process->getErrorOutput()));
     }
 
     /**
