@@ -55,12 +55,28 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function changeWorkingDirectory($remoteDirectory)
+    {
+        return @chdir($remoteDirectory);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function executeCommand($command)
     {
         $process = new Process($command);
         $process->run();
 
         return new ProcessExecutionResult($process->getExitCode(), $process->getOutput(), strval($process->getErrorOutput()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWorkingDirectory()
+    {
+        return getcwd();
     }
 
     /**
