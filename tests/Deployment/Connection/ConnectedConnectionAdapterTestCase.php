@@ -46,11 +46,15 @@ abstract class ConnectedConnectionAdapterTestCase extends ConnectionAdapterTestC
     }
 
     /**
-     * Tests if ConnectionAdapterInterface::executeCommand returns false without connection.
+     * Tests if ConnectionAdapterInterface::executeCommand returns ProcessExecutionResult with failure exit code and error output without connection.
      */
     public function testExecuteCommandReturnsFalseWhenNotConnected()
     {
-        $this->assertFalse($this->connectionAdapter->executeCommand('echo test'));
+        $result = $this->connectionAdapter->executeCommand('echo test');
+        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $result);
+        $this->assertSame(126, $result->getExitCode());
+        $this->assertSame('', $result->getOutput());
+        $this->assertSame("Connection adapter not connected.\n", $result->getErrorOutput());
     }
 
     /**

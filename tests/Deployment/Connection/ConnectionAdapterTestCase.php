@@ -153,7 +153,11 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     {
         $this->connectionAdapter->connect();
 
-        $this->assertSame('test'.PHP_EOL, $this->connectionAdapter->executeCommand('echo test'));
+        $result = $this->connectionAdapter->executeCommand('echo test');
+        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $result);
+        $this->assertSame(0, $result->getExitCode());
+        $this->assertSame('test'.PHP_EOL, $result->getOutput());
+        $this->assertSame('', $result->getErrorOutput());
     }
 
     /**
