@@ -2,6 +2,7 @@
 
 namespace Accompli\Deployment\Connection;
 
+use Accompli\Chrono\Process\ProcessExecutionResult;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SFTP;
 use phpseclib\System\SSH\Agent;
@@ -161,10 +162,18 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     public function executeCommand($command)
     {
         if ($this->isConnected()) {
-            return $this->connection->exec($command);
+            $this->connection->enableQuietMode();
+
+            $output = $this->connection->exec($command);
+            $exitCode = $this->connection->getExitStatus();
+            $errorOutput = $this->connection->getStdError();
+
+            $this->connection->disableQuietMode();
+
+            return new ProcessExecutionResult($exitCode, $output, $errorOutput);
         }
 
-        return false;
+        return new ProcessExecutionResult(126, '', "Connection adapter not connected.\n");
     }
 
     /**
