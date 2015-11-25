@@ -51,6 +51,15 @@ interface ConnectionAdapterInterface
     public function isDirectory($remoteDirectory);
 
     /**
+     * Changes the current working directory.
+     *
+     * @param string $remoteDirectory
+     *
+     * @return bool
+     */
+    public function changeWorkingDirectory($remoteDirectory);
+
+    /**
      * Executes a command.
      *
      * @param string $command
@@ -58,6 +67,13 @@ interface ConnectionAdapterInterface
      * @return ProcessExecutionResult
      */
     public function executeCommand($command);
+
+    /**
+     * Returns the current working directory.
+     *
+     * @return string|bool
+     */
+    public function getWorkingDirectory();
 
     /**
      * Returns an array with files and directories within a remote directory.
