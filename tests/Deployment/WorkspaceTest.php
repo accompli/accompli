@@ -10,95 +10,219 @@ use PHPUnit_Framework_TestCase;
 /**
  * WorkspaceTest.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class WorkspaceTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * testGetHost.
+     * Tests if constructing a new Workspace instance sets the instance properties.
      */
-    public function testGetHost()
+    public function testConstruct()
     {
-        $host = $this->createHostInstance();
-        $workspace = $this->createWorkspaceInstance($host);
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
 
-        $this->assertSame($host, $workspace->getHost());
+        $workspace = new Workspace($hostMock);
+
+        $this->assertAttributeSame($hostMock, 'host', $workspace);
     }
 
     /**
-     * testAddReleaseSetsWorkspaceOnRelease.
+     * Tests if Workspace::getHost returns the same instance as set as constructor argument.
+     */
+    public function testGetHost()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $workspace = new Workspace($hostMock);
+
+        $this->assertSame($hostMock, $workspace->getHost());
+    }
+
+    /**
+     * Tests if Workspace::setReleasesDirectory sets the property.
+     */
+    public function testSetReleasesDirectory()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setReleasesDirectory('releases/');
+
+        $this->assertAttributeSame('releases/', 'releasesDirectory', $workspace);
+    }
+
+    /**
+     * Tests if Workspace::setDataDirectory sets the property.
+     */
+    public function testSetDataDirectory()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setDataDirectory('data/');
+
+        $this->assertAttributeSame('data/', 'dataDirectory', $workspace);
+    }
+
+    /**
+     * Tests if Workspace::setCacheDirectory sets the property.
+     */
+    public function testSetCacheDirectory()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setCacheDirectory('cache/');
+
+        $this->assertAttributeSame('cache/', 'cacheDirectory', $workspace);
+    }
+
+    /**
+     * Tests if Workspace::testSetOtherDirectories sets the property.
+     */
+    public function testSetOtherDirectories()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setOtherDirectories(array('data/images/', 'data/documents/'));
+
+        $this->assertAttributeSame(array('data/images/', 'data/documents/'), 'otherDirectories', $workspace);
+    }
+
+    /**
+     * Tests if Workspace::getReleasesDirectory returns the absolute path to the releases directory.
+     *
+     * @depends testSetReleasesDirectory
+     */
+    public function testGetReleasesDirectory()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('getPath')->willReturn('{host-base-path}');
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setReleasesDirectory('releases/');
+
+        $this->assertSame('{host-base-path}/releases/', $workspace->getReleasesDirectory());
+    }
+
+    /**
+     * Tests if Workspace::getDataDirectory returns the absolute path to the data directory.
+     *
+     * @depends testSetDataDirectory
+     */
+    public function testGetDataDirectory()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('getPath')->willReturn('{host-base-path}');
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setDataDirectory('data/');
+
+        $this->assertSame('{host-base-path}/data/', $workspace->getDataDirectory());
+    }
+
+    /**
+     * Tests if Workspace::getCacheDirectory returns the absolute path to the cache directory.
+     *
+     * @depends testSetCacheDirectory
+     */
+    public function testGetCacheDirectory()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('getPath')->willReturn('{host-base-path}');
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setCacheDirectory('cache/');
+
+        $this->assertSame('{host-base-path}/cache/', $workspace->getCacheDirectory());
+    }
+
+    /**
+     * Tests if Workspace::getOtherDirectories returns an array with the absolute path to the other directories.
+     *
+     * @depends testSetOtherDirectories
+     */
+    public function testGetOtherDirectories()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->exactly(2))->method('getPath')->willReturn('{host-base-path}');
+
+        $workspace = new Workspace($hostMock);
+        $workspace->setOtherDirectories(array('data/images/', 'data/documents/'));
+
+        $this->assertSame(array('{host-base-path}/data/images/', '{host-base-path}/data/documents/'), $workspace->getOtherDirectories());
+    }
+
+    /**
+     * Tests if Workspace::addRelease adds the Release to the Workspace and sets the Workspace on the Release.
      */
     public function testAddReleaseSetsWorkspaceOnRelease()
     {
-        $release = $this->createReleaseInstance();
-        $workspace = $this->createWorkspaceInstance($this->createHostInstance());
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $release = new Release('1.0.0');
+
+        $workspace = new Workspace($hostMock);
         $workspace->addRelease($release);
 
+        $this->assertAttributeSame(array($release), 'releases', $workspace);
         $this->assertSame($workspace, $release->getWorkspace());
     }
 
     /**
-     * testGetReleasesReturnsEmptyArray.
+     * Tests if Workspace::getReleases returns an empty array by default.
      */
     public function testGetReleasesReturnsEmptyArray()
     {
-        $workspace = $this->createWorkspaceInstance($this->createHostInstance());
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $workspace = new Workspace($hostMock);
 
         $this->assertInternalType('array', $workspace->getReleases());
         $this->assertEmpty($workspace->getReleases());
     }
 
     /**
-     * testGetReleasesReturnsArrayWithReleaseInstanceAfterAddRelease.
+     * Tests if Workspace::getReleases returns the array with added Release instances.
+     *
+     * @depends testAddReleaseSetsWorkspaceOnRelease
      */
     public function testGetReleasesReturnsArrayWithReleaseInstanceAfterAddRelease()
     {
-        $release = $this->createReleaseInstance();
-        $workspace = $this->createWorkspaceInstance($this->createHostInstance());
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $release = new Release('1.0.0');
+
+        $workspace = new Workspace($hostMock);
         $workspace->addRelease($release);
 
-        $releases = $workspace->getReleases();
-        $this->assertInternalType('array', $releases);
-        $this->assertArrayHasKey(0, $releases);
-        $this->assertSame($release, $releases[0]);
-    }
-
-    /**
-     * Constructs and returns a new Workspace instance.
-     *
-     * @param Host $host
-     *
-     * @return Workspace
-     */
-    private function createWorkspaceInstance(Host $host)
-    {
-        return new Workspace($host);
-    }
-
-    /**
-     * Constructs and returns a new Host instance.
-     *
-     * @param string $stage
-     * @param string $connectionType
-     * @param string $hostname
-     * @param string $path
-     *
-     * @return Host
-     */
-    private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www')
-    {
-        return new Host($stage, $connectionType, $hostname, $path);
-    }
-
-    /**
-     * Constructs and returns a new Release instance.
-     *
-     * @param string $identifier
-     *
-     * @return Release
-     */
-    private function createReleaseInstance($identifier = '1.0.0')
-    {
-        return new Release($identifier);
+        $this->assertSame(array($release), $workspace->getReleases());
     }
 }
