@@ -71,7 +71,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->willReturn(array($hostMock));
 
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(4))
+        $eventDispatcherMock->expects($this->exactly(5))
                 ->method('dispatch')
                 ->withConsecutive(
                     array(
@@ -90,6 +90,12 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::INSTALL_RELEASE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof InstallReleaseEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::INSTALL_RELEASE_COMPLETE),
                         $this->callback(function ($event) {
                             return ($event instanceof InstallReleaseEvent);
                         }),
@@ -119,7 +125,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->willReturn(array($hostMock, $hostMock));
 
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(8))
+        $eventDispatcherMock->expects($this->exactly(10))
                 ->method('dispatch')
                 ->withConsecutive(
                     array(
@@ -143,6 +149,12 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                         }),
                     ),
                     array(
+                        $this->equalTo(AccompliEvents::INSTALL_RELEASE_COMPLETE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof InstallReleaseEvent);
+                        }),
+                    ),
+                    array(
                         $this->equalTo(AccompliEvents::CREATE_CONNECTION),
                         $this->callback(function ($event) {
                             return ($event instanceof HostEvent);
@@ -158,6 +170,12 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::INSTALL_RELEASE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof InstallReleaseEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::INSTALL_RELEASE_COMPLETE),
                         $this->callback(function ($event) {
                             return ($event instanceof InstallReleaseEvent);
                         }),
