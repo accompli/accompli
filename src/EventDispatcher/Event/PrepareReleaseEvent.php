@@ -47,13 +47,13 @@ class PrepareReleaseEvent extends Event
     }
 
     /**
-     * Sets a Release instance.
+     * Returns the Workspace instance.
      *
-     * @param Release $release
+     * @return Workspace
      */
-    public function setRelease(Release $release)
+    public function getWorkspace()
     {
-        $this->release = $release;
+        return $this->workspace;
     }
 
     /**
@@ -74,5 +74,15 @@ class PrepareReleaseEvent extends Event
     public function getRelease()
     {
         return $this->release;
+    }
+
+    /**
+     * Sets a Release instance.
+     *
+     * @param Release $release
+     */
+    public function setRelease(Release $release)
+    {
+        $this->release = $release;
     }
 }
