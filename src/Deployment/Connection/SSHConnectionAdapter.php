@@ -159,6 +159,18 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function changeWorkingDirectory($remoteDirectory)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->chdir($remoteDirectory);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function executeCommand($command)
     {
         if ($this->isConnected()) {
@@ -174,6 +186,18 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         }
 
         return new ProcessExecutionResult(126, '', "Connection adapter not connected.\n");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWorkingDirectory()
+    {
+        if ($this->isConnected()) {
+            return $this->connection->pwd();
+        }
+
+        return false;
     }
 
     /**

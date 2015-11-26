@@ -46,6 +46,14 @@ abstract class ConnectedConnectionAdapterTestCase extends ConnectionAdapterTestC
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::changeWorkingDirectory returns false without connection.
+     */
+    public function testChangeWorkingDirectoryReturnsFalseWhenNotConnected()
+    {
+        $this->assertFalse($this->connectionAdapter->changeWorkingDirectory($this->workspaceUtility->getWorkspacePath()));
+    }
+
+    /**
      * Tests if ConnectionAdapterInterface::executeCommand returns ProcessExecutionResult with failure exit code and error output without connection.
      */
     public function testExecuteCommandReturnsFalseWhenNotConnected()
@@ -55,6 +63,14 @@ abstract class ConnectedConnectionAdapterTestCase extends ConnectionAdapterTestC
         $this->assertSame(126, $result->getExitCode());
         $this->assertSame('', $result->getOutput());
         $this->assertSame("Connection adapter not connected.\n", $result->getErrorOutput());
+    }
+
+    /**
+     * Tests if ConnectionAdapterInterface::getWorkingDirectory returns false without connection.
+     */
+    public function testGetWorkingDirectoryReturnsFalseWhenNotConnected()
+    {
+        $this->assertFalse($this->connectionAdapter->getWorkingDirectory());
     }
 
     /**
