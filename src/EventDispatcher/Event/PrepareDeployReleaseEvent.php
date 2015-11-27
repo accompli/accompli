@@ -5,8 +5,8 @@ namespace Accompli\EventDispatcher\Event;
 /**
  * PrepareDeployReleaseEvent.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class PrepareDeployReleaseEvent extends AbstractDeploymentEvent
+class PrepareDeployReleaseEvent extends PrepareReleaseEvent
 {
 }
