@@ -5,7 +5,7 @@ namespace Accompli\Deployment\Strategy;
 use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\ConfigurationAwareInterface;
 use Accompli\DependencyInjection\EventDispatcherAwareInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 
 /**
  * AbstractDeploymentStrategy.
