@@ -47,7 +47,7 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function deploy($version, $stage = null)
+    public function deploy($version, $stage)
     {
     }
 }
