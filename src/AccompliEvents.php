@@ -60,6 +60,16 @@ final class AccompliEvents
     const GATHER_FACTS = 'accompli.gather_facts';
 
     /**
+     * The GET_WORKSPACE event is dispatched when the Workspace instance from a host is required.
+     *
+     * The event listener receives an
+     * Accompli\EventDispatcher\Event\WorkspaceEvent instance.
+     *
+     * @var string
+     */
+    const GET_WORKSPACE = 'accompli.get_workspace';
+
+    /**
      * The INSTALL_RELEASE event is dispatched when a Release requires installation.
      *
      * The event listener receives an
@@ -172,6 +182,7 @@ final class AccompliEvents
             self::DEPLOY_RELEASE_COMPLETE,
             self::DEPLOY_RELEASE_FAILED,
             self::GATHER_FACTS,
+            self::GET_WORKSPACE,
             self::INSTALL_RELEASE,
             self::INSTALL_RELEASE_COMPLETE,
             self::INSTALL_RELEASE_FAILED,
