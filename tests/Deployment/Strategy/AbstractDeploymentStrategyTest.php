@@ -29,7 +29,7 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testSetEventDispatcher()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
         $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
 
         $deploymentStrategyMock->setEventDispatcher($eventDispatcherMock);

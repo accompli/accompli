@@ -2,7 +2,7 @@
 
 namespace Accompli\DependencyInjection;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 
 /**
  * EventDispatcherAwareInterface.
