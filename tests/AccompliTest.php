@@ -113,7 +113,8 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 ->with(
                     $this->equalTo('0.1.0'),
                     $this->equalTo(null)
-                );
+                )
+                ->willReturn(true);
 
         $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
         $containerMock->expects($this->once())
@@ -129,7 +130,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 ->getMock();
         $accompli->expects($this->once())->method('getContainer')->willReturn($containerMock);
 
-        $accompli->install('0.1.0');
+        $this->assertTrue($accompli->install('0.1.0'));
     }
 
     /**
@@ -143,7 +144,8 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 ->with(
                     $this->equalTo('0.1.0'),
                     $this->equalTo(Host::STAGE_TEST)
-                );
+                )
+                ->willReturn(true);
 
         $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
         $containerMock->expects($this->once())
@@ -159,7 +161,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 ->getMock();
         $accompli->expects($this->once())->method('getContainer')->willReturn($containerMock);
 
-        $accompli->deploy('0.1.0', Host::STAGE_TEST);
+        $this->assertTrue($accompli->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
