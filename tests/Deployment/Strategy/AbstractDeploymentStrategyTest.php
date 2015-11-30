@@ -289,6 +289,61 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if AbstractDeploymentStrategy::deploy dispatches all the rollback events successfully.
+     *
+     * @depends testDeployDispatchesEventsSuccessfully
+     */
+    public function testDeployDispatchesRollbackEventsSuccessfully()
+    {
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
+                ->getMock();
+
+        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock->expects($this->once())
+                ->method('getHostsByStage')
+                ->with($this->equalTo(Host::STAGE_TEST))
+                ->willReturn(array($hostMock));
+
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(5))
+                ->method('dispatch')
+                ->withConsecutive(
+                    array(
+                        $this->equalTo(AccompliEvents::CREATE_CONNECTION),
+                        $this->callback(function ($event) {
+                            return ($event instanceof HostEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::GET_WORKSPACE),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_DEPLOY_RELEASE),
+                        $this->callback(array($this, 'provideDispatchCallbackForRollbackPrepareDeployReleaseEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::ROLLBACK_RELEASE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof DeployReleaseEvent);
+                        }),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::ROLLBACK_RELEASE_COMPLETE),
+                        $this->callback(function ($event) {
+                            return ($event instanceof DeployReleaseEvent);
+                        }),
+                    )
+                );
+
+        $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
+        $strategyMock->setConfiguration($configurationMock);
+        $strategyMock->setEventDispatcher($eventDispatcherMock);
+        $strategyMock->deploy('0.1.0', Host::STAGE_TEST);
+    }
+
+    /**
      * Provides the dispatch test callback for the WorkspaceEvent.
      *
      * @see testDeployDispatchesEventsSuccessfully
@@ -324,6 +379,37 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                 ->getMock();
 
         $event->setRelease($releaseMock);
+
+        return ($event instanceof PrepareDeployReleaseEvent);
+    }
+
+    /**
+     * Provides the dispatch test callback for the PrepareDeployReleaseEvent for the rollback scenario.
+     *
+     * @see testDeployDispatchesEventsSuccessfully
+     *
+     * @param Event $event
+     *
+     * @return bool
+     */
+    public function provideDispatchCallbackForRollbackPrepareDeployReleaseEvent(Event $event)
+    {
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->any())
+                ->method('getVersion')
+                ->willReturn($event->getVersion());
+
+        $currentReleaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $currentReleaseMock->expects($this->any())
+                ->method('getVersion')
+                ->willReturn('0.1.1');
+
+        $event->setRelease($releaseMock);
+        $event->setCurrentRelease($currentReleaseMock);
 
         return ($event instanceof PrepareDeployReleaseEvent);
     }

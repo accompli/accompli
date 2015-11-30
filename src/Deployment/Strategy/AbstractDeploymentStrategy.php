@@ -14,6 +14,7 @@ use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Composer\Semver\Comparator;
 use Exception;
 
 /**
@@ -62,6 +63,10 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
         foreach ($hosts as $host) {
             $exception = null;
 
+            $deployEventName = AccompliEvents::DEPLOY_RELEASE;
+            $deployCompleteEventName = AccompliEvents::DEPLOY_RELEASE_COMPLETE;
+            $deployFailedEventName = AccompliEvents::DEPLOY_RELEASE_FAILED;
+
             try {
                 $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
 
@@ -75,10 +80,17 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
 
                     $release = $prepareDeployReleaseEvent->getRelease();
                     if ($release instanceof Release) {
-                        $deployReleaseEvent = new DeployReleaseEvent($release, $prepareDeployReleaseEvent->getCurrentRelease());
-                        $this->eventDispatcher->dispatch(AccompliEvents::DEPLOY_RELEASE, $deployReleaseEvent);
+                        $currentRelease = $prepareDeployReleaseEvent->getCurrentRelease();
+                        if ($currentRelease instanceof Release && Comparator::lessThan($release->getVersion(), $currentRelease->getVersion())) {
+                            $deployEventName = AccompliEvents::ROLLBACK_RELEASE;
+                            $deployCompleteEventName = AccompliEvents::ROLLBACK_RELEASE_COMPLETE;
+                            $deployFailedEventName = AccompliEvents::ROLLBACK_RELEASE_FAILED;
+                        }
 
-                        $this->eventDispatcher->dispatch(AccompliEvents::DEPLOY_RELEASE_COMPLETE, $deployReleaseEvent);
+                        $deployReleaseEvent = new DeployReleaseEvent($release, $currentRelease);
+                        $this->eventDispatcher->dispatch($deployEventName, $deployReleaseEvent);
+
+                        $this->eventDispatcher->dispatch($deployCompleteEventName, $deployReleaseEvent);
 
                         continue;
                     }
@@ -87,7 +99,7 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
             }
 
             $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
-            $this->eventDispatcher->dispatch(AccompliEvents::DEPLOY_RELEASE_FAILED, $failedEvent);
+            $this->eventDispatcher->dispatch($deployFailedEventName, $failedEvent);
         }
     }
 }
