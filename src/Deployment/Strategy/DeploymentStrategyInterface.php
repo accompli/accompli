@@ -20,8 +20,8 @@ interface DeploymentStrategyInterface
     /**
      * Deploys a release according to the deployment strategy.
      *
-     * @param string      $version
-     * @param string|null $stage
+     * @param string $version
+     * @param string $stage
      */
-    public function deploy($version, $stage = null);
+    public function deploy($version, $stage);
 }
