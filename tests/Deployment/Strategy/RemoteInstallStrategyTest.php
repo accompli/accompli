@@ -31,7 +31,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
 
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
-        $strategy->install('0.1.0');
+
+        $this->assertTrue($strategy->install('0.1.0'));
     }
 
     /**
@@ -50,7 +51,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
 
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
-        $strategy->install('0.1.0', Host::STAGE_TEST);
+
+        $this->assertTrue($strategy->install('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -105,7 +107,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
-        $strategy->install('0.1.0', Host::STAGE_TEST);
+
+        $this->assertTrue($strategy->install('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -185,7 +188,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
-        $strategy->install('0.1.0', Host::STAGE_TEST);
+
+        $this->assertTrue($strategy->install('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -240,7 +244,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
-        $strategy->install('0.1.0', Host::STAGE_TEST);
+
+        $this->assertFalse($strategy->install('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -291,7 +296,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
-        $strategy->install('0.1.0', Host::STAGE_TEST);
+
+        $this->assertFalse($strategy->install('0.1.0', Host::STAGE_TEST));
     }
 
     /**
