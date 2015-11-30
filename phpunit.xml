@@ -10,8 +10,12 @@
     stopOnFailure='false'>
 
     <testsuites>
-        <testsuite name='Accompli_Accompli'>
+        <testsuite name='Accompli'>
             <directory>./tests/</directory>
+            <exclude>./tests/Console/Command/</exclude>
+        </testsuite>
+        <testsuite name='Accompli_Commands'>
+            <directory>./tests/Console/Command/</directory>
         </testsuite>
     </testsuites>
 
