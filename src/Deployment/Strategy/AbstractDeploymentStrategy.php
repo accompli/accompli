@@ -59,6 +59,8 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
      */
     public function deploy($version, $stage)
     {
+        $successfulDeploy = true;
+
         $hosts = $this->configuration->getHostsByStage($stage);
         foreach ($hosts as $host) {
             $exception = null;
@@ -98,8 +100,12 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
             } catch (Exception $exception) {
             }
 
+            $successfulDeploy = false;
+
             $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
             $this->eventDispatcher->dispatch($deployFailedEventName, $failedEvent);
         }
+
+        return $successfulDeploy;
     }
 }

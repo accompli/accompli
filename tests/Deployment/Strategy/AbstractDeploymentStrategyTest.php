@@ -98,7 +98,8 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->deploy('0.1.0', Host::STAGE_TEST);
+
+        $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -179,7 +180,8 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->deploy('0.1.0', Host::STAGE_TEST);
+
+        $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -230,7 +232,8 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->deploy('0.1.0', Host::STAGE_TEST);
+
+        $this->assertFalse($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -285,7 +288,8 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->deploy('0.1.0', Host::STAGE_TEST);
+
+        $this->assertFalse($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -340,7 +344,8 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->deploy('0.1.0', Host::STAGE_TEST);
+
+        $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
