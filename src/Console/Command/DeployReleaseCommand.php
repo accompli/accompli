@@ -44,6 +44,12 @@ class DeployReleaseCommand extends Command
 
         $accompli = new Accompli($parameters);
         $accompli->initialize();
-        $accompli->deploy($input->getArgument('version'), $input->getArgument('stage'));
+
+        $successfulInstall = $accompli->deploy($input->getArgument('version'), $input->getArgument('stage'));
+        if ($successfulInstall) {
+            return 0;
+        }
+
+        return 1;
     }
 }
