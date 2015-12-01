@@ -14,6 +14,19 @@ use UnexpectedValueException;
 class SSHConnectionAdapterTest extends ConnectedConnectionAdapterTestCase
 {
     /**
+     * Unsets the USERPROFILE environment variable and sets the HOME environment variable.
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        if (isset($_SERVER['USERPROFILE'])) {
+            $_SERVER['HOME'] = $_SERVER['USERPROFILE'];
+            unset($_SERVER['USERPROFILE']);
+        }
+    }
+
+    /**
      * Tests if constructing a new SSHConnectionAdapter instance throws an UnexpectedValueException when the authentication type is not known.
      *
      * @expectedException        UnexpectedValueException
@@ -30,6 +43,19 @@ class SSHConnectionAdapterTest extends ConnectedConnectionAdapterTestCase
     public function testConstructWithPasswordAuthenticationType()
     {
         $this->connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_PASSWORD, $this->getSSHUsername(), getenv('ssh.password'));
+    }
+
+    /**
+     * Tests if constructing a new SSHConnectionAdapter instance in a (emulated) Windows operating system environment loads the RSA key.
+     */
+    public function testConstructInWindowsOperatingSystemEnvironment()
+    {
+        $_SERVER['USERPROFILE'] = $_SERVER['HOME'];
+        unset($_SERVER['HOME']);
+
+        $this->connectionAdapter = $this->createConnectionAdapter();
+
+        $this->assertAttributeInstanceOf('phpseclib\Crypt\RSA', 'authenticationCredentials', $this->connectionAdapter);
     }
 
     /**
