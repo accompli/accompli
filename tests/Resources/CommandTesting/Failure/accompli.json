@@ -1,0 +1,11 @@
+{
+    "$extend": "../../../../src/Resources/accompli-defaults.json",
+    "hosts": [
+        {
+            "stage": "test",
+            "connectionType": "none",
+            "hostname": "",
+            "path": ""
+        }
+    ]
+}

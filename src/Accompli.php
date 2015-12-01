@@ -141,11 +141,14 @@ class Accompli
      *
      * @param string      $version
      * @param string|null $stage
+     *
+     * @return bool
      */
     public function install($version, $stage = null)
     {
         $deploymentStrategy = $this->getContainer()->get('deployment_strategy');
-        $deploymentStrategy->install($version, $stage);
+
+        return $deploymentStrategy->install($version, $stage);
     }
 
     /**
@@ -153,11 +156,14 @@ class Accompli
      *
      * @param string $version
      * @param string $stage
+     *
+     * @return bool
      */
     public function deploy($version, $stage)
     {
         $deploymentStrategy = $this->getContainer()->get('deployment_strategy');
-        $deploymentStrategy->deploy($version, $stage);
+
+        return $deploymentStrategy->deploy($version, $stage);
     }
 
     /**

@@ -35,6 +35,8 @@ class InstallReleaseCommand extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -44,6 +46,12 @@ class InstallReleaseCommand extends Command
 
         $accompli = new Accompli($parameters);
         $accompli->initialize();
-        $accompli->install($input->getArgument('version'), $input->getArgument('stage'));
+
+        $successfulInstall = $accompli->install($input->getArgument('version'), $input->getArgument('stage'));
+        if ($successfulInstall) {
+            return 0;
+        }
+
+        return 1;
     }
 }

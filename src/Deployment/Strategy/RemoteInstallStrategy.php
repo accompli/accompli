@@ -24,6 +24,8 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
      */
     public function install($version, $stage = null)
     {
+        $successfulInstall = true;
+
         $hosts = $this->configuration->getHosts();
         if ($stage !== null) {
             $hosts = $this->configuration->getHostsByStage($stage);
@@ -56,8 +58,12 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
             } catch (Exception $exception) {
             }
 
+            $successfulInstall = false;
+
             $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
             $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, $failedEvent);
         }
+
+        return $successfulInstall;
     }
 }
