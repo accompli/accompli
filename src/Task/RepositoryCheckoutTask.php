@@ -75,16 +75,19 @@ class RepositoryCheckoutTask extends AbstractConnectedTask
      */
     public function onPrepareReleaseCheckoutRepository(PrepareReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
-        $context = array('repositoryUrl' => $this->repositoryUrl, 'version' => $event->getRelease()->getVersion(), 'done' => chr(251));
+        $context = array('repositoryUrl' => $this->repositoryUrl, 'version' => $event->getRelease()->getVersion(), 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
 
         $connection = $this->ensureConnection($event->getRelease()->getWorkspace()->getHost());
         $processExecutor = new ConnectionAdapterProcessExecutor($connection);
 
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[...] Creating checkout of repository "{repositoryUrl}" for version "{version}".', $event, $context));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
 
         $repository = new Repository($this->repositoryUrl, $event->getRelease()->getPath(), $processExecutor);
         if ($repository->checkout($event->getRelease()->getVersion())) {
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[ {done} ] Creating checkout of repository "{repositoryUrl}" for version "{version}".', $event, $context));
+            $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
+            $context['output.resetLine'] = true;
+
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Created checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
         } else {
             throw new RuntimeException(sprintf('Checkout of repository "%s" for version "%s" failed.', $this->repositoryUrl, $event->getRelease()->getVersion()));
         }

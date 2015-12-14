@@ -5,7 +5,6 @@ namespace Accompli\Test;
 use Accompli\EventDispatcher\Event\LogEvent;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LogLevel;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * LogEventTest.
@@ -19,13 +18,14 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructSetsProperties()
     {
-        $event = new Event();
+        $eventSubscriberMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')->getMock();
 
-        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', $event);
+        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test', $eventSubscriberMock);
 
         $this->assertAttributeSame(LogLevel::DEBUG, 'level', $logEvent);
         $this->assertAttributeSame('Test', 'message', $logEvent);
-        $this->assertAttributeSame($event, 'eventContext', $logEvent);
+        $this->assertAttributeSame('accompli.test', 'eventNameContext', $logEvent);
+        $this->assertAttributeSame($eventSubscriberMock, 'eventSubscriberContext', $logEvent);
         $this->assertAttributeSame(array(), 'context', $logEvent);
     }
 
@@ -37,7 +37,7 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructThrowInvalidArgumentExceptionWhenLogLevelInvalid()
     {
-        new LogEvent('invalid', 'Test', new Event());
+        new LogEvent('invalid', 'Test', 'accompli.test');
     }
 
     /**
@@ -45,7 +45,7 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetLevel()
     {
-        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', new Event());
+        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test');
 
         $this->assertSame(LogLevel::DEBUG, $logEvent->getLevel());
     }
@@ -55,21 +55,31 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetMessage()
     {
-        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', new Event());
+        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test');
 
         $this->assertSame('Test', $logEvent->getMessage());
     }
 
     /**
+     * Tests if LogEvent::getEventNameContext returns the same value as during construction of LogEvent.
+     */
+    public function testGetEventNameContext()
+    {
+        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test');
+
+        $this->assertSame('accompli.test', $logEvent->getEventNameContext());
+    }
+
+    /**
      * Tests if LogEvent::getEventContext returns the same value as during construction of LogEvent.
      */
-    public function testGetEventContext()
+    public function testGetEventSubscriberContext()
     {
-        $event = new Event();
+        $eventSubscriberMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')->getMock();
 
-        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', $event);
+        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test', $eventSubscriberMock);
 
-        $this->assertSame($event, $logEvent->getEventContext());
+        $this->assertSame($eventSubscriberMock, $logEvent->getEventSubscriberContext());
     }
 
     /**
@@ -77,7 +87,7 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetContext()
     {
-        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', new Event(), array('key' => 'value'));
+        $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test', null, array('key' => 'value'));
 
         $this->assertSame(array('key' => 'value'), $logEvent->getContext());
     }

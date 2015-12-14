@@ -5,6 +5,7 @@ namespace Accompli\EventDispatcher\Event;
 use InvalidArgumentException;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * LogEvent.
@@ -28,11 +29,18 @@ class LogEvent extends Event
     private $message;
 
     /**
-     * The event instance as context for the log message.
+     * The name of the event as context for the log message.
+     *
+     * @var string
+     */
+    private $eventNameContext;
+
+    /**
+     * The event subscriber instance as context for the log message.
      *
      * @var Event
      */
-    private $eventContext;
+    private $eventSubscriberContext;
 
     /**
      * The array with context for the log message.
@@ -44,20 +52,22 @@ class LogEvent extends Event
     /**
      * Constructs a new LogEvent.
      *
-     * @param string $level
-     * @param string $message
-     * @param Event  $eventContext
-     * @param array  $context
+     * @param string                        $level
+     * @param string                        $message
+     * @param string                        $eventNameContext
+     * @param EventSubscriberInterface|null $eventSubscriberContext
+     * @param array                         $context
      */
-    public function __construct($level, $message, Event $eventContext, array $context = array())
+    public function __construct($level, $message, $eventNameContext, EventSubscriberInterface $eventSubscriberContext = null, array $context = array())
     {
         if ($this->isValidLogLevel($level) === false) {
             throw new InvalidArgumentException(sprintf('The provided level "%s" is not a valid log level.', $level));
         }
 
         $this->level = $level;
+        $this->eventNameContext = $eventNameContext;
         $this->message = $message;
-        $this->eventContext = $eventContext;
+        $this->eventSubscriberContext = $eventSubscriberContext;
         $this->context = $context;
     }
 
@@ -104,13 +114,23 @@ class LogEvent extends Event
     }
 
     /**
-     * Returns the event instance as context for the log message.
+     * Returns the name of the event as context for the log message.
      *
-     * @return Event
+     * @return string
      */
-    public function getEventContext()
+    public function getEventNameContext()
     {
-        return $this->eventContext;
+        return $this->eventNameContext;
+    }
+
+    /**
+     * Returns the event subscriber instance as context for the log message.
+     *
+     * @return EventSubscriberInterface
+     */
+    public function getEventSubscriberContext()
+    {
+        return $this->eventSubscriberContext;
     }
 
     /**

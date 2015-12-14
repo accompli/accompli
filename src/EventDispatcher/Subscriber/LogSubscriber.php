@@ -52,11 +52,14 @@ class LogSubscriber implements EventSubscriberInterface, LoggerAwareInterface
     public function onLogEvent(LogEvent $event)
     {
         $context = $event->getContext();
-        $context['eventContext'] = get_class($event->getEventContext());
-        $context['event'] = $event->getEventContext();
+        $context['event.name'] = $event->getEventNameContext();
 
-        $message = sprintf('[{eventContext}] %s', $event->getMessage());
+        $eventSubscriberClassName = get_class($event->getEventSubscriberContext());
+        if (strrpos($eventSubscriberClassName, '\\') !== false) {
+            $eventSubscriberClassName = substr($eventSubscriberClassName, strrpos($eventSubscriberClassName, '\\') + 1);
+        }
+        $context['event.task.name'] = $eventSubscriberClassName;
 
-        $this->logger->log($event->getLevel(), $message, $context);
+        $this->logger->log($event->getLevel(), $event->getMessage(), $context);
     }
 }

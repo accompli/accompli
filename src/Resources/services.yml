@@ -12,7 +12,7 @@ services:
             - [addListener, [accompli.create_connection, ["@connection_manager", onCreateConnection]]]
             - [addSubscriber, ["@log_subscriber"]]
     logger:
-        class: Symfony\Component\Console\Logger\ConsoleLogger
+        class: Accompli\Console\Logger\ConsoleLogger
         arguments: ["%console.output_interface%"]
     log_subscriber:
         class: Accompli\EventDispatcher\Subscriber\LogSubscriber

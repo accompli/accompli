@@ -84,7 +84,7 @@ class CreateWorkspaceTask extends AbstractConnectedTask
      */
     public function onPrepareWorkspaceConstructWorkspaceInstance(PrepareWorkspaceEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[...] Creating Workspace.', $event));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating Workspace.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
         $workspace = new Workspace($event->getHost());
         $workspace->setReleasesDirectory($this->releasesDirectory);
@@ -94,7 +94,7 @@ class CreateWorkspaceTask extends AbstractConnectedTask
 
         $event->setWorkspace($workspace);
 
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[ {done} ] Created Workspace.', $event, array('done' => chr(251))));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Created Workspace.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
     }
 
     /**
@@ -126,17 +126,26 @@ class CreateWorkspaceTask extends AbstractConnectedTask
         );
 
         foreach ($directories as $directory) {
-            $context = array('directory' => $directory, 'done' => chr(251));
+            $context = array('directory' => $directory, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
 
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[...] Creating directory "{directory}".', $event, $context));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating directory "{directory}".', $eventName, $this, $context));
             if ($connection->isDirectory($directory) === false) {
                 if ($connection->createDirectory($directory)) {
-                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[ {done} ] Created directory "{directory}".', $event, $context));
+                    $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
+                    $context['output.resetLine'] = true;
+
+                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Created directory "{directory}".', $eventName, $this, $context));
                 } else {
-                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, '[ X ] Failed creating directory "{directory}".', $event, $context));
+                    $context['event.task.action'] = TaskInterface::ACTION_FAILED;
+                    $context['output.resetLine'] = true;
+
+                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed creating directory "{directory}".', $eventName, $this, $context));
                 }
             } else {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, '[ {done} ] Directory "{directory}" exists.', $event, $context));
+                $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
+                $context['output.resetLine'] = true;
+
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Directory "{directory}" exists.', $eventName, $this, $context));
             }
         }
     }
