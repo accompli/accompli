@@ -2,16 +2,16 @@
 
 namespace Accompli\Task;
 
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Host;
 use Accompli\Exception\ConnectionException;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * AbstractConnectedTask.
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-abstract class AbstractConnectedTask implements EventSubscriberInterface
+abstract class AbstractConnectedTask implements TaskInterface
 {
     /**
      * Ensures a connected connection adapter for a host.
