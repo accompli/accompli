@@ -11,7 +11,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 /**
  * Application.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class Application extends BaseApplication
 {
