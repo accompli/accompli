@@ -114,6 +114,7 @@ class ConsoleLogger extends AbstractLogger
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
+        $this->output->setFormatter(new OutputFormatter($this->output->isDecorated()));
 
         if (substr($this->getOperatingSystemName(), 0, 3) === 'WIN') {
             $this->taskActionStatusToOutputMap['completed'] = ' '.chr(251).' ';
