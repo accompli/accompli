@@ -219,7 +219,12 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
                     array($this->equalTo('  <info>message</info>'))
                 );
 
-        $logger = new ConsoleLogger($outputMock);
+        $logger = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLogger')
+                ->setConstructorArgs(array($outputMock))
+                ->setMethods(array('getTerminalWidth'))
+                ->getMock();
+        $logger->expects($this->exactly(2))->method('getTerminalWidth')->willReturn(150);
+
         $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
         $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask', 'output.resetLine' => true));
     }

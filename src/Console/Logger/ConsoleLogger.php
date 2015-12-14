@@ -158,6 +158,24 @@ class ConsoleLogger extends AbstractLogger
     }
 
     /**
+     * Returns the terminal width.
+     *
+     * @return int
+     */
+    public function getTerminalWidth()
+    {
+        $application = new Application();
+        $terminalDimensions = $application->getTerminalDimensions();
+
+        $width = 120;
+        if (isset($terminalDimensions[0])) {
+            $width = $terminalDimensions[0];
+        }
+
+        return $width;
+    }
+
+    /**
      * Returns the instance handling the output to the console.
      *
      * @param string $level
@@ -249,23 +267,5 @@ class ConsoleLogger extends AbstractLogger
         $messageLength = FormatterHelper::strlenWithoutDecoration($this->output->getFormatter(), $message);
 
         return ceil($messageLength / $this->getTerminalWidth());
-    }
-
-    /**
-     * Returns the terminal width.
-     *
-     * @return int
-     */
-    private function getTerminalWidth()
-    {
-        $application = new Application();
-        $terminalDimensions = $application->getTerminalDimensions();
-
-        $width = 120;
-        if (isset($terminalDimensions[0])) {
-            $width = $terminalDimensions[0];
-        }
-
-        return $width;
     }
 }
