@@ -3,9 +3,10 @@
 namespace Accompli\Test;
 
 use Accompli\AccompliEvents;
-use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\Task\CreateWorkspaceTask;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 /**
  * CreateWorkspaceTaskTest.
@@ -50,7 +51,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if CreateWorkspaceTask::onPrepareWorkspaceConstructWorkspaceInstance constructs a new Workspace instance and sets it on the PrepareWorkspaceEvent.
+     * Tests if CreateWorkspaceTask::onPrepareWorkspaceConstructWorkspaceInstance constructs a new Workspace instance and sets it on the WorkspaceEvent.
      *
      * @depends testConstruct
      */
@@ -63,7 +64,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $event = new PrepareWorkspaceEvent($hostMock);
+        $event = new WorkspaceEvent($hostMock);
 
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -98,7 +99,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
         $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
 
-        $event = new PrepareWorkspaceEvent($hostMock);
+        $event = new WorkspaceEvent($hostMock);
 
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -133,7 +134,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
         $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
 
-        $event = new PrepareWorkspaceEvent($hostMock);
+        $event = new WorkspaceEvent($hostMock);
 
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -166,7 +167,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
         $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
 
-        $event = new PrepareWorkspaceEvent($hostMock);
+        $event = new WorkspaceEvent($hostMock);
 
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -194,7 +195,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
         $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
 
-        $event = new PrepareWorkspaceEvent($hostMock);
+        $event = new WorkspaceEvent($hostMock);
 
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);

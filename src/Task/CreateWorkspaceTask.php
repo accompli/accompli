@@ -5,11 +5,10 @@ namespace Accompli\Task;
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\LogEvent;
-use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LogLevel;
 use RuntimeException;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * CreateWorkspaceTask.
@@ -78,11 +77,11 @@ class CreateWorkspaceTask extends AbstractConnectedTask
     /**
      * Constructs a new Workspace instance and sets the Workspace on the event.
      *
-     * @param PrepareWorkspaceEvent $event
-     * @param string                $eventName
-     * @param EventDispatcher       $eventDispatcher
+     * @param WorkspaceEvent           $event
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function onPrepareWorkspaceConstructWorkspaceInstance(PrepareWorkspaceEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
+    public function onPrepareWorkspaceConstructWorkspaceInstance(WorkspaceEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating Workspace.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
@@ -100,13 +99,13 @@ class CreateWorkspaceTask extends AbstractConnectedTask
     /**
      * Creates the workspace directories when not already existing.
      *
-     * @param PrepareWorkspaceEvent $event
-     * @param string                $eventName
-     * @param EventDispatcher       $eventDispatcher
+     * @param WorkspaceEvent           $event
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @throws RuntimeException
      */
-    public function onPrepareWorkspaceCreateWorkspace(PrepareWorkspaceEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
+    public function onPrepareWorkspaceCreateWorkspace(WorkspaceEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         $workspace = $event->getWorkspace();
         $connection = $this->ensureConnection($workspace->getHost());
