@@ -212,7 +212,7 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
             return ($result && $this->delete($remoteTarget, false));
         }
 
-        if ($this->isDirectory($remoteTarget)) {
+        if ($this->isDirectory($remoteTarget) && $this->isLink($remoteTarget) === false) {
             return rmdir($remoteTarget);
         }
 
