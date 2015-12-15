@@ -9,7 +9,7 @@ use Accompli\EventDispatcher\Event\FailedEvent;
 use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
-use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Exception;
 
 /**
@@ -37,10 +37,10 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
             try {
                 $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
 
-                $prepareWorkspaceEvent = new PrepareWorkspaceEvent($host);
-                $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $prepareWorkspaceEvent);
+                $workspaceEvent = new WorkspaceEvent($host);
+                $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_WORKSPACE, $workspaceEvent);
 
-                $workspace = $prepareWorkspaceEvent->getWorkspace();
+                $workspace = $workspaceEvent->getWorkspace();
                 if ($workspace instanceof Workspace) {
                     $prepareReleaseEvent = new PrepareReleaseEvent($workspace, $version);
                     $this->eventDispatcher->dispatch(AccompliEvents::PREPARE_RELEASE, $prepareReleaseEvent);

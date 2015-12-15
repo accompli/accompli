@@ -9,7 +9,7 @@ use Accompli\EventDispatcher\Event\FailedEvent;
 use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
-use Accompli\EventDispatcher\Event\PrepareWorkspaceEvent;
+use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -84,7 +84,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
-                        $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_RELEASE),
@@ -139,7 +139,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
-                        $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_RELEASE),
@@ -165,7 +165,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
-                        $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_RELEASE),
@@ -225,7 +225,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
-                        $this->callback(array($this, 'provideDispatchCallbackForPrepareWorkspaceEvent')),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_RELEASE),
@@ -282,7 +282,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
                         $this->callback(function ($event) {
-                            return ($event instanceof PrepareWorkspaceEvent);
+                            return ($event instanceof WorkspaceEvent);
                         }),
                     ),
                     array(
@@ -309,7 +309,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      *
      * @return bool
      */
-    public function provideDispatchCallbackForPrepareWorkspaceEvent(Event $event)
+    public function provideDispatchCallbackForWorkspaceEvent(Event $event)
     {
         $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
                 ->setConstructorArgs(array($event->getHost()))
@@ -317,7 +317,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
 
         $event->setWorkspace($workspaceMock);
 
-        return ($event instanceof PrepareWorkspaceEvent);
+        return ($event instanceof WorkspaceEvent);
     }
 
     /**
