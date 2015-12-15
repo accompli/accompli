@@ -16,12 +16,13 @@ use RuntimeException;
 class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * Tests if CreateWorkspaceTask::getSubscribedEvents returns an array with at least a AccompliEvents::PREPARE_WORKSPACE key.
+     * Tests if CreateWorkspaceTask::getSubscribedEvents returns an array with at least a AccompliEvents::PREPARE_WORKSPACE and AccompliEvents::GET_WORKSPACE key.
      */
     public function testGetSubscribedEvents()
     {
         $this->assertInternalType('array', CreateWorkspaceTask::getSubscribedEvents());
         $this->assertArrayHasKey(AccompliEvents::PREPARE_WORKSPACE, CreateWorkspaceTask::getSubscribedEvents());
+        $this->assertArrayHasKey(AccompliEvents::GET_WORKSPACE, CreateWorkspaceTask::getSubscribedEvents());
     }
 
     /**

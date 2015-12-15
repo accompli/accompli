@@ -55,6 +55,9 @@ class CreateWorkspaceTask extends AbstractConnectedTask
                 array('onPrepareWorkspaceConstructWorkspaceInstance', 10),
                 array('onPrepareWorkspaceCreateWorkspace', 0),
             ),
+            AccompliEvents::GET_WORKSPACE => array(
+                array('onPrepareWorkspaceConstructWorkspaceInstance', 10),
+            ),
         );
     }
 
@@ -127,13 +130,13 @@ class CreateWorkspaceTask extends AbstractConnectedTask
         foreach ($directories as $directory) {
             $context = array('directory' => $directory, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
 
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating directory "{directory}".', $eventName, $this, $context));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Creating directory "{directory}".', $eventName, $this, $context));
             if ($connection->isDirectory($directory) === false) {
                 if ($connection->createDirectory($directory)) {
                     $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
                     $context['output.resetLine'] = true;
 
-                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Created directory "{directory}".', $eventName, $this, $context));
+                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Created directory "{directory}".', $eventName, $this, $context));
                 } else {
                     $context['event.task.action'] = TaskInterface::ACTION_FAILED;
                     $context['output.resetLine'] = true;
@@ -144,7 +147,7 @@ class CreateWorkspaceTask extends AbstractConnectedTask
                 $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
                 $context['output.resetLine'] = true;
 
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Directory "{directory}" exists.', $eventName, $this, $context));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Directory "{directory}" exists.', $eventName, $this, $context));
             }
         }
     }
