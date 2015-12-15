@@ -430,6 +430,23 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::delete only deletes a link to a directory.
+     *
+     * @depends testDelete
+     */
+    public function testDeleteLinkToDirectory()
+    {
+        $this->workspaceUtility->createDirectory('/existing-directory');
+        $this->workspaceUtility->createFile('/existing-directory/test.txt');
+        symlink($this->workspaceUtility->getWorkspacePath().'/existing-directory', $this->workspaceUtility->getWorkspacePath().'/link-to-existing-directory');
+
+        $this->connectionAdapter->connect();
+
+        $this->assertTrue($this->connectionAdapter->delete($this->workspaceUtility->getWorkspacePath().'/link-to-existing-directory', false));
+        $this->assertFileExists($this->workspaceUtility->getWorkspacePath().'/existing-directory/test.txt');
+    }
+
+    /**
      * Constructs a new connection adapter implementing the ConnectionAdapterInterface.
      *
      * @return ConnectionAdapterInterface
