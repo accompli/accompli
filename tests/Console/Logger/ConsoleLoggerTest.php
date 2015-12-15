@@ -205,7 +205,7 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
     {
         $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
         $outputMock->expects($this->exactly(2))->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $outputMock->expects($this->exactly(3))->method('isDecorated')->willReturn(true);
+        $outputMock->expects($this->exactly(5))->method('isDecorated')->willReturn(true);
         $outputMock->expects($this->exactly(3))
                 ->method('getFormatter')
                 ->willReturn(new OutputFormatter(true));
@@ -215,8 +215,8 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
         $outputMock->expects($this->exactly(2))
                 ->method('writeln')
                 ->withConsecutive(
-                    array($this->equalTo('[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>]  <info>message</info>')),
-                    array($this->equalTo('  <info>message</info>'))
+                    array($this->equalTo("[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] \e[1D <info>message</info>")),
+                    array($this->equalTo(" \e[1D <info>message</info>"))
                 );
 
         $logger = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLogger')

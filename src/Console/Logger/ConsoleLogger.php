@@ -36,6 +36,14 @@ class ConsoleLogger extends AbstractLogger
     const ANSI_CURSOR_FORWARD_FORMAT = "\e[%dC";
 
     /**
+     * ANSI code to move the cursor back by the specified number of columns without changing lines.
+     * If the cursor is already in the leftmost column, this sequence is ignored.
+     *
+     * @var string
+     */
+    const ANSI_CURSOR_BACKWARD_FORMAT = "\e[%dD";
+
+    /**
      * ANSI code to clear the screen from cursor to end of display. The cursor position is unchanged.
      *
      * @var string
@@ -227,6 +235,9 @@ class ConsoleLogger extends AbstractLogger
     private function getTaskActionStatusSectionFromContext(array $context)
     {
         $actionStatusSection = '';
+        if ($this->output->isDecorated()) {
+            $actionStatusSection = sprintf(self::ANSI_CURSOR_BACKWARD_FORMAT, 1);
+        }
         if (isset($context['event.task.action']) && isset($this->taskActionStatusToOutputMap[$context['event.task.action']])) {
             $actionStatusSection = sprintf('[<event-task-action-%1$s>%2$s</event-task-action-%1$s>]', $context['event.task.action'], $this->taskActionStatusToOutputMap[$context['event.task.action']]);
         }
