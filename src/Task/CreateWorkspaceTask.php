@@ -55,6 +55,9 @@ class CreateWorkspaceTask extends AbstractConnectedTask
                 array('onPrepareWorkspaceConstructWorkspaceInstance', 10),
                 array('onPrepareWorkspaceCreateWorkspace', 0),
             ),
+            AccompliEvents::GET_WORKSPACE => array(
+                array('onPrepareWorkspaceConstructWorkspaceInstance', 10),
+            ),
         );
     }
 
