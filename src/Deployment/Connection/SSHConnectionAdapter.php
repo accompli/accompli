@@ -147,6 +147,18 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function isLink($remoteTarget)
+    {
+        if ($this->isConnected()) {
+            return $this->connection->is_link($remoteTarget);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isDirectory($remoteDirectory)
     {
         if ($this->isConnected()) {
