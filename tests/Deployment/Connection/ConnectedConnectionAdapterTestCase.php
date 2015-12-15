@@ -36,6 +36,17 @@ abstract class ConnectedConnectionAdapterTestCase extends ConnectionAdapterTestC
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::isLink returns false when not connected.
+     */
+    public function testIsLinkReturnsFalseWhenNotConnected()
+    {
+        $this->workspaceUtility->createFile('/test.txt');
+        symlink($this->workspaceUtility->getWorkspacePath().'/test.txt', $this->workspaceUtility->getWorkspacePath().'/testLink');
+
+        $this->assertFalse($this->connectionAdapter->isLink($this->workspaceUtility->getWorkspacePath().'/testLink'));
+    }
+
+    /**
      * Tests if ConnectionAdapterInterface::isDirectory returns false when not connected.
      */
     public function testIsDirectoryReturnsFalseWhenNotConnected()

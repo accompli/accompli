@@ -47,6 +47,14 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function isLink($remoteTarget)
+    {
+        return is_link($remoteTarget);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isDirectory($remoteDirectory)
     {
         return is_dir($remoteDirectory);

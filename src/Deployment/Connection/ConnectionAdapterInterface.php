@@ -42,6 +42,15 @@ interface ConnectionAdapterInterface
     public function isFile($remoteFilename);
 
     /**
+     * Returns true if $remoteTarget is a symlink.
+     *
+     * @param string $remoteTarget
+     *
+     * @return bool
+     */
+    public function isLink($remoteTarget);
+
+    /**
      * Returns true if $remoteDirectory is a remote directory.
      *
      * @param string $remoteDirectory
