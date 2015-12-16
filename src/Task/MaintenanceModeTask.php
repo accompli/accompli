@@ -13,11 +13,11 @@ use Psr\Log\LogLevel;
 use RuntimeException;
 
 /**
- * MaintenanceTask.
+ * MaintenanceModeTask.
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class MaintenanceTask extends AbstractConnectedTask
+class MaintenanceModeTask extends AbstractConnectedTask
 {
     /**
      * The maintenance page strategy.

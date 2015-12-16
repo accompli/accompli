@@ -3,26 +3,26 @@
 namespace Accompli\Test;
 
 use Accompli\AccompliEvents;
-use Accompli\Task\MaintenanceTask;
+use Accompli\Task\MaintenanceModeTask;
 use Accompli\Utility\VersionCategoryComparator;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
 
 /**
- * MaintenanceTaskTest.
+ * MaintenanceModeTaskTest.
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
+class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Tests if MaintenanceTask::getSubscribedEvents returns an array with at least a AccompliEvents::PREPARE_WORKSPACE and AccompliEvents::PREPARE_DEPLOY_RELEASE key.
      */
     public function testGetSubscribedEvents()
     {
-        $this->assertInternalType('array', MaintenanceTask::getSubscribedEvents());
-        $this->assertArrayHasKey(AccompliEvents::PREPARE_WORKSPACE, MaintenanceTask::getSubscribedEvents());
-        $this->assertArrayHasKey(AccompliEvents::PREPARE_DEPLOY_RELEASE, MaintenanceTask::getSubscribedEvents());
+        $this->assertInternalType('array', MaintenanceModeTask::getSubscribedEvents());
+        $this->assertArrayHasKey(AccompliEvents::PREPARE_WORKSPACE, MaintenanceModeTask::getSubscribedEvents());
+        $this->assertArrayHasKey(AccompliEvents::PREPARE_DEPLOY_RELEASE, MaintenanceModeTask::getSubscribedEvents());
     }
 
     /**
@@ -30,7 +30,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
 
         $this->assertAttributeSame(VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE, 'strategy', $task);
         $this->assertAttributeSame(realpath(__DIR__.'/../../src/Resources/maintenance'), 'localMaintenanceDirectory', $task);
@@ -44,7 +44,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructThrowsInvalidArgumentException()
     {
-        new MaintenanceTask('invalid');
+        new MaintenanceModeTask('invalid');
     }
 
     /**
@@ -81,7 +81,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getWorkspace')
                 ->willReturn($workspaceMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareWorkspaceUploadMaintenancePage($eventMock, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
     }
 
@@ -119,7 +119,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getWorkspace')
                 ->willReturn($workspaceMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareWorkspaceUploadMaintenancePage($eventMock, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
     }
 
@@ -157,7 +157,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getWorkspace')
                 ->willReturn($workspaceMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareWorkspaceUploadMaintenancePage($eventMock, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
     }
 
@@ -203,7 +203,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getRelease')
                 ->willReturn($releaseMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
     }
 
@@ -249,7 +249,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getRelease')
                 ->willReturn($releaseMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
     }
 
@@ -297,7 +297,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getCurrentRelease')
                 ->willReturn($releaseMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
     }
 
@@ -346,7 +346,7 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getRelease')
                 ->willReturn($releaseMock);
 
-        $task = new MaintenanceTask();
+        $task = new MaintenanceModeTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
     }
 }
