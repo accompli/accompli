@@ -7,6 +7,8 @@ use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Utility\VersionCategoryComparator;
+use InvalidArgumentException;
 use Psr\Log\LogLevel;
 use RuntimeException;
 
@@ -17,6 +19,13 @@ use RuntimeException;
  */
 class MaintenanceTask extends AbstractConnectedTask
 {
+    /**
+     * The maintenance page strategy.
+     *
+     * @var string
+     */
+    private $strategy;
+
     /**
      * The local path to the directory containing the maintenance page.
      *
@@ -41,9 +50,18 @@ class MaintenanceTask extends AbstractConnectedTask
 
     /**
      * Constructs a new MaintenanceTask.
+     *
+     * @param string $strategy
+     *
+     * @throws InvalidArgumentException
      */
-    public function __construct()
+    public function __construct($strategy = VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE)
     {
+        if (in_array($strategy, array(VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE, VersionCategoryComparator::MATCH_MINOR_DIFFERENCE, VersionCategoryComparator::MATCH_ALWAYS)) === false) {
+            throw new InvalidArgumentException(sprintf('The strategy type "%s" is invalid.', $strategy));
+        }
+
+        $this->strategy = $strategy;
         $this->localMaintenanceDirectory = realpath(__DIR__.'/../Resources/maintenance');
     }
 
@@ -109,6 +127,10 @@ class MaintenanceTask extends AbstractConnectedTask
      */
     public function onPrepareDeployReleaseLinkMaintenancePageToStage(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
+        if (VersionCategoryComparator::matchesStrategy($this->strategy, $event->getRelease(), $event->getCurrentRelease()) === false) {
+            return;
+        }
+
         $host = $event->getWorkspace()->getHost();
         $connection = $this->ensureConnection($host);
 

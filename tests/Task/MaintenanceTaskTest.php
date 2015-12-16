@@ -4,7 +4,9 @@ namespace Accompli\Test;
 
 use Accompli\AccompliEvents;
 use Accompli\Task\MaintenanceTask;
+use Accompli\Utility\VersionCategoryComparator;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 /**
  * MaintenanceTaskTest.
@@ -30,7 +32,19 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
     {
         $task = new MaintenanceTask();
 
+        $this->assertAttributeSame(VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE, 'strategy', $task);
         $this->assertAttributeSame(realpath(__DIR__.'/../../src/Resources/maintenance'), 'localMaintenanceDirectory', $task);
+    }
+
+    /**
+     * Tests if constructing a new MaintenanceTask with an invalid strategy throws an InvalidArgumentException.
+     *
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage The strategy type "invalid" is invalid.
+     */
+    public function testConstructThrowsInvalidArgumentException()
+    {
+        new MaintenanceTask('invalid');
     }
 
     /**
@@ -175,12 +189,19 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getHost')
                 ->willReturn($hostMock);
 
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+
         $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
                 ->method('getWorkspace')
                 ->willReturn($workspaceMock);
+        $eventMock->expects($this->once())
+                ->method('getRelease')
+                ->willReturn($releaseMock);
 
         $task = new MaintenanceTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
@@ -214,12 +235,67 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getHost')
                 ->willReturn($hostMock);
 
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+
         $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
                 ->method('getWorkspace')
                 ->willReturn($workspaceMock);
+        $eventMock->expects($this->once())
+                ->method('getRelease')
+                ->willReturn($releaseMock);
+
+        $task = new MaintenanceTask();
+        $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if MaintenanceTask::onPrepareDeployReleaseLinkMaintenancePageToStage calls the connection adapter to unlink an existing stage link and link the stage to the maintenance directory.
+     */
+    public function testOnPrepareDeployReleaseLinkMaintenancePageToStageDoesNotExecuteWhenVersionCategoryDifferenceDoesNotMatchStrategy()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->never())->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->never())->method('isConnected');
+        $connectionAdapterMock->expects($this->never())->method('isLink');
+        $connectionAdapterMock->expects($this->never())->method('link');
+        $connectionAdapterMock->expects($this->never())->method('delete');
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->never())->method('hasConnection');
+        $hostMock->expects($this->never())->method('getConnection');
+        $hostMock->expects($this->never())->method('getStage');
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->never())->method('getHost');
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->exactly(2))
+                ->method('getVersion')
+                ->willReturn('0.1.0');
+
+        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $eventMock->expects($this->never())->method('getWorkspace');
+        $eventMock->expects($this->once())
+                ->method('getRelease')
+                ->willReturn($releaseMock);
+        $eventMock->expects($this->once())
+                ->method('getCurrentRelease')
+                ->willReturn($releaseMock);
 
         $task = new MaintenanceTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
@@ -256,12 +332,19 @@ class MaintenanceTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getHost')
                 ->willReturn($hostMock);
 
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+
         $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
                 ->method('getWorkspace')
                 ->willReturn($workspaceMock);
+        $eventMock->expects($this->once())
+                ->method('getRelease')
+                ->willReturn($releaseMock);
 
         $task = new MaintenanceTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);
