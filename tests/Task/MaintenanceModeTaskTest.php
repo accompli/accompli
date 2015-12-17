@@ -259,7 +259,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
     public function testOnPrepareDeployReleaseLinkMaintenancePageToStageDoesNotExecuteWhenVersionCategoryDifferenceDoesNotMatchStrategy()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->never())->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(1))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->never())->method('isConnected');
