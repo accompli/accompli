@@ -128,6 +128,8 @@ class MaintenanceModeTask extends AbstractConnectedTask
     public function onPrepareDeployReleaseLinkMaintenancePageToStage(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         if (VersionCategoryComparator::matchesStrategy($this->strategy, $event->getRelease(), $event->getCurrentRelease()) === false) {
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Skipped linking maintenance page according to strategy.', $eventName, $this));
+
             return;
         }
 
