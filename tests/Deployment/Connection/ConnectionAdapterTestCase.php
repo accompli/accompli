@@ -212,6 +212,22 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::executeCommand returns the expected output.
+     *
+     * @depends testExecuteCommand
+     */
+    public function testExecuteCommandWithArguments()
+    {
+        $this->connectionAdapter->connect();
+
+        $result = $this->connectionAdapter->executeCommand('echo', array('test'));
+        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $result);
+        $this->assertSame(0, $result->getExitCode());
+        $this->assertSame('test'.PHP_EOL, $result->getOutput());
+        $this->assertSame('', $result->getErrorOutput());
+    }
+
+    /**
      * Tests if ConnectionAdapterInterface::getWorkingDirectory returns the expected working directory.
      *
      * @depends testChangeWorkingDirectoryWithNonExistingDirectoryReturnsFalse

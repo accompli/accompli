@@ -3,6 +3,7 @@
 namespace Accompli\Deployment\Connection;
 
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Utility\ProcessUtility;
 use Symfony\Component\Process\Process;
 
 /**
@@ -71,8 +72,12 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function executeCommand($command)
+    public function executeCommand($command, array $arguments = array())
     {
+        if (empty($arguments) === false) {
+            $command = ProcessUtility::escapeArguments($arguments, $command);
+        }
+
         $process = new Process($command);
         $process->run();
 
