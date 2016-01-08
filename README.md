@@ -89,7 +89,7 @@ Accompli is licensed under the MIT License. Please see the [LICENSE file](LICENS
 [link-coverage]: https://coveralls.io/r/accompli/accompli?branch=master
 [link-security]: https://insight.sensiolabs.com/projects/5b884e85-bb11-4847-b212-e3aaace39a26
 [link-code-style]: https://styleci.io/repos/32416744
-[link-documentation]: https://github.com/accompli/accompli/docs/Getting-started.md
+[link-documentation]: https://github.com/accompli/accompli/blob/master/docs/01-Getting-started.md
 [link-author]: https://github.com/niels-nijens
 [link-author-name]: https://github.com/reyostallenberg
 [link-contributors]: https://github.com/accompli/accompli/contributors
