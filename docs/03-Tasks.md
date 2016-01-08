@@ -2,6 +2,20 @@
 
 A task consists of one or more installation and/or deployment actions. They execute the actions by listening to events dispatched by the [Symfony Event Dispatcher][link-symfony-event-dispatcher] service.
 
+## Available tasks
+
+The following tasks are included in Accompli:
+
+### Install tasks
+
+* [CreateWorkspaceTask](tasks/CreateWorkspaceTask.md)
+* [RepositoryCheckoutTask](tasks/RepositoryCheckoutTask.md)
+
+### Deployment tasks
+
+* [MaintenanceModeTask](tasks/MaintenanceModeTask.md)
+* [DeployReleaseTask](tasks/DeployReleaseTask.md)
+
 ## Creating a task
 
 A task can be either an Event Listener or an Event Subscriber. For reusability it's easier for users to configure a task that is self-aware of the events it needs to listen to than configure each event listener separately.
@@ -39,9 +53,9 @@ class ExampleTask extends AbstractConnectedTask
     /**
      * Do something by using the connection adapter.
      *
-     * @param PrepareWorkspaceEvent $event
+     * @param WorkspaceEvent $event
      */
-    public function onPrepareWorkspaceDoSomething(PrepareWorkspaceEvent $event)
+    public function onPrepareWorkspaceDoSomething(WorkspaceEvent $event)
     {
         $connection = $this->ensureConnection($event->getHost());
         
@@ -75,18 +89,20 @@ Some dispatched events differ per scenario.
 ##### Deployment of a new release
 
 1. AccompliEvents::CREATE_CONNECTION
-2. AccompliEvents::PREPARE_DEPLOY_RELEASE
-3. AccompliEvents::DEPLOY_RELEASE
-4. AccompliEvents::DEPLOY_RELEASE_COMPLETE (dispatched only when the deployment of a release was completed successfully)
-5. AccompliEvents::DEPLOY_RELEASE_FAILED  (dispatched only when eg. a certain task fails)
+2. AccompliEvents::GET_WORKSPACE
+3. AccompliEvents::PREPARE_DEPLOY_RELEASE
+4. AccompliEvents::DEPLOY_RELEASE
+5. AccompliEvents::DEPLOY_RELEASE_COMPLETE (dispatched only when the deployment of a release was completed successfully)
+6. AccompliEvents::DEPLOY_RELEASE_FAILED  (dispatched only when eg. a certain task fails)
 
 ##### Rollback deployment to an old release
 
 1. AccompliEvents::CREATE_CONNECTION
-2. AccompliEvents::PREPARE_DEPLOY_RELEASE
-3. AccompliEvents::ROLLBACK_RELEASE
-4. AccompliEvents::ROLLBACK_RELEASE_COMPLETE (dispatched only when the deployment of a release was completed successfully)
-5. AccompliEvents::ROLLBACK_RELEASE_FAILED (dispatched only when eg. a certain task fails)
+2. AccompliEvents::GET_WORKSPACE
+3. AccompliEvents::PREPARE_DEPLOY_RELEASE
+4. AccompliEvents::ROLLBACK_RELEASE
+5. AccompliEvents::ROLLBACK_RELEASE_COMPLETE (dispatched only when the deployment of a release was completed successfully)
+6. AccompliEvents::ROLLBACK_RELEASE_FAILED (dispatched only when eg. a certain task fails)
 
 For more in-depth information on the dispatched events, please see the [AccompliEvents][link-accompli-events-class] class.
 

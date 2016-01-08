@@ -1,5 +1,6 @@
 # Force Unix line-endings
 * text eol=lf
+*.png binary
 
 # Remove all test and documentation files from releases with 'export-ignore'.
 /docs               export-ignore
