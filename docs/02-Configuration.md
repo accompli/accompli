@@ -38,7 +38,7 @@ A host object requires the following keys:
 
 Optionally, a 'connectionOptions' key can be configured within a host object with an array of connection adapter specific configuration parameters.
 
-For more information on the specific connection options, please see the [connection adapter](Connection-adapters.md) documentation.
+For more information on the specific connection options, please see the [connection adapter](04-Connection-adapters.md) documentation.
 
 ## Configuring a task
 
@@ -74,7 +74,7 @@ If your task has constructor arguments to configure it's behavior, you're able t
 }
 ```
 
-For more information about tasks and a list of available Accompli tasks, see the [tasks](Tasks.md) documentation.
+For more information about tasks and a list of available Accompli tasks, see the [tasks](03-Tasks.md) documentation.
 
 ## Configuring the deployment strategy
 
