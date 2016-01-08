@@ -70,9 +70,9 @@ An example accompli.json:
 }
 ```
 
-For more detailed information on how to configure your accompli.json, please see the [configuration](Configuration.md) documentation.
+For more detailed information on how to configure your accompli.json, please see the [configuration](02-Configuration.md) documentation.
 
-See the [tasks](Tasks.md) documentation to learn what tasks are provided by Accompli and how to create your own tasks.
+See the [tasks](03-Tasks.md) documentation to learn what tasks are provided by Accompli and how to create your own tasks.
 
 ### Install a release for deployment
 To install a release for deployment you need to run the following command from your project root:
