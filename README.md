@@ -17,7 +17,7 @@ An easy to use and extendable deployment tool for PHP projects.
 Run the following command to add the package to the composer.json of your project:
 
 ``` bash
-$ composer require accompli/accompli:dev-master --dev
+$ composer require accompli/accompli:^0.1 --dev
 ```
 
 #### Versioning
