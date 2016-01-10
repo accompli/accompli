@@ -46,7 +46,7 @@ class Accompli
      *
      * @var string
      **/
-    const VERSION = '0.1';
+    const VERSION = '0.1.0';
 
     /**
      * The parameter bag instance containing parameters for the service container.
