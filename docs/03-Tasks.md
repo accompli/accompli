@@ -18,7 +18,7 @@ The following tasks are included in Accompli:
 
 ## Creating a task
 
-A task can be either an Event Listener or an Event Subscriber. For reusability it's easier for users to configure a task that is self-aware of the events it needs to listen to than configure each event listener separately.
+A task can be either an Event Listener or an Event Subscriber. For reusability it's easier for users to configure a task that is self-aware of the events it needs to listen to than to configure each event listener separately.
 
 For more information on how to create an Event Subscriber, see the [Symfony documentation][link-symfony-event-dispatcher-event-subscriber].
 
@@ -67,7 +67,7 @@ class ExampleTask extends AbstractConnectedTask
 
 ### Dispatched Accompli events
 
-The amount of events dispatched depends on the configured deployment strategy. A typical deployment strategy should at least dispatch the events described below.
+The amount of events dispatched depends on the configured deployment strategy. A typical deployment strategy should at least to dispatch the events described below.
 
 #### Events dispatched during installation of a release
 

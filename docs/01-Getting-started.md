@@ -3,14 +3,14 @@
 Accompli is a tool to automate deployment of (PHP) projects. It allows you to easily configure (and create) a set of tasks 
 and run the task when deploying a release of your project.
 
-We aim provide support for [Testing-Acceptance-Production][link-wikipedia-dtap], [Continuous Delivery][link-wikipedia-continuous-delivery] and [Continuous Deployment][link-wikipedia-continuous-delivery] concepts.
+We aim to provide support for [Testing-Acceptance-Production][link-wikipedia-dtap], [Continuous Delivery][link-wikipedia-continuous-delivery] and [Continuous Deployment][link-wikipedia-continuous-delivery] concepts.
 
 ## Why the name 'Accompli'?
 
 Accompli is the French word for 'accomplished' or 'finished'. 
-This fits well with deploying your project, as it most likely to be done.
+This fits well with deploying your project, as it is most likely to be done.
 The French originates back to when Accompli was mainly meant to be a deployment tool for 
-Symfony Framework projects. Which is created by SensioLabs, a French company.
+Symfony Framework projects which is created by SensioLabs, a French company.
 
 ## System Requirements
 
@@ -20,7 +20,7 @@ The following extensions are suggested to speed up SSH related tasks:
 * mcrypt
 * openssl
 
-In order to install releases from version control, you will need to have git or subversion 
+In order to install releases from version control, you'll need to have git or subversion 
 installed depending on how your project is version-controlled.
 
 Accompli is multi-platform and we strive to make it run equally well on Windows, Linux and OSX.
@@ -35,7 +35,7 @@ $ composer require accompli/accompli:dev-master --dev
 
 ## Using Accompli
 
-In order for Accompli to run you require a accompli.json file in the root of your project. 
+In order for Accompli to run your project requires an accompli.json file in the root of your project. 
 This will contain the configured hosts to deploy to and the tasks to run during deployment of a release.
 
 An example accompli.json:
@@ -75,7 +75,7 @@ For more detailed information on how to configure your accompli.json, please see
 See the [tasks](03-Tasks.md) documentation to learn what tasks are provided by Accompli and how to create your own tasks.
 
 ### Install a release for deployment
-To install a release for deployment you need to run the following command from your project root:
+To install a release for deployment you'll need to run the following command from your project root:
 
 ``` bash
 $ vendor/bin/accompli install-release <version>
@@ -91,13 +91,13 @@ $ vendor/bin/accompli install-release <version> <stage>
 
 ### Deploy a release
 
-To deploy a previously install release you need to run the following command from your project root:
+To deploy a previously install release you'll need to run the following command from your project root:
 
 ``` bash
 $ vendor/bin/accompli deploy-release <version> <stage>
 ```
 
-During a deployment Accompli is able to determine wether the deployment is a rollback to a previous version or an increment to a new version.
+During a deployment Accompli is able to determine whether the deployment is a rollback to a previous version or an increment to a new version.
 
 *C'est fini! Accompli!*
 

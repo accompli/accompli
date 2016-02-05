@@ -58,7 +58,7 @@ To configure a task as an event subscriber add your class to the 'events.subscri
 }
 ```
 
-If your task has constructor arguments to configure it's behavior, you're able to configure them next to the class name of the task:
+If your task has constructor arguments to configure it's behavior, you'll be able to configure them next to the class name of the task:
 
 ``` json
 {
@@ -90,7 +90,7 @@ A deployment strategy is configured in the 'deployment.strategy' keys by setting
 
 ## Configuring connection adapters
 
-Connection adapters are configured in the 'deployment.connection' keys with a unique identifier and the class name of the connection adapter:
+Connection adapters are configured in the 'deployment.connection' keys with an unique identifier and the class name of the connection adapter:
 
 ``` json
 {
