@@ -35,7 +35,7 @@ $ composer require accompli/accompli:dev-master --dev
 
 ## Using Accompli
 
-In order for Accompli to run your project requires an accompli.json file in the root of your project. 
+In order for Accompli to run your project requires an accompli.json file in the root of the project. 
 This will contain the configured hosts to deploy to and the tasks to run during deployment of a release.
 
 An example accompli.json:

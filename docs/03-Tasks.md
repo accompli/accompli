@@ -67,7 +67,7 @@ class ExampleTask extends AbstractConnectedTask
 
 ### Dispatched Accompli events
 
-The amount of events dispatched depends on the configured deployment strategy. A typical deployment strategy should at least to dispatch the events described below.
+The amount of events dispatched depends on the configured deployment strategy. A typical deployment strategy should at least dispatch the events described below.
 
 #### Events dispatched during installation of a release
 
