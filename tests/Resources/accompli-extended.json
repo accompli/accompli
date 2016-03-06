@@ -1,5 +1,5 @@
 {
-    "$extend": "../../src/Resources/accompli-defaults.json",
+    "$extend": "../../src/Resources/recipe/defaults.json",
     "hosts": [
         {
             "stage": "test",
