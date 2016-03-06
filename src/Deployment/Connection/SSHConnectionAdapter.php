@@ -72,7 +72,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         $this->hostname = $hostname;
         $this->authenticationUsername = $authenticationUsername;
         if (isset($this->authenticationUsername) === false) {
-            $this->authenticationUsername = get_current_user();
+            $this->authenticationUsername = $this->getCurrentUsername();
         }
 
         switch ($authenticationType) {
@@ -374,6 +374,23 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         }
 
         return false;
+    }
+
+    /**
+     * Returns the username of user executing the script.
+     *
+     * @return string
+     */
+    private function getCurrentUsername()
+    {
+        if (function_exists('posix_getpwuid')) {
+            $username = posix_getpwuid(posix_geteuid())['name'];
+        } else {
+            // Fallback when POSIX functions are not available.
+            $username = get_current_user();
+        }
+
+        return $username;
     }
 
     /**
