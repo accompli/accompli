@@ -4,6 +4,7 @@ namespace Accompli\Test;
 
 use Accompli\Accompli;
 use Accompli\Deployment\Host;
+use Nijens\ProtocolStream\StreamManager;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -35,11 +36,31 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Unregisters the accompli stream wrapper.
+     */
+    public function tearDown()
+    {
+        StreamManager::create()->unregisterStream('accompli');
+    }
+
+    /**
      * Tests instantiation of Accompli.
      */
     public function testConstruct()
     {
         new Accompli(new ParameterBag());
+    }
+
+    /**
+     * Tests if Accompli::initializeStreamWrapper initializes the stream wrapper for recipes.
+     */
+    public function testInitializeStreamWrapper()
+    {
+        $accompli = new Accompli(new ParameterBag());
+        $accompli->initializeStreamWrapper();
+
+        $this->assertContains('accompli', stream_get_wrappers());
+        $this->assertFileExists('accompli://recipe/defaults.json');
     }
 
     /**

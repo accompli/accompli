@@ -5,6 +5,8 @@ namespace Accompli;
 use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\AwarenessCompilerPass;
 use Accompli\DependencyInjection\ConfigurationServiceRegistrationCompilerPass;
+use Nijens\ProtocolStream\Stream\Stream;
+use Nijens\ProtocolStream\StreamManager;
 use Nijens\Utilities\ObjectFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -77,8 +79,21 @@ class Accompli
      */
     public function initialize()
     {
+        $this->initializeStreamWrapper();
         $this->initializeContainer();
         $this->initializeEventListeners();
+    }
+
+    /**
+     * Initializes the stream wrapper to load recipes within the Accompli package.
+     */
+    public function initializeStreamWrapper()
+    {
+        $stream = new Stream('accompli', array(
+                'recipe' => realpath(__DIR__.'/Resources/recipe'),
+            ), false);
+
+        StreamManager::create()->registerStream($stream);
     }
 
     /**
