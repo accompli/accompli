@@ -72,10 +72,11 @@ interface ConnectionAdapterInterface
      * Executes a command.
      *
      * @param string $command
+     * @param array  $arguments
      *
      * @return ProcessExecutionResult
      */
-    public function executeCommand($command);
+    public function executeCommand($command, array $arguments = array());
 
     /**
      * Returns the current working directory.

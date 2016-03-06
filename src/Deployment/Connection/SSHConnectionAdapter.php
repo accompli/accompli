@@ -3,6 +3,7 @@
 namespace Accompli\Deployment\Connection;
 
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Utility\ProcessUtility;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SFTP;
 use phpseclib\System\SSH\Agent;
@@ -183,10 +184,14 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function executeCommand($command)
+    public function executeCommand($command, array $arguments = array())
     {
         if ($this->isConnected()) {
             $this->connection->enableQuietMode();
+
+            if (empty($arguments) === false) {
+                $command = ProcessUtility::escapeArguments($arguments, $command);
+            }
 
             $output = $this->connection->exec($command);
             $exitCode = $this->connection->getExitStatus();
