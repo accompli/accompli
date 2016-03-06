@@ -3,6 +3,7 @@
 namespace Accompli\Test;
 
 use Accompli\Console\Command\DeployReleaseCommand;
+use Nijens\ProtocolStream\StreamManager;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -14,6 +15,14 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class DeployReleaseCommandTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Unregisters the accompli stream wrapper.
+     */
+    public function tearDown()
+    {
+        StreamManager::create()->unregisterStream('accompli');
+    }
+
     /**
      * Tests if DeployReleaseCommand::execute returns the success exit code (0) on succesful deployment.
      */
