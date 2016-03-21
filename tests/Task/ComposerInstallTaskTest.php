@@ -28,6 +28,17 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if constructing a new ComposerInstallTask sets the instance properties.
+     */
+    public function testOnConstruct()
+    {
+        $authentication = array('github-oauth' => array('github.com' => 'd6d6c58ee370641927a3e3f76e354dc9a6cf9208'));
+        $task = new ComposerInstallTask($authentication);
+
+        $this->assertAttributeSame($authentication, 'authentication', $task);
+    }
+
+    /**
      * Tests if ComposerInstallTask::onPrepareWorkspaceInstallComposer calls the connection adapter to install the Composer binary in the workspace.
      */
     public function testOnPrepareWorkspaceInstallComposerInstallsComposer()
@@ -207,12 +218,61 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
         $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/0.1.0');
+        $releaseMock->expects($this->exactly(2))->method('getPath')->willReturn('{workspace}/0.1.0');
         $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
 
         $event = new InstallReleaseEvent($releaseMock);
 
         $task = new ComposerInstallTask();
+        $task->onInstallReleaseExecuteComposerInstall($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if ComposerInstallTask::onInstallReleaseExecuteComposerInstall adds the authentication configuration to an auth.json file and deletes it afterwards.
+     */
+    public function testOnInstallReleaseExecuteComposerInstallWithAuthentication()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->once())
+                ->method('putContents')
+                ->with(
+                    $this->equalTo('{workspace}/0.1.0/auth.json'),
+                    $this->equalTo('{"github-oauth":{"github.com":"d6d6c58ee370641927a3e3f76e354dc9a6cf9208"}}')
+                );
+        $connectionAdapterMock->expects($this->once())
+                ->method('executeCommand')
+                ->with('php composer.phar install --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
+                ->willReturn(new ProcessExecutionResult(0, '', ''));
+        $connectionAdapterMock->expects($this->once())
+                ->method('isFile')
+                ->with($this->equalTo('{workspace}/0.1.0/auth.json'))
+                ->willReturn(true);
+        $connectionAdapterMock->expects($this->once())
+                ->method('delete');
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->exactly(2))->method('getPath')->willReturn('{workspace}/0.1.0');
+        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+
+        $event = new InstallReleaseEvent($releaseMock);
+
+        $task = new ComposerInstallTask(array('github-oauth' => array('github.com' => 'd6d6c58ee370641927a3e3f76e354dc9a6cf9208')));
         $task->onInstallReleaseExecuteComposerInstall($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
 
@@ -244,7 +304,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
         $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/0.1.0');
+        $releaseMock->expects($this->exactly(2))->method('getPath')->willReturn('{workspace}/0.1.0');
         $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
 
         $event = new InstallReleaseEvent($releaseMock);
