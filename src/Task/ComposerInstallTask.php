@@ -19,6 +19,13 @@ use RuntimeException;
 class ComposerInstallTask extends AbstractConnectedTask
 {
     /**
+     * The authentication configuration for Composer.
+     *
+     * @var array
+     */
+    private $authentication;
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
@@ -31,6 +38,16 @@ class ComposerInstallTask extends AbstractConnectedTask
                 array('onInstallReleaseExecuteComposerInstall', 0),
             ),
         );
+    }
+
+    /**
+     * Constructs a new ComposerInstallTask.
+     *
+     * @param array $authentication
+     */
+    public function __construct(array $authentication = array())
+    {
+        $this->authentication = $authentication;
     }
 
     /**
@@ -92,12 +109,21 @@ class ComposerInstallTask extends AbstractConnectedTask
 
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Installing Composer dependencies.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
+        $authenticationFile = $release->getPath().'/auth.json';
+        if (empty($this->authentication) === false) {
+            $connection->putContents($authenticationFile, json_encode($this->authentication));
+        }
+
         $connection->changeWorkingDirectory($host->getPath());
         $result = $connection->executeCommand(sprintf('php composer.phar install --working-dir="%s" --no-dev --no-scripts --optimize-autoloader', $release->getPath()));
         if ($result->isSuccessful()) {
             $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Installed Composer dependencies.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
         } else {
             $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::CRITICAL, 'Failed installing Composer dependencies.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_FAILED, 'output.resetLine' => true)));
+        }
+
+        if ($connection->isFile($authenticationFile)) {
+            $connection->delete($authenticationFile);
         }
     }
 }
