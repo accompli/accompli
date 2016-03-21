@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "19ba1be75fb50b477e815b4e3f6a3898",
-    "content-hash": "e0b5d8c113c85f55632cb763ed8aaefd",
+    "hash": "5b44ef3dddb38f3efc04adb069c94445",
+    "content-hash": "51baddf399fb092634d3c48cf236aa6e",
     "packages": [
         {
             "name": "accompli/chrono",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/accompli/chrono.git",
-                "reference": "10ae2caf542e2859b6ce056f798c7f09b7aec34f"
+                "reference": "7bfd10b40595aae846e391f675a76f1447c29507"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/accompli/chrono/zipball/10ae2caf542e2859b6ce056f798c7f09b7aec34f",
-                "reference": "10ae2caf542e2859b6ce056f798c7f09b7aec34f",
+                "url": "https://api.github.com/repos/accompli/chrono/zipball/7bfd10b40595aae846e391f675a76f1447c29507",
+                "reference": "7bfd10b40595aae846e391f675a76f1447c29507",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "symfony/process": "^2.7"
+                "php": "^5.4 || ^7.0",
+                "symfony/process": "^2.7 || ^3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.4",
-                "satooshi/php-coveralls": "dev-master"
+                "satooshi/php-coveralls": "^1.0"
             },
             "type": "library",
             "autoload": {
@@ -54,7 +54,7 @@
                 "svn",
                 "vcs"
             ],
-            "time": "2015-11-25 13:10:28"
+            "time": "2016-03-21 10:37:38"
         },
         {
             "name": "composer/semver",
@@ -787,25 +787,25 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.3",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe"
+                "reference": "dfecef47506179db2501430e732adbf3793099c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe",
-                "reference": "7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe",
+                "url": "https://api.github.com/repos/symfony/process/zipball/dfecef47506179db2501430e732adbf3793099c8",
+                "reference": "dfecef47506179db2501430e732adbf3793099c8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.5.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -832,7 +832,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-02 13:33:15"
+            "time": "2016-02-02 13:44:19"
         },
         {
             "name": "symfony/yaml",
