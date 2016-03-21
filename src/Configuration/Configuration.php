@@ -156,7 +156,11 @@ class Configuration implements ConfigurationInterface
     {
         $configuration = json_decode($json, true);
         if (isset($configuration['$extend'])) {
-            $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $configuration['$extend']);
+            $extendConfigurationFile = $configuration['$extend'];
+            $extendConfigurationFileScheme = parse_url($extendConfigurationFile, PHP_URL_SCHEME);
+            if (substr($extendConfigurationFile, 0, 1) === '/' || isset($extendConfigurationFileScheme) === false) {
+                $extendConfigurationFile = sprintf('%s/%s', dirname($this->configurationFile), $configuration['$extend']);
+            }
             unset($configuration['$extend']);
 
             $parentConfiguration = new static($extendConfigurationFile, $this->configurationSchema);

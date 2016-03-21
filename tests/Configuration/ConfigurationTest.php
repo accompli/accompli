@@ -2,18 +2,29 @@
 
 namespace Accompli\Test;
 
+use Accompli\Accompli;
 use Accompli\Configuration\Configuration;
 use Accompli\Deployment\Host;
+use Nijens\ProtocolStream\Stream\Stream;
+use Nijens\ProtocolStream\StreamManager;
 use PHPUnit_Framework_TestCase;
 use UnexpectedValueException;
 
 /**
  * ConfigurationTest.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class ConfigurationTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Unregisters the accompli stream wrapper.
+     */
+    public function tearDown()
+    {
+        StreamManager::create()->unregisterStream('accompli');
+    }
+
     /**
      * testLoadWithValidJSON.
      */
@@ -65,6 +76,21 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
         $configuration->load(__DIR__.'/../Resources/accompli-extended.json');
 
         $this->assertArrayHasKey('deployment', $configuration->toArray());
+    }
+
+    /**
+     * Tests if Configuration::load imports the configuration extend through the accompli stream wrapper.
+     */
+    public function testLoadWithExtendedConfigurationFromRecipe()
+    {
+        $stream = new Stream('accompli', array(
+                'recipe' => realpath(__DIR__.'/../../src/Resources/recipe'),
+            ), false);
+
+        StreamManager::create()->registerStream($stream);
+
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-extended-recipe.json');
     }
 
     /**

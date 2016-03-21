@@ -1,0 +1,25 @@
+{
+    "$extend": "accompli://recipe/defaults.json",
+    "hosts": [
+        {
+            "stage": "test",
+            "connectionType": "local",
+            "hostname": "",
+            "path": ""
+        }
+    ],
+    "events": {
+        "subscribers": [
+            "SetupTask",
+            {
+                "class": "ComposerTask",
+                "options": [
+                    "ignore-platform-reqs"
+                ]
+            }
+        ],
+        "listeners": {
+            "accompli.prepare_server": ["SomeTask::someAction"]
+        }
+    }
+}
