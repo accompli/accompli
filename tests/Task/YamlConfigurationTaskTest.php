@@ -1,0 +1,231 @@
+<?php
+
+namespace Accompli\Test\Task;
+
+use Accompli\AccompliEvents;
+use Accompli\EventDispatcher\Event\InstallReleaseEvent;
+use Accompli\Task\YamlConfigurationTask;
+use PHPUnit_Framework_TestCase;
+
+/**
+ * YamlConfigurationTaskTest.
+ *
+ * @author Niels Nijens <nijens.niels@gmail.com>
+ */
+class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * Tests if YamlConfigurationTask::getSubscribedEvents returns an array with at least a AccompliEvents::INSTALL_RELEASE key.
+     */
+    public function testGetSubscribedEvents()
+    {
+        $this->assertInternalType('array', YamlConfigurationTask::getSubscribedEvents());
+        $this->assertArrayHasKey(AccompliEvents::INSTALL_RELEASE, YamlConfigurationTask::getSubscribedEvents());
+    }
+
+    /**
+     * Tests if constructing a new YamlConfigurationTask sets the instance properties.
+     */
+    public function testConstruct()
+    {
+        $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), array('baz', 'bar.baz'));
+
+        $this->assertAttributeSame('/parameters.yml', 'configurationFile', $task);
+        $this->assertAttributeSame(array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), 'configuration', $task);
+        $this->assertAttributeSame(array('baz', 'bar.baz'), 'generateValueForParameters', $task);
+    }
+
+    /**
+     * Tests if YamlConfigurationTask::onInstallReleaseCreateOrUpdateConfiguration creates a new configuration file.
+     */
+    public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewConfigurationFile()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->exactly(3))
+                ->method('isFile')
+                ->withConsecutive(
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml.dist'))
+                )
+                ->willReturnOnConsecutiveCalls(false, false, false);
+        $connectionAdapterMock->expects($this->once())
+                ->method('putContents')
+                ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'), $this->stringStartsWith("foo: bar\nbaz: "))
+                ->willReturn(true);
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
+
+        $event = new InstallReleaseEvent($releaseMock);
+
+        $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), array('baz', 'bar.baz'));
+        $task->onInstallReleaseCreateOrUpdateConfiguration($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if YamlConfigurationTask::onInstallReleaseCreateOrUpdateConfiguration updates the existing new configuration file.
+     */
+    public function testOnInstallReleaseCreateOrUpdateConfigurationUpdatesExistingConfigurationFile()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->exactly(3))
+                ->method('isFile')
+                ->withConsecutive(
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml.dist'))
+                )
+                ->willReturnOnConsecutiveCalls(true, true, false);
+        $connectionAdapterMock->expects($this->once())
+                ->method('getContents')
+                ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'))
+                ->willReturn("foo: bam\nbaz: ~\nbar:\n    baz: ~");
+        $connectionAdapterMock->expects($this->once())
+                ->method('putContents')
+                ->with(
+                    $this->equalTo('{workspace}/releases/0.1.0/parameters.yml'),
+                    $this->logicalNot($this->equalTo("foo: bam\nbaz: ~\nbar:\n    baz: ~"))
+                )
+                ->willReturn(true);
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
+
+        $event = new InstallReleaseEvent($releaseMock);
+
+        $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), array('baz', 'bar.baz'));
+        $task->onInstallReleaseCreateOrUpdateConfiguration($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if YamlConfigurationTask::onInstallReleaseCreateOrUpdateConfiguration creates a new configuration file from the distribution configuration file.
+     */
+    public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewConfigurationFileFromDistributionFile()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->exactly(3))
+                ->method('isFile')
+                ->withConsecutive(
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml.dist'))
+                )
+                ->willReturnOnConsecutiveCalls(false, false, true);
+        $connectionAdapterMock->expects($this->once())
+                ->method('getContents')
+                ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml.dist'))
+                ->willReturn("foo: bam\nbaz: ~\nbar:\n    baz: ~");
+        $connectionAdapterMock->expects($this->once())
+                ->method('putContents')
+                ->with(
+                    $this->equalTo('{workspace}/releases/0.1.0/parameters.yml'),
+                    $this->logicalAnd($this->logicalNot($this->equalTo("foo: bam\nbaz: ~\nbar:\n    baz: ~")), $this->stringStartsWith("foo: bar\nbaz: "))
+                )
+                ->willReturn(true);
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
+
+        $event = new InstallReleaseEvent($releaseMock);
+
+        $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), array('baz', 'bar.baz'));
+        $task->onInstallReleaseCreateOrUpdateConfiguration($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if YamlConfigurationTask::onInstallReleaseCreateOrUpdateConfiguration fails creating a new configuration file.
+     */
+    public function testOnInstallReleaseCreateOrUpdateConfigurationFailsCreatingANewConfigurationFile()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->exactly(3))
+                ->method('isFile')
+                ->withConsecutive(
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml.dist'))
+                )
+                ->willReturnOnConsecutiveCalls(false, false, false);
+        $connectionAdapterMock->expects($this->once())
+                ->method('putContents')
+                ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'), $this->stringStartsWith("foo: bar\nbaz: "))
+                ->willReturn(false);
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
+
+        $event = new InstallReleaseEvent($releaseMock);
+
+        $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), array('baz', 'bar.baz'));
+        $task->onInstallReleaseCreateOrUpdateConfiguration($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
+    }
+}
