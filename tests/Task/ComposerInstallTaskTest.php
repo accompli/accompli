@@ -44,10 +44,13 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnPrepareWorkspaceInstallComposerInstallsComposer()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->once())->method('isFile')->willReturn(false);
+        $connectionAdapterMock->expects($this->exactly(2))
+                ->method('isFile')
+                ->with($this->equalTo('{workspace}/composer.phar'))
+                ->willReturnOnConsecutiveCalls(false, true);
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with('php -r "readfile(\'https://getcomposer.org/installer\');" | php')
@@ -58,6 +61,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->getMock();
         $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
         $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->exactly(3))->method('getPath')->willReturn('{workspace}');
 
         $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
                 ->disableOriginalConstructor()
@@ -76,7 +80,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnPrepareWorkspaceInstallComposerFailsInstallingComposer()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())->method('isFile')->willReturn(false);
@@ -108,7 +112,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnPrepareWorkspaceInstallComposerUpdatesComposer()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())->method('isFile')->willReturn(true);
@@ -140,7 +144,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnPrepareWorkspaceInstallComposerFailsUpdatingComposer()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())->method('isFile')->willReturn(true);
@@ -196,7 +200,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnInstallReleaseExecuteComposerInstall()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())
@@ -233,7 +237,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnInstallReleaseExecuteComposerInstallWithAuthentication()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())
@@ -282,7 +286,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnInstallReleaseExecuteComposerInstallFails()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())

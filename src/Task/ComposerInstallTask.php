@@ -76,6 +76,8 @@ class ComposerInstallTask extends AbstractConnectedTask
                 } else {
                     $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed installing the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_FAILED)));
                 }
+
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
             } else {
                 $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updating the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
@@ -86,6 +88,8 @@ class ComposerInstallTask extends AbstractConnectedTask
                 } else {
                     $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed updating the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_FAILED)));
                 }
+
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
             }
 
             return;
@@ -125,5 +129,7 @@ class ComposerInstallTask extends AbstractConnectedTask
         if ($connection->isFile($authenticationFile)) {
             $connection->delete($authenticationFile);
         }
+
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
     }
 }
