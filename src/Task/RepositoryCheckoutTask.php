@@ -80,14 +80,14 @@ class RepositoryCheckoutTask extends AbstractConnectedTask
         $connection = $this->ensureConnection($event->getRelease()->getWorkspace()->getHost());
         $processExecutor = new ConnectionAdapterProcessExecutor($connection);
 
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Creating checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
 
         $repository = new Repository($this->repositoryUrl, $event->getRelease()->getPath(), $processExecutor);
         if ($repository->checkout($event->getRelease()->getVersion())) {
             $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
             $context['output.resetLine'] = true;
 
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Created checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Created checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
         } else {
             throw new RuntimeException(sprintf('Checkout of repository "%s" for version "%s" failed.', $this->repositoryUrl, $event->getRelease()->getVersion()));
         }
