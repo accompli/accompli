@@ -4,6 +4,7 @@ namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\ReleaseEvent;
 use Accompli\Task\ExecuteCommandTask;
 use PHPUnit_Framework_TestCase;
@@ -42,7 +43,41 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if ExecuteCommandTask::onEvent successfully executes the command.
      */
-    public function testOnEvent()
+    public function testOnEventWithPrepareReleaseEvent()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');
+        $connectionAdapterMock->expects($this->once())
+                ->method('executeCommand')
+                ->with($this->equalTo('echo'), $this->equalTo(array('test')))
+                ->willReturn(new ProcessExecutionResult(0, '', ''));
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->once())
+                ->method('getHost')
+                ->willReturn($hostMock);
+
+        $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
+
+        $task = new ExecuteCommandTask(array(AccompliEvents::PREPARE_RELEASE), 'echo', array('test'));
+        $task->onEvent($event, AccompliEvents::PREPARE_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if ExecuteCommandTask::onEvent successfully executes the command.
+     */
+    public function testOnEventWithReleaseEvent()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
         $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');

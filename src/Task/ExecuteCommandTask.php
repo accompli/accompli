@@ -7,6 +7,7 @@ use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Event\ReleaseEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LogLevel;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * ExecuteCommandTask.
@@ -42,6 +43,9 @@ class ExecuteCommandTask extends AbstractConnectedTask
     public static function getSubscribedEvents()
     {
         return array(
+            AccompliEvents::PREPARE_RELEASE => array(
+                array('onEvent', 0),
+            ),
             AccompliEvents::INSTALL_RELEASE => array(
                 array('onEvent', 0),
             ),
@@ -71,18 +75,26 @@ class ExecuteCommandTask extends AbstractConnectedTask
     /**
      * Executes the configured command.
      */
-    public function onEvent(ReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
+    public function onEvent(Event $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         if (in_array($eventName, $this->events)) {
-            $release = $event->getRelease();
+            if ($event instanceof ReleaseEvent) {
+                $release = $event->getRelease();
 
-            $connection = $this->ensureConnection($release->getWorkspace()->getHost());
+                $host = $release->getWorkspace()->getHost();
+                $path = $release->getPath();
+            } else {
+                $host = $event->getWorkspace()->getHost();
+                $path = $host->getPath();
+            }
+
+            $connection = $this->ensureConnection($host);
 
             $currentWorkingDirectory = $connection->getWorkingDirectory();
 
             $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Executing command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
-            $connection->changeWorkingDirectory($release->getPath());
+            $connection->changeWorkingDirectory($path);
             $result = $connection->executeCommand($this->command, $this->arguments);
             if ($result->isSuccessful()) {
                 $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Executed command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
