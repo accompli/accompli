@@ -234,7 +234,7 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
         $eventMock->expects($this->once())->method('getRelease')->willReturn($releaseMock);
 
         $task = new DeployReleaseTask();
-        $task->onDeployReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
+        $task->onDeployOrRollbackReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
     }
 
     /**
@@ -289,7 +289,7 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
         $eventMock->expects($this->once())->method('getRelease')->willReturn($releaseMock);
 
         $task = new DeployReleaseTask();
-        $task->onDeployReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
+        $task->onDeployOrRollbackReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
     }
 
     /**
@@ -339,7 +339,7 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
         $eventMock->expects($this->once())->method('getRelease')->willReturn($releaseMock);
 
         $task = new DeployReleaseTask();
-        $task->onDeployReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
+        $task->onDeployOrRollbackReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
     }
 
     /**
@@ -390,6 +390,6 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
         $eventMock->expects($this->once())->method('getRelease')->willReturn($releaseMock);
 
         $task = new DeployReleaseTask();
-        $task->onDeployReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
+        $task->onDeployOrRollbackReleaseLinkRelease($eventMock, AccompliEvents::DEPLOY_RELEASE, $eventDispatcherMock);
     }
 }
