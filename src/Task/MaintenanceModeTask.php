@@ -107,7 +107,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
                 if (is_file($localFile)) {
                     $context = array('file' => $localFile, 'event.task.action' => TaskInterface::ACTION_COMPLETED);
 
-                    $uploaded = $connection->putFile($localFile, $host->getPath().'maintenance/'.$file);
+                    $uploaded = $connection->putFile($localFile, $directory.$file);
                     if ($uploaded === true) {
                         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Uploaded file "{file}".', $eventName, $this, $context));
                     }
