@@ -175,6 +175,8 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     public function changeWorkingDirectory($remoteDirectory)
     {
         if ($this->isConnected()) {
+            $this->executeCommand('cd', array($remoteDirectory));
+
             return $this->connection->chdir($remoteDirectory);
         }
 
@@ -188,14 +190,23 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     {
         if ($this->isConnected()) {
             $this->connection->enableQuietMode();
+            $this->connection->setTimeout(0);
 
             if (empty($arguments) === false) {
                 $command = ProcessUtility::escapeArguments($arguments, $command);
             }
 
-            $output = $this->connection->exec($command);
-            $exitCode = $this->connection->getExitStatus();
-            $errorOutput = $this->connection->getStdError();
+            if (isset($this->connection->server_channels[SFTP::CHANNEL_SHELL]) === false) {
+                $this->connection->read($this->getShellPromptRegex(), SFTP::READ_REGEX);
+            }
+
+            $this->connection->write($command."\n");
+            $output = $this->getFilteredOutput($this->connection->read($this->getShellPromptRegex(), SFTP::READ_REGEX), $command);
+
+            $this->connection->write("echo $?\n");
+
+            $exitCode = intval($this->getFilteredOutput($this->connection->read($this->getShellPromptRegex(), SFTP::READ_REGEX), 'echo $?'));
+            $errorOutput = strval($this->connection->getStdError());
 
             $this->connection->disableQuietMode();
 
@@ -410,5 +421,59 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         $userDirectory .= '/'.$this->authenticationUsername;
 
         return $userDirectory;
+    }
+
+    /**
+     * Returns the filtered output of the command.
+     * Removes the command echo and shell prompt from the output.
+     *
+     * @param string $output
+     * @param string $command
+     *
+     * @return string
+     */
+    private function getFilteredOutput($output, $command)
+    {
+        $output = str_replace(array("\r\n", "\r"), array("\n", ''), $output);
+
+        $matches = array();
+        if (preg_match($this->getOutputFilterRegex($command), $output, $matches) === 1) {
+            $output = ltrim($matches[1]);
+        }
+
+        return $output;
+    }
+
+    /**
+     * Returns the output filter regex to filter the output.
+     *
+     * @param string $command
+     *
+     * @return string
+     */
+    private function getOutputFilterRegex($command)
+    {
+        $commandCharacters = str_split(preg_quote($command, '/'));
+        $commandCharacterRegexWhitespaceFunction = function ($value) {
+            if ($value !== '\\') {
+                $value .= '\s?';
+            }
+
+            return $value;
+        };
+
+        $commandCharacters = array_map($commandCharacterRegexWhitespaceFunction, $commandCharacters);
+
+        return sprintf('/%s(.*)%s/s', implode('', $commandCharacters), substr($this->getShellPromptRegex(), 1, -1));
+    }
+
+    /**
+     * Returns the regex matching the shell prompt.
+     *
+     * @return string
+     */
+    private function getShellPromptRegex()
+    {
+        return sprintf('/%s@.*[$|#]/', $this->authenticationUsername);
     }
 }
