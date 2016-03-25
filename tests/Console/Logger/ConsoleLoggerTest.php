@@ -129,10 +129,10 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
         $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
         $outputMock->expects($this->once())->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
         $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
-        $outputMock->expects($this->once())->method('writeln')->with($this->equalTo('  <info>Message to Bob</info>'));
+        $outputMock->expects($this->once())->method('writeln')->with($this->equalTo('  <notice>Message to Bob</notice>'));
 
         $logger = new ConsoleLogger($outputMock);
-        $logger->log(LogLevel::INFO, 'Message to {user}', array('user' => 'Bob'));
+        $logger->log(LogLevel::NOTICE, 'Message to {user}', array('user' => 'Bob'));
     }
 
     /**
@@ -147,10 +147,10 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
         $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
         $outputMock->expects($this->once())
                 ->method('writeln')
-                ->with($this->equalTo('[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>]  <info>message</info>'));
+                ->with($this->equalTo('[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>]  <notice>message</notice>'));
 
         $logger = new ConsoleLogger($outputMock);
-        $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
+        $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
     }
 
     /**
@@ -166,13 +166,13 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
         $outputMock->expects($this->exactly(2))
                 ->method('writeln')
                 ->withConsecutive(
-                    array($this->equalTo('[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>]  <info>message</info>')),
-                    array($this->equalTo('                                                                 <info>message</info>'))
+                    array($this->equalTo('[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>]  <notice>message</notice>')),
+                    array($this->equalTo('                                                                 <notice>message</notice>'))
                 );
 
         $logger = new ConsoleLogger($outputMock);
-        $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
-        $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
+        $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
+        $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
     }
 
     /**
@@ -195,7 +195,7 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo($expectedLogMessage));
 
         $logger = new ConsoleLogger($outputMock);
-        $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask', 'event.task.action' => $actionStatus));
+        $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask', 'event.task.action' => $actionStatus));
     }
 
     /**
@@ -215,8 +215,8 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
         $outputMock->expects($this->exactly(2))
                 ->method('writeln')
                 ->withConsecutive(
-                    array($this->equalTo("[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] \e[1D <info>message</info>")),
-                    array($this->equalTo(" \e[1D <info>message</info>"))
+                    array($this->equalTo("[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] \e[1D <notice>message</notice>")),
+                    array($this->equalTo(" \e[1D <notice>message</notice>"))
                 );
 
         $logger = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLogger')
@@ -225,8 +225,8 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
                 ->getMock();
         $logger->expects($this->exactly(2))->method('getTerminalWidth')->willReturn(150);
 
-        $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
-        $logger->log(LogLevel::INFO, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask', 'output.resetLine' => true));
+        $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
+        $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask', 'output.resetLine' => true));
     }
 
     /**
@@ -251,8 +251,25 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
             array(LogLevel::ERROR, OutputInterface::VERBOSITY_NORMAL, true),
             array(LogLevel::WARNING, OutputInterface::VERBOSITY_NORMAL, true),
             array(LogLevel::NOTICE, OutputInterface::VERBOSITY_NORMAL, true),
-            array(LogLevel::INFO, OutputInterface::VERBOSITY_NORMAL, true),
+            array(LogLevel::INFO, OutputInterface::VERBOSITY_NORMAL, false),
             array(LogLevel::DEBUG, OutputInterface::VERBOSITY_NORMAL, false),
+            array(LogLevel::EMERGENCY, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::ALERT, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::CRITICAL, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::ERROR, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::WARNING, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::NOTICE, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::INFO, OutputInterface::VERBOSITY_VERBOSE, true),
+            array(LogLevel::DEBUG, OutputInterface::VERBOSITY_VERBOSE, false),
+            array(LogLevel::EMERGENCY, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::ALERT, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::CRITICAL, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::ERROR, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::WARNING, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::NOTICE, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::INFO, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::DEBUG, OutputInterface::VERBOSITY_VERY_VERBOSE, true),
+            array(LogLevel::EMERGENCY, OutputInterface::VERBOSITY_DEBUG, true),
             array(LogLevel::ALERT, OutputInterface::VERBOSITY_DEBUG, true),
             array(LogLevel::CRITICAL, OutputInterface::VERBOSITY_DEBUG, true),
             array(LogLevel::ERROR, OutputInterface::VERBOSITY_DEBUG, true),
@@ -286,9 +303,9 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
     public function provideTestLogTaskActionStatus()
     {
         return array(
-            array(TaskInterface::ACTION_IN_PROGRESS, '[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] [<event-task-action-in_progress>...</event-task-action-in_progress>] <info>message</info>'),
-            array(TaskInterface::ACTION_COMPLETED, '[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] [<event-task-action-completed> ✓ </event-task-action-completed>] <info>message</info>'),
-            array(TaskInterface::ACTION_FAILED, '[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] [<event-task-action-failed>!!!</event-task-action-failed>] <info>message</info>'),
+            array(TaskInterface::ACTION_IN_PROGRESS, '[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] [<event-task-action-in_progress>...</event-task-action-in_progress>] <notice>message</notice>'),
+            array(TaskInterface::ACTION_COMPLETED, '[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] [<event-task-action-completed> ✓ </event-task-action-completed>] <notice>message</notice>'),
+            array(TaskInterface::ACTION_FAILED, '[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>] [<event-task-action-failed>!!!</event-task-action-failed>] <notice>message</notice>'),
         );
     }
 }

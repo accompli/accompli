@@ -80,15 +80,17 @@ class ExecuteCommandTask extends AbstractConnectedTask
 
             $currentWorkingDirectory = $connection->getWorkingDirectory();
 
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Executing command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Executing command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
             $connection->changeWorkingDirectory($release->getPath());
             $result = $connection->executeCommand($this->command, $this->arguments);
             if ($result->isSuccessful()) {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Executed command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Executed command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
             } else {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed executing command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_FAILED)));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed executing command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_FAILED, 'output.resetLine' => true)));
             }
+
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
 
             $connection->changeWorkingDirectory($currentWorkingDirectory);
         }

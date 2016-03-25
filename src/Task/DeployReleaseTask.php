@@ -68,7 +68,7 @@ class DeployReleaseTask extends AbstractConnectedTask
                 $workspace->addRelease($release);
 
                 $context = array('currentReleaseVersion' => $currentRelease->getVersion());
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Detected release version "{currentReleaseVersion}" currently deployed.', $eventName, $this, $context));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Detected release version "{currentReleaseVersion}" currently deployed.', $eventName, $this, $context));
 
                 $event->setCurrentRelease($currentRelease);
             }
@@ -91,7 +91,7 @@ class DeployReleaseTask extends AbstractConnectedTask
         $releasePath = $host->getPath().'/'.$host->getStage();
 
         $context = array('linkTarget' => $releasePath, 'releaseVersion' => $release->getVersion(), 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Linking "{linkTarget}" to release "{releaseVersion}".', $eventName, $this, $context));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Linking "{linkTarget}" to release "{releaseVersion}".', $eventName, $this, $context));
 
         if ($connection->isLink($releasePath) === false || $this->getRealPath($connection, $releasePath) !== $release->getPath()) {
             if ($connection->isLink($releasePath)) {
@@ -102,12 +102,12 @@ class DeployReleaseTask extends AbstractConnectedTask
                 $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
                 $context['output.resetLine'] = true;
 
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Linked "{linkTarget}" to release "{releaseVersion}".', $eventName, $this, $context));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Linked "{linkTarget}" to release "{releaseVersion}".', $eventName, $this, $context));
             } else {
                 $context['event.task.action'] = TaskInterface::ACTION_FAILED;
                 $context['output.resetLine'] = true;
 
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Linking "{linkTarget}" to release "{releaseVersion}" failed.', $eventName, $this, $context));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Linking "{linkTarget}" to release "{releaseVersion}" failed.', $eventName, $this, $context));
 
                 throw new RuntimeException(sprintf('Linking "%s" to release "%s" failed.', $context['linkTarget'], $context['releaseVersion']));
             }
@@ -115,7 +115,7 @@ class DeployReleaseTask extends AbstractConnectedTask
             $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
             $context['output.resetLine'] = true;
 
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Link "{linkTarget}" to release "{releaseVersion}" already exists.', $eventName, $this, $context));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Link "{linkTarget}" to release "{releaseVersion}" already exists.', $eventName, $this, $context));
         }
     }
 

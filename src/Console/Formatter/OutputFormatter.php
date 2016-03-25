@@ -29,9 +29,9 @@ class OutputFormatter extends BaseOutputFormatter
         $this->setStyle(LogLevel::ALERT, new OutputFormatterStyle('white', 'red'));
         $this->setStyle(LogLevel::ERROR, new OutputFormatterStyle('white', 'red'));
         $this->setStyle(LogLevel::WARNING, new OutputFormatterStyle('white', 'red'));
-        $this->setStyle(LogLevel::NOTICE, new OutputFormatterStyle('white', 'blue'));
-        $this->setStyle(LogLevel::INFO, new OutputFormatterStyle());
-        $this->setStyle(LogLevel::DEBUG, new OutputFormatterStyle('black', 'yellow'));
+        $this->setStyle(LogLevel::NOTICE, new OutputFormatterStyle());
+        $this->setStyle(LogLevel::INFO, new OutputFormatterStyle('black', 'yellow'));
+        $this->setStyle(LogLevel::DEBUG, new OutputFormatterStyle());
         $this->setStyle('event-name', new OutputFormatterStyle('yellow'));
         $this->setStyle('event-task-name', new OutputFormatterStyle('yellow'));
         $this->setStyle('event-task-action-in_progress', new OutputFormatterStyle());

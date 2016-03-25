@@ -45,7 +45,7 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
     public function testOnEvent()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->atLeast(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');
@@ -86,7 +86,7 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
     public function testOnEventFailure()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->atLeast(2))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');

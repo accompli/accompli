@@ -80,13 +80,13 @@ class MaintenanceModeTask extends AbstractConnectedTask
         $directory = $host->getPath().'/maintenance/';
         $context = array('directory' => $directory, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
 
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Creating directory "{directory}".', $eventName, $this, $context));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Creating directory "{directory}".', $eventName, $this, $context));
         if ($connection->isDirectory($directory) === false) {
             if ($connection->createDirectory($directory)) {
                 $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
                 $context['output.resetLine'] = true;
 
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Created directory "{directory}".', $eventName, $this, $context));
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Created directory "{directory}".', $eventName, $this, $context));
             } else {
                 $context['event.task.action'] = TaskInterface::ACTION_FAILED;
                 $context['output.resetLine'] = true;
@@ -97,7 +97,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
             $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
             $context['output.resetLine'] = true;
 
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Directory "{directory}" exists.', $eventName, $this, $context));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Directory "{directory}" exists.', $eventName, $this, $context));
         }
 
         if ($connection->isDirectory($directory)) {
@@ -109,7 +109,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
 
                     $uploaded = $connection->putFile($localFile, $host->getPath().'maintenance/'.$file);
                     if ($uploaded === true) {
-                        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Uploaded file "{file}".', $eventName, $this, $context));
+                        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Uploaded file "{file}".', $eventName, $this, $context));
                     }
                 }
             }
@@ -128,7 +128,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
     public function onPrepareDeployReleaseLinkMaintenancePageToStage(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         if (VersionCategoryComparator::matchesStrategy($this->strategy, $event->getRelease(), $event->getCurrentRelease()) === false) {
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, 'Skipped linking maintenance page according to strategy.', $eventName, $this));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Skipped linking maintenance page according to strategy.', $eventName, $this));
 
             return;
         }
