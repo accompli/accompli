@@ -172,30 +172,6 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if ConnectionAdapterInterface::changeWorkingDirectory returns true on successful change to a different working directory.
-     *
-     * @depends testConnectReturnsTrue
-     */
-    public function testChangeWorkingDirectoryReturnsTrue()
-    {
-        $this->connectionAdapter->connect();
-
-        $this->assertTrue($this->connectionAdapter->changeWorkingDirectory($this->workspaceUtility->getWorkspacePath()));
-    }
-
-    /**
-     * Tests if ConnectionAdapterInterface::changeWorkingDirectory returns false when trying to change to a non-existing working directory.
-     *
-     * @depends testChangeWorkingDirectoryReturnsTrue
-     */
-    public function testChangeWorkingDirectoryWithNonExistingDirectoryReturnsFalse()
-    {
-        $this->connectionAdapter->connect();
-
-        $this->assertFalse($this->connectionAdapter->changeWorkingDirectory($this->workspaceUtility->getWorkspacePath().'/non-existing-directory'));
-    }
-
-    /**
      * Tests if ConnectionAdapterInterface::executeCommand returns the expected output.
      *
      * @depends testDisconnectReturnsTrue
@@ -225,6 +201,32 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $result->getExitCode());
         $this->assertSame('test'.PHP_EOL, $result->getOutput());
         $this->assertSame('', $result->getErrorOutput());
+    }
+
+    /**
+     * Tests if ConnectionAdapterInterface::changeWorkingDirectory returns true on successful change to a different working directory.
+     *
+     * @depends testConnectReturnsTrue
+     * @depends testExecuteCommand
+     */
+    public function testChangeWorkingDirectoryReturnsTrue()
+    {
+        $this->connectionAdapter->connect();
+
+        $this->assertTrue($this->connectionAdapter->changeWorkingDirectory($this->workspaceUtility->getWorkspacePath()));
+        $this->assertSame(realpath($this->workspaceUtility->getWorkspacePath()), trim($this->connectionAdapter->executeCommand('pwd')->getOutput()));
+    }
+
+    /**
+     * Tests if ConnectionAdapterInterface::changeWorkingDirectory returns false when trying to change to a non-existing working directory.
+     *
+     * @depends testChangeWorkingDirectoryReturnsTrue
+     */
+    public function testChangeWorkingDirectoryWithNonExistingDirectoryReturnsFalse()
+    {
+        $this->connectionAdapter->connect();
+
+        $this->assertFalse($this->connectionAdapter->changeWorkingDirectory($this->workspaceUtility->getWorkspacePath().'/non-existing-directory'));
     }
 
     /**

@@ -175,6 +175,8 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     public function changeWorkingDirectory($remoteDirectory)
     {
         if ($this->isConnected()) {
+            $this->executeCommand('cd', array($remoteDirectory));
+
             return $this->connection->chdir($remoteDirectory);
         }
 
