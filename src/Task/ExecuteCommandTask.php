@@ -90,6 +90,8 @@ class ExecuteCommandTask extends AbstractConnectedTask
                 $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed executing command "{command}".', $eventName, $this, array('command' => $this->command, 'event.task.action' => TaskInterface::ACTION_FAILED, 'output.resetLine' => true)));
             }
 
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
+
             $connection->changeWorkingDirectory($currentWorkingDirectory);
         }
     }
