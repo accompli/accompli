@@ -82,7 +82,7 @@ class DeployReleaseTask extends AbstractConnectedTask
      * @param string                   $eventName
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function onDeployReleaseLinkRelease(DeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
+    public function onDeployOrRollbackReleaseLinkRelease(DeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         $release = $event->getRelease();
         $host = $release->getWorkspace()->getHost();
