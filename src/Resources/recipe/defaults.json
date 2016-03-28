@@ -2,7 +2,9 @@
     "hosts": [],
     "events": {
         "subscribers": [
-            "Accompli\\Task\\WorkspaceTask"
+            {
+                "class": "Accompli\\Task\\CreateWorkspaceTask"
+            }
         ]
     },
     "deployment": {
