@@ -97,7 +97,10 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
                 ->method('isLink')
                 ->with($this->equalTo('/path/to/workspace/test'))
                 ->willReturn(true);
-        $connectionAdapterMock->expects($this->once())->method('getWorkingDirectory')->willReturn('/path/to/workspace/releases/0.1.0');
+        $connectionAdapterMock->expects($this->once())
+                ->method('readLink')
+                ->with($this->equalTo('/path/to/workspace/test'))
+                ->willReturn('/path/to/workspace/releases/0.1.0');
 
         $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
                 ->disableOriginalConstructor()
@@ -258,7 +261,8 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo('/path/to/workspace/releases/0.1.0'), $this->equalTo('/path/to/workspace/test'))
                 ->willReturn(true);
         $connectionAdapterMock->expects($this->once())
-                ->method('getWorkingDirectory')
+                ->method('readLink')
+                ->with($this->equalTo('/path/to/workspace/test'))
                 ->willReturn('/path/to/workspace/releases/master');
         $connectionAdapterMock->expects($this->once())
                 ->method('delete')
@@ -310,7 +314,8 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
                 ->willReturn(true);
         $connectionAdapterMock->expects($this->never())->method('link');
         $connectionAdapterMock->expects($this->once())
-                ->method('getWorkingDirectory')
+                ->method('readLink')
+                ->with($this->equalTo('/path/to/workspace/test'))
                 ->willReturn('/path/to/workspace/releases/0.1.0');
         $connectionAdapterMock->expects($this->never())->method('delete');
 

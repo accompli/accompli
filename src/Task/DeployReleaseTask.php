@@ -3,7 +3,6 @@
 namespace Accompli\Task;
 
 use Accompli\AccompliEvents;
-use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\DeployReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
@@ -62,7 +61,7 @@ class DeployReleaseTask extends AbstractConnectedTask
         $currentRelease = null;
         $releasePath = $host->getPath().'/'.$host->getStage();
         if ($connection->isLink($releasePath)) {
-            $releaseRealPath = $this->getRealPath($connection, $releasePath);
+            $releaseRealPath = $connection->readLink($releasePath);
             if (strpos($releaseRealPath, $workspace->getReleasesDirectory()) === 0) {
                 $currentRelease = new Release(substr($releaseRealPath, strlen($workspace->getReleasesDirectory()) + 1));
                 $workspace->addRelease($release);
@@ -93,7 +92,7 @@ class DeployReleaseTask extends AbstractConnectedTask
         $context = array('linkTarget' => $releasePath, 'releaseVersion' => $release->getVersion(), 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Linking "{linkTarget}" to release "{releaseVersion}".', $eventName, $this, $context));
 
-        if ($connection->isLink($releasePath) === false || $this->getRealPath($connection, $releasePath) !== $release->getPath()) {
+        if ($connection->isLink($releasePath) === false || $connection->readLink($releasePath) !== $release->getPath()) {
             if ($connection->isLink($releasePath)) {
                 $connection->delete($releasePath, false);
             }
@@ -117,24 +116,5 @@ class DeployReleaseTask extends AbstractConnectedTask
 
             $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Link "{linkTarget}" to release "{releaseVersion}" already exists.', $eventName, $this, $context));
         }
-    }
-
-    /**
-     * Returns the canonicalized absolute path of a link.
-     *
-     * Note: This should be replaced by the release manifest solution.
-     *
-     * @see https://github.com/accompli/accompli/issues/70
-     *
-     * @param ConnectionAdapterInterface $connection
-     * @param string                     $path
-     *
-     * @return string
-     */
-    private function getRealPath(ConnectionAdapterInterface $connection, $path)
-    {
-        $connection->changeWorkingDirectory($path);
-
-        return $connection->getWorkingDirectory();
     }
 }
