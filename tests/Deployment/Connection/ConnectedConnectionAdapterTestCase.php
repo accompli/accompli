@@ -57,6 +57,17 @@ abstract class ConnectedConnectionAdapterTestCase extends ConnectionAdapterTestC
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::readLink returns false when not connected.
+     */
+    public function testReadLinkReturnsFalseWhenNotConnected()
+    {
+        $this->workspaceUtility->createFile('/test.txt');
+        symlink($this->workspaceUtility->getWorkspacePath().'/test.txt', $this->workspaceUtility->getWorkspacePath().'/testLink');
+
+        $this->assertFalse($this->connectionAdapter->readLink($this->workspaceUtility->getWorkspacePath().'/testLink'));
+    }
+
+    /**
      * Tests if ConnectionAdapterInterface::changeWorkingDirectory returns false without connection.
      */
     public function testChangeWorkingDirectoryReturnsFalseWhenNotConnected()
