@@ -3,6 +3,7 @@
 namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Host;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\Task\YamlConfigurationTask;
 use PHPUnit_Framework_TestCase;
@@ -66,17 +67,64 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
         $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+        $workspaceMock->expects($this->exactly(2))->method('getHost')->willReturn($hostMock);
 
         $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->exactly(2))->method('getWorkspace')->willReturn($workspaceMock);
         $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
 
         $event = new InstallReleaseEvent($releaseMock);
 
         $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar', 'baz' => '', 'bar' => array('baz' => '')), array('baz', 'bar.baz'));
+        $task->onInstallReleaseCreateOrUpdateConfiguration($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
+    }
+
+    /**
+     * Tests if YamlConfigurationTask::onInstallReleaseCreateOrUpdateConfiguration creates a new configuration file with environment variables.
+     */
+    public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewConfigurationFileWithEnvironmentVariables()
+    {
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+
+        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock->expects($this->exactly(3))
+                ->method('isFile')
+                ->withConsecutive(
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml')),
+                    array($this->equalTo('{workspace}/releases/0.1.0/parameters.yml.dist'))
+                )
+                ->willReturnOnConsecutiveCalls(false, false, false);
+        $connectionAdapterMock->expects($this->once())
+                ->method('putContents')
+                ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'), $this->equalTo("foo: bar_test\nbaz: 0.1.0\nbar:\n    baz: test_0.1.0\n"))
+                ->willReturn(true);
+
+        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
+        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())->method('getStage')->willReturn(Host::STAGE_TEST);
+
+        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $workspaceMock->expects($this->exactly(2))->method('getHost')->willReturn($hostMock);
+
+        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $releaseMock->expects($this->exactly(2))->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
+        $releaseMock->expects($this->once())->method('getVersion')->willReturn('0.1.0');
+
+        $event = new InstallReleaseEvent($releaseMock);
+
+        $task = new YamlConfigurationTask('/parameters.yml', array('foo' => 'bar_%stage%', 'baz' => '%version%', 'bar' => array('baz' => '%stage%_%version%')), array());
         $task->onInstallReleaseCreateOrUpdateConfiguration($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
 
@@ -118,12 +166,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
         $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+        $workspaceMock->expects($this->exactly(2))->method('getHost')->willReturn($hostMock);
 
         $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->exactly(2))->method('getWorkspace')->willReturn($workspaceMock);
         $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
 
         $event = new InstallReleaseEvent($releaseMock);
@@ -170,12 +218,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
         $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+        $workspaceMock->expects($this->exactly(2))->method('getHost')->willReturn($hostMock);
 
         $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->exactly(2))->method('getWorkspace')->willReturn($workspaceMock);
         $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
 
         $event = new InstallReleaseEvent($releaseMock);
@@ -215,12 +263,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
         $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+        $workspaceMock->expects($this->exactly(2))->method('getHost')->willReturn($hostMock);
 
         $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
+        $releaseMock->expects($this->exactly(2))->method('getWorkspace')->willReturn($workspaceMock);
         $releaseMock->expects($this->once())->method('getPath')->willReturn('{workspace}/releases/0.1.0');
 
         $event = new InstallReleaseEvent($releaseMock);
