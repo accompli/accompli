@@ -60,6 +60,15 @@ interface ConnectionAdapterInterface
     public function isDirectory($remoteDirectory);
 
     /**
+     * Returns the target of a symbolic link.
+     *
+     * @param string $remoteTarget
+     *
+     * @return string
+     */
+    public function readLink($remoteTarget);
+
+    /**
      * Changes the current working directory.
      *
      * @param string $remoteDirectory

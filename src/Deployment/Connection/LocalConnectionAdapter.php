@@ -64,6 +64,14 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function readLink($remoteTarget)
+    {
+        return @readlink($remoteTarget);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function changeWorkingDirectory($remoteDirectory)
     {
         return @chdir($remoteDirectory);

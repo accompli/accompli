@@ -172,6 +172,33 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::readLink returns false when the link does not exist.
+     *
+     * @depends testConnectReturnsTrue
+     */
+    public function testReadLinkReturnsFalseWhenLinkNotExists()
+    {
+        $this->connectionAdapter->connect();
+
+        $this->assertFalse($this->connectionAdapter->readLink($this->workspaceUtility->getWorkspacePath().'testLink'));
+    }
+
+    /**
+     * Tests if ConnectionAdapterInterface::readLink returns the target of the symbolic link when the link exists.
+     *
+     * @depends testConnectReturnsTrue
+     */
+    public function testReadLinkReturnsPathWhenLinkExists()
+    {
+        $this->workspaceUtility->createFile('/test.txt');
+        symlink($this->workspaceUtility->getWorkspacePath().'/test.txt', $this->workspaceUtility->getWorkspacePath().'/testLink');
+
+        $this->connectionAdapter->connect();
+
+        $this->assertSame($this->workspaceUtility->getWorkspacePath().'/test.txt', $this->connectionAdapter->readLink($this->workspaceUtility->getWorkspacePath().'/testLink'));
+    }
+
+    /**
      * Tests if ConnectionAdapterInterface::executeCommand returns the expected output.
      *
      * @depends testDisconnectReturnsTrue
