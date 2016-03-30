@@ -4,6 +4,7 @@ namespace Accompli\Task;
 
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
@@ -37,6 +38,13 @@ class YamlConfigurationTask extends AbstractConnectedTask
      * @var array
      */
     private $generateValueForParameters;
+
+    /**
+     * The array with environment variables to use in the YAML configuration.
+     *
+     * @var array
+     */
+    private $environmentVariables;
 
     /**
      * {@inheritdoc}
@@ -73,6 +81,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
     public function onInstallReleaseCreateOrUpdateConfiguration(InstallReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         $release = $event->getRelease();
+        $this->gatherEnvironmentVariables($release);
 
         $connection = $this->ensureConnection($release->getWorkspace()->getHost());
 
@@ -105,6 +114,19 @@ class YamlConfigurationTask extends AbstractConnectedTask
     }
 
     /**
+     * Gathers environment variables to use in the YAML configuration.
+     *
+     * @param Release $release
+     */
+    private function gatherEnvironmentVariables(Release $release)
+    {
+        $this->environmentVariables = array(
+            '%stage%' => $release->getWorkspace()->getHost()->getStage(),
+            '%version%' => $release->getVersion(),
+        );
+    }
+
+    /**
      * Returns the generated YAML content based on the existing configuration file, distribution configuration file and the configuration configured with this task.
      *
      * @param ConnectionAdapterInterface $connection
@@ -129,6 +151,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
         foreach ($this->generateValueForParameters as $generateValueForParameter) {
             $this->findKeyAndGenerateValue($configuration, explode('.', $generateValueForParameter));
         }
+        $configuration = $this->addEnvironmentVariables($configuration);
 
         return Yaml::dump($configuration);
     }
@@ -153,5 +176,23 @@ class YamlConfigurationTask extends AbstractConnectedTask
                 }
             }
         }
+    }
+
+    /**
+     * Adds the environment variables.
+     *
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function addEnvironmentVariables($value)
+    {
+        if (is_array($value)) {
+            $value = array_map(array($this, __METHOD__), $value);
+        } elseif (is_string($value)) {
+            $value = strtr($value, $this->environmentVariables);
+        }
+
+        return $value;
     }
 }
