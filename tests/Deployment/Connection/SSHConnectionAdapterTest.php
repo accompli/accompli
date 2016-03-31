@@ -1,9 +1,8 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment\Connection;
 
 use Accompli\Deployment\Connection\SSHConnectionAdapter;
-use Accompli\Test\Deployment\Connection\ConnectedConnectionAdapterTestCase;
 use UnexpectedValueException;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
 use Accompli\Deployment\Host;

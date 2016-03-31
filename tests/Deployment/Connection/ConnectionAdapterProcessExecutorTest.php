@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment\Connection;
 
 use Accompli\Chrono\Process\ProcessExecutionResult;
 use Accompli\Deployment\Connection\ConnectionAdapterProcessExecutor;

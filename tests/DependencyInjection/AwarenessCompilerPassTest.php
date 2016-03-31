@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\DependencyInjection;
 
 use Accompli\DependencyInjection\AwarenessCompilerPass;
 use PHPUnit_Framework_TestCase;

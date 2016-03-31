@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\EventDispatcher;
 
 use Accompli\EventDispatcher\EventDispatcher;
 use PHPUnit_Framework_TestCase;

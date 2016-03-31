@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\DependencyInjection;
 
 use Accompli\DependencyInjection\ConfigurationServiceRegistrationCompilerPass;
 use PHPUnit_Framework_TestCase;

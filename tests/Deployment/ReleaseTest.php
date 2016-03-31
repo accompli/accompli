@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment;
 
 use Accompli\Deployment\Release;
 use PHPUnit_Framework_TestCase;

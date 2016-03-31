@@ -1,9 +1,8 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment\Connection;
 
 use Accompli\Deployment\Connection\LocalConnectionAdapter;
-use Accompli\Test\Deployment\Connection\ConnectionAdapterTestCase;
 
 /**
  * LocalConnectionAdapterTest.

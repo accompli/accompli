@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Task;
 
 use PHPUnit_Framework_TestCase;
 

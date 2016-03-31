@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\EventDispatcher\Subscriber;
 
 use Accompli\AccompliEvents;
 use Accompli\EventDispatcher\Subscriber\LogSubscriber;

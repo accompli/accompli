@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Console;
 
 use Accompli\Accompli;
 use Accompli\Console\Application;
