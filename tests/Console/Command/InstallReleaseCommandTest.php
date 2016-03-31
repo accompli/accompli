@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Console\Command;
 
 use Accompli\Console\Command\InstallReleaseCommand;
 use Nijens\ProtocolStream\StreamManager;

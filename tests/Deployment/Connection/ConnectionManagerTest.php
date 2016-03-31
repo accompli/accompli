@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment\Connection;
 
 use Accompli\Deployment\Connection\ConnectionManager;
 use Accompli\Deployment\Host;

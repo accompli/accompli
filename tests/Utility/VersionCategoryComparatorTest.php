@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Utility;
 
 use Accompli\Deployment\Release;
 use Accompli\Utility\VersionCategoryComparator;

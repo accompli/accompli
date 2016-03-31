@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Utility;
 
 use Accompli\Utility\ProcessUtility;
 use PHPUnit_Framework_TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Console\Logger;
 
 use Accompli\Console\Logger\ConsoleLogger;
 use Accompli\Task\TaskInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Deployment;
 
 use Accompli\Deployment\Host;
 use PHPUnit_Framework_TestCase;

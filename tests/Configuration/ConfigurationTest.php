@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Configuration;
 
 use Accompli\Accompli;
 use Accompli\Configuration\Configuration;

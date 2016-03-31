@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\EventDispatcher\Event;
 
 use Accompli\EventDispatcher\Event\ReleaseEvent;
 use PHPUnit_Framework_TestCase;

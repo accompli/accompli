@@ -1,6 +1,6 @@
 <?php
 
-namespace Accompli\Test;
+namespace Accompli\Test\Console\Formatter;
 
 use Accompli\Console\Formatter\OutputFormatter;
 use PHPUnit_Framework_TestCase;
