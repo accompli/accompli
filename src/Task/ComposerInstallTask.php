@@ -35,7 +35,7 @@ class ComposerInstallTask extends AbstractConnectedTask
                 array('onPrepareWorkspaceInstallComposer', 0),
             ),
             AccompliEvents::INSTALL_RELEASE => array(
-                array('onInstallReleaseExecuteComposerInstall', 0),
+                array('onInstallReleaseExecuteComposerInstall', 50),
             ),
         );
     }
