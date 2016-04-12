@@ -1,16 +1,14 @@
 # Getting started
 
-Accompli is a tool to automate deployment of (PHP) projects. It allows you to easily configure (and create) a set of tasks 
+Accompli is a tool to automate deployment of (PHP) projects. It allows you to easily configure (and create) a set of tasks
 and run the task when deploying a release of your project.
 
 We aim to provide support for [Testing-Acceptance-Production][link-wikipedia-dtap], [Continuous Delivery][link-wikipedia-continuous-delivery] and [Continuous Deployment][link-wikipedia-continuous-delivery] concepts.
 
 ## Why the name 'Accompli'?
 
-Accompli is the French word for 'accomplished' or 'finished'. 
-This fits well with deploying your project, as it is most likely to be done.
-The French originates back to when Accompli was mainly meant to be a deployment tool for 
-Symfony Framework projects which is created by SensioLabs, a French company.
+Accompli is the French word for 'accomplished' or 'finished'. This fits well with deploying your project, as it is most likely to be done.
+The French originates back to when Accompli was mainly meant to be a deployment tool for Symfony Framework projects which is created by SensioLabs, a French company.
 
 ## System Requirements
 
@@ -20,8 +18,7 @@ The following extensions are suggested to speed up SSH related tasks:
 * mcrypt
 * openssl
 
-In order to install releases from version control, you'll need to have git or subversion 
-installed depending on how your project is version-controlled.
+In order to install releases from version control, you'll need to have git or subversion installed depending on how your project is version-controlled.
 
 Accompli is multi-platform and we strive to make it run equally well on Windows, Linux and OSX.
 
@@ -35,13 +32,12 @@ $ composer require accompli/accompli:dev-master --dev
 
 ## Using Accompli
 
-In order for Accompli to run your project requires an accompli.json file in the root of the project. 
-This will contain the configured hosts to deploy to and the tasks to run during deployment of a release.
+In order for Accompli to run your project requires an accompli.json file in the root of the project. This will contain the configured hosts to deploy to and the tasks to run during deployment of a release.
 
 An example accompli.json:
 ``` json
 {
-  "$extend": "vendor/accompli/accompli/src/Resources/accompli-defaults.json",
+  "$extend": "accompli://recipe/defaults.json",
   "hosts": [
     {
       "stage": "test",

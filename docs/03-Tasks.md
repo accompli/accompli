@@ -6,15 +6,20 @@ A task consists of one or more installation and/or deployment actions. They exec
 
 The following tasks are included in Accompli:
 
-### Install tasks
+### Tasks for installing a release
 
+* [ComposerInstallTask](tasks/ComposerInstallTask.md)
 * [CreateWorkspaceTask](tasks/CreateWorkspaceTask.md)
+* [ExecuteCommandTask](tasks/ExecuteCommandTask.md)
 * [RepositoryCheckoutTask](tasks/RepositoryCheckoutTask.md)
+* [SSHAgentTask](tasks/SSHAgentTask.md)
+* [YamlConfigurationTask](tasks/YamlConfigurationTask.md)
 
-### Deployment tasks
+### Tasks for deploying a release
 
-* [MaintenanceModeTask](tasks/MaintenanceModeTask.md)
 * [DeployReleaseTask](tasks/DeployReleaseTask.md)
+* [ExecuteCommandTask](tasks/ExecuteCommandTask.md)
+* [MaintenanceModeTask](tasks/MaintenanceModeTask.md)
 
 ## Creating a task
 
@@ -58,7 +63,7 @@ class ExampleTask extends AbstractConnectedTask
     public function onPrepareWorkspaceDoSomething(WorkspaceEvent $event)
     {
         $connection = $this->ensureConnection($event->getHost());
-        
+
         // Do something
     }
 }
