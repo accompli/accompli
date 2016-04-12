@@ -27,7 +27,7 @@ Accompli is multi-platform and we strive to make it run equally well on Windows,
 Run the following command to add the package to the composer.json of your project:
 
 ``` bash
-$ composer require accompli/accompli:dev-master --dev
+$ composer require accompli/accompli --dev
 ```
 
 ## Using Accompli
