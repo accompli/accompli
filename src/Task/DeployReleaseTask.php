@@ -63,8 +63,8 @@ class DeployReleaseTask extends AbstractConnectedTask
         if ($connection->isLink($releasePath)) {
             $releaseRealPath = $connection->readLink($releasePath);
             if (strpos($releaseRealPath, $workspace->getReleasesDirectory()) === 0) {
-                $currentRelease = new Release(substr($releaseRealPath, strlen($workspace->getReleasesDirectory()) + 1));
-                $workspace->addRelease($release);
+                $currentRelease = new Release(substr($releaseRealPath, strlen($workspace->getReleasesDirectory())));
+                $workspace->addRelease($currentRelease);
 
                 $context = array('currentReleaseVersion' => $currentRelease->getVersion());
                 $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Detected release version "{currentReleaseVersion}" currently deployed.', $eventName, $this, $context));
