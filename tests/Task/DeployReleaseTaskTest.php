@@ -91,7 +91,7 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
         $connectionAdapterMock->expects($this->once())->method('isConnected')->willReturn(true);
         $connectionAdapterMock->expects($this->once())
                 ->method('isDirectory')
-                ->with($this->equalTo('/path/to/workspace/releases/0.1.0'))
+                ->with($this->equalTo('/path/to/workspace/releases//0.1.0'))
                 ->willReturn(true);
         $connectionAdapterMock->expects($this->once())
                 ->method('isLink')
@@ -114,7 +114,7 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
-        $workspaceMock->expects($this->exactly(3))->method('getReleasesDirectory')->willReturn('/path/to/workspace/releases');
+        $workspaceMock->expects($this->exactly(3))->method('getReleasesDirectory')->willReturn('/path/to/workspace/releases/');
         $workspaceMock->expects($this->exactly(2))
                 ->method('addRelease')
                 ->with($this->callback(function ($release) use ($workspaceMock) {
@@ -122,7 +122,7 @@ class DeployReleaseTaskTest extends PHPUnit_Framework_TestCase
                         $release->setWorkspace($workspaceMock);
                     }
 
-                    return ($release instanceof Release);
+                    return ($release instanceof Release && $release->getVersion() === '0.1.0');
                 }));
 
         $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
