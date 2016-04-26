@@ -188,7 +188,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
 
                     $configuration[$key] = $value;
                 } elseif (is_scalar($value)) {
-                    $configuration[$key] = sha1(uniqid());
+                    $configuration[$key] = $this->generateValue();
                 }
             }
         }
@@ -210,5 +210,15 @@ class YamlConfigurationTask extends AbstractConnectedTask
         }
 
         return $value;
+    }
+
+    /**
+     * Generate a sha key
+     *
+     * @return string
+     */
+    private function generateValue()
+    {
+        return sha1(uniqid());
     }
 }
