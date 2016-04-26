@@ -7,6 +7,7 @@ use Accompli\Deployment\Host;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\Task\YamlConfigurationTask;
 use PHPUnit_Framework_TestCase;
+use ReflectionClass;
 
 /**
  * YamlConfigurationTaskTest.
@@ -442,5 +443,21 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
             array('acceptance', "foo: baz\nbaz: ''\nbar:\n    baz: ''\n"),
             array('production', "foo: bam\nbaz: ''\nbar:\n    baz: ''\n"),
         );
+    }
+
+    /**
+     * Tests if generated values are not regenerated within the same process.
+     */
+    public function testGeneratedValuesAreNotRegenerated()
+    {
+        $task = new YamlConfigurationTask('foobar');
+        $reflectionClass = new ReflectionClass('Accompli\Task\YamlConfigurationTask');
+        $method = $reflectionClass->getMethod('generateValue');
+        $method->setAccessible(true);
+
+        $generated = $method->invoke($task, 'foobar');
+
+        $this->assertNotEmpty($generated);
+        $this->assertEquals($generated, $method->invoke($task, 'foobar'));
     }
 }
