@@ -455,9 +455,10 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
         $method = $reflectionClass->getMethod('generateValue');
         $method->setAccessible(true);
 
-        $generated = $method->invoke($task, 'foobar');
+        $generated = $method->invokeArgs($task, array('foobar'));
 
         $this->assertNotEmpty($generated);
-        $this->assertEquals($generated, $method->invoke($task, 'foobar'));
+        $this->assertEquals($generated, $method->invokeArgs($task, array('foobar')));
+        $this->assertNotEquals($generated, $method->invokeArgs($task, array('baz')));
     }
 }

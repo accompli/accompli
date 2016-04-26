@@ -54,6 +54,13 @@ class YamlConfigurationTask extends AbstractConnectedTask
     private $environmentVariables;
 
     /**
+     * Generated values to prevent different secrets on different nodes.
+     *
+     * @var array
+     */
+    private static $generatedValues = array();
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
@@ -188,7 +195,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
 
                     $configuration[$key] = $value;
                 } elseif (is_scalar($value)) {
-                    $configuration[$key] = $this->generateValue();
+                    $configuration[$key] = $this->generateValue($key);
                 }
             }
         }
@@ -213,12 +220,18 @@ class YamlConfigurationTask extends AbstractConnectedTask
     }
 
     /**
-     * Generate a sha key
+     * Generate a sha key for $key.
+     *
+     * @param string $key
      *
      * @return string
      */
-    private function generateValue()
+    private function generateValue($key)
     {
-        return sha1(uniqid());
+        if (!array_key_exists($key, self::$generatedValues)) {
+            self::$generatedValues[$key] = sha1(uniqid());
+        }
+
+        return self::$generatedValues[$key];
     }
 }
