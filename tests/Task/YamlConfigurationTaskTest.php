@@ -450,7 +450,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
     public function testValueGeneratorSetter()
     {
         $task = new YamlConfigurationTask('/parameters.yml');
-        $generator =  $this->getMockBuilder('Accompli\Utility\ValueGeneratorInterface')->getMock();
+        $generator = $this->getMockBuilder('Accompli\Utility\ValueGeneratorInterface')->getMock();
         $task->setValueGenerator($generator);
 
         $this->assertAttributeEquals($generator, 'valueGenerator', $task);
