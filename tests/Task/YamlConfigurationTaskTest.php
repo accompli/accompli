@@ -7,7 +7,6 @@ use Accompli\Deployment\Host;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\Task\YamlConfigurationTask;
 use PHPUnit_Framework_TestCase;
-use ReflectionClass;
 
 /**
  * YamlConfigurationTaskTest.
@@ -446,19 +445,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if generated values are not regenerated within the same process.
+     * Test setting a value generator.
      */
-    public function testGeneratedValuesAreNotRegenerated()
+    public function testValueGeneratorSetter()
     {
-        $task = new YamlConfigurationTask('foobar');
-        $reflectionClass = new ReflectionClass('Accompli\Task\YamlConfigurationTask');
-        $method = $reflectionClass->getMethod('generateValue');
-        $method->setAccessible(true);
+        $task = new YamlConfigurationTask('/parameters.yml');
+        $generator =  $this->getMockBuilder('Accompli\Utility\ValueGeneratorInterface')->getMock();
+        $task->setValueGenerator($generator);
 
-        $generated = $method->invokeArgs($task, array('foobar'));
-
-        $this->assertNotEmpty($generated);
-        $this->assertEquals($generated, $method->invokeArgs($task, array('foobar')));
-        $this->assertNotEquals($generated, $method->invokeArgs($task, array('baz')));
+        $this->assertAttributeEquals($generator, 'valueGenerator', $task);
     }
 }

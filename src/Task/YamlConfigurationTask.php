@@ -8,6 +8,8 @@ use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Utility\SecretGenerator;
+use Accompli\Utility\ValueGeneratorInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Yaml\Yaml;
 
@@ -54,11 +56,11 @@ class YamlConfigurationTask extends AbstractConnectedTask
     private $environmentVariables;
 
     /**
-     * Generated values to prevent different secrets on different nodes.
+     * Generator to generate values.
      *
-     * @var array
+     * @var ValueGeneratorInterface
      */
-    private static $generatedValues = array();
+    private $valueGenerator;
 
     /**
      * {@inheritdoc}
@@ -131,6 +133,31 @@ class YamlConfigurationTask extends AbstractConnectedTask
     }
 
     /**
+     * Sets a value generator.
+     *
+     * @param ValueGeneratorInterface
+     */
+    public function setValueGenerator(ValueGeneratorInterface $valueGenerator)
+    {
+        $this->valueGenerator = $valueGenerator;
+    }
+
+    /**
+     * Gets the value generator
+     * Defaults to SecretGenerator.
+     *
+     * @return ValueGeneratorInterface
+     */
+    private function getValueGenerator()
+    {
+        if (!$this->valueGenerator instanceof ValueGeneratorInterface) {
+            $this->valueGenerator = new SecretGenerator();
+        }
+
+        return $this->valueGenerator;
+    }
+
+    /**
      * Gathers environment variables to use in the YAML configuration.
      *
      * @param Release $release
@@ -195,7 +222,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
 
                     $configuration[$key] = $value;
                 } elseif (is_scalar($value)) {
-                    $configuration[$key] = $this->generateValue($key);
+                    $configuration[$key] = $this->getValueGenerator()->generate($key);
                 }
             }
         }
@@ -217,21 +244,5 @@ class YamlConfigurationTask extends AbstractConnectedTask
         }
 
         return $value;
-    }
-
-    /**
-     * Generate a sha key for $key.
-     *
-     * @param string $key
-     *
-     * @return string
-     */
-    private function generateValue($key)
-    {
-        if (!array_key_exists($key, self::$generatedValues)) {
-            self::$generatedValues[$key] = sha1(uniqid());
-        }
-
-        return self::$generatedValues[$key];
     }
 }
