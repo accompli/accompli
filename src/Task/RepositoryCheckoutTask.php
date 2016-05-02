@@ -9,8 +9,8 @@ use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskRuntimeException;
 use Psr\Log\LogLevel;
-use RuntimeException;
 
 /**
  * RepositoryCheckoutTask.
@@ -71,7 +71,7 @@ class RepositoryCheckoutTask extends AbstractConnectedTask
      * @param string                   $eventName
      * @param EventDispatcherInterface $eventDispatcher
      *
-     * @throws RuntimeException
+     * @throws TaskRuntimeException when the checkout of the repository has failed.
      */
     public function onPrepareReleaseCheckoutRepository(PrepareReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
@@ -89,7 +89,7 @@ class RepositoryCheckoutTask extends AbstractConnectedTask
 
             $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Created checkout of repository "{repositoryUrl}" for version "{version}".', $eventName, $this, $context));
         } else {
-            throw new RuntimeException(sprintf('Checkout of repository "%s" for version "%s" failed.', $this->repositoryUrl, $event->getRelease()->getVersion()));
+            throw new TaskRuntimeException(sprintf('Failed to checkout version "%s" from repository "%s".', $event->getRelease()->getVersion(), $this->repositoryUrl), $this);
         }
     }
 }

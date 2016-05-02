@@ -121,7 +121,7 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
     public function testOnEventFailure()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(1))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');
@@ -151,6 +151,8 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
                 ->willReturn($workspaceMock);
 
         $event = new ReleaseEvent($releaseMock);
+
+        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed executing command "echo".');
 
         $task = new ExecuteCommandTask(array(AccompliEvents::INSTALL_RELEASE), 'echo', array('test'));
         $task->onEvent($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
