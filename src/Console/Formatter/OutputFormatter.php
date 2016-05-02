@@ -24,6 +24,7 @@ class OutputFormatter extends BaseOutputFormatter
     {
         parent::__construct($decorated, $styles);
 
+        $this->setStyle('title', new OutputFormatterStyle());
         $this->setStyle(LogLevel::EMERGENCY, new OutputFormatterStyle('white', 'red'));
         $this->setStyle(LogLevel::CRITICAL, new OutputFormatterStyle('white', 'red'));
         $this->setStyle(LogLevel::ALERT, new OutputFormatterStyle('white', 'red'));
