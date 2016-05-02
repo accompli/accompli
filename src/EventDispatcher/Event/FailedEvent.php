@@ -13,6 +13,13 @@ use Symfony\Component\EventDispatcher\Event;
 class FailedEvent extends Event
 {
     /**
+     * The last event name dispatched before the failure occured.
+     *
+     * @var string
+     */
+    private $eventName;
+
+    /**
      * The last event dispatched before the failure occurred.
      *
      * @var Event
@@ -29,13 +36,25 @@ class FailedEvent extends Event
     /**
      * Constructs a new FailedEvent.
      *
+     * @param string    $eventName
      * @param Event     $event
      * @param Exception $exception
      */
-    public function __construct(Event $event, Exception $exception = null)
+    public function __construct($eventName, Event $event, Exception $exception = null)
     {
+        $this->eventName = $eventName;
         $this->event = $event;
         $this->exception = $exception;
+    }
+
+    /**
+     * Returns the last event name that was dispatched.
+     *
+     * @return string
+     */
+    public function getLastEventName()
+    {
+        return $this->eventName;
     }
 
     /**

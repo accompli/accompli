@@ -102,7 +102,7 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
 
             $successfulDeploy = false;
 
-            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
+            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEventName(), $this->eventDispatcher->getLastDispatchedEvent(), $exception);
             $this->eventDispatcher->dispatch($deployFailedEventName, $failedEvent);
         }
 

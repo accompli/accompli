@@ -60,7 +60,7 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
 
             $successfulInstall = false;
 
-            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
+            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEventName(), $this->eventDispatcher->getLastDispatchedEvent(), $exception);
             $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, $failedEvent);
         }
 
