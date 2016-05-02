@@ -137,11 +137,22 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+                ->getMock();
+        $eventDispatcherMock->expects($this->once())
+                ->method('dispatch');
+
         $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
-        $containerMock->expects($this->once())
+        $containerMock->expects($this->exactly(2))
                 ->method('get')
-                ->with($this->equalTo('deployment_strategy'))
-                ->willReturn($deploymentStrategyMock);
+                ->withConsecutive(
+                    array($this->equalTo('deployment_strategy')),
+                    array($this->equalTo('event_dispatcher'))
+                )
+                ->willReturnOnConsecutiveCalls(
+                    $deploymentStrategyMock,
+                    $eventDispatcherMock
+                );
 
         $parameterBagMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface')->getMock();
 
@@ -149,7 +160,9 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 ->setConstructorArgs(array($parameterBagMock))
                 ->setMethods(array('getContainer'))
                 ->getMock();
-        $accompli->expects($this->once())->method('getContainer')->willReturn($containerMock);
+        $accompli->expects($this->exactly(2))
+                ->method('getContainer')
+                ->willReturn($containerMock);
 
         $this->assertTrue($accompli->install('0.1.0'));
     }
@@ -168,11 +181,22 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
+        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+                ->getMock();
+        $eventDispatcherMock->expects($this->once())
+                ->method('dispatch');
+
         $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
-        $containerMock->expects($this->once())
+        $containerMock->expects($this->exactly(2))
                 ->method('get')
-                ->with($this->equalTo('deployment_strategy'))
-                ->willReturn($deploymentStrategyMock);
+                ->withConsecutive(
+                    array($this->equalTo('deployment_strategy')),
+                    array($this->equalTo('event_dispatcher'))
+                )
+                ->willReturnOnConsecutiveCalls(
+                    $deploymentStrategyMock,
+                    $eventDispatcherMock
+                );
 
         $parameterBagMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface')->getMock();
 
@@ -180,7 +204,9 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 ->setConstructorArgs(array($parameterBagMock))
                 ->setMethods(array('getContainer'))
                 ->getMock();
-        $accompli->expects($this->once())->method('getContainer')->willReturn($containerMock);
+        $accompli->expects($this->exactly(2))
+                ->method('getContainer')
+                ->willReturn($containerMock);
 
         $this->assertTrue($accompli->deploy('0.1.0', Host::STAGE_TEST));
     }
