@@ -4,7 +4,6 @@ namespace Accompli\EventDispatcher\Subscriber;
 
 use Accompli\AccompliEvents;
 use Accompli\EventDispatcher\Event\LogEvent;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -13,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class LogSubscriber implements EventSubscriberInterface, LoggerAwareInterface
+class LogSubscriber implements EventSubscriberInterface
 {
     /**
      * The logger instance.
@@ -35,11 +34,11 @@ class LogSubscriber implements EventSubscriberInterface, LoggerAwareInterface
     }
 
     /**
-     * Sets a logger instance.
+     * Constructs a new LogSubscriber instance.
      *
      * @param LoggerInterface $logger
      */
-    public function setLogger(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

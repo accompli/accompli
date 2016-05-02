@@ -17,8 +17,7 @@ services:
         arguments: ["%console.output_interface%"]
     log_subscriber:
         class: Accompli\EventDispatcher\Subscriber\LogSubscriber
-        calls:
-            - [setLogger, ["@logger"]]
+        arguments: ["@logger"]
     log_failure_subscriber:
         class: Accompli\EventDispatcher\Subscriber\LogFailureSubscriber
         arguments: ["@logger"]

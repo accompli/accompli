@@ -25,14 +25,13 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests if LogSubscriber::setLogger sets the logger property.
+     * Tests if constructing a new LogSubscriber instance sets the logger property.
      */
-    public function testSetLogger()
+    public function testConstruct()
     {
         $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
-        $logSubscriber = new LogSubscriber();
-        $logSubscriber->setLogger($loggerMock);
+        $logSubscriber = new LogSubscriber($loggerMock);
 
         $this->assertAttributeSame($loggerMock, 'logger', $logSubscriber);
     }
@@ -40,7 +39,7 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if LogSubscriber::onLogEvent calls the log method on the logger.
      *
-     * @depends testSetLogger
+     * @depends testConstruct
      */
     public function testOnLogEvent()
     {
@@ -64,15 +63,14 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
                     $this->equalTo(array('event.name' => 'accompli.test', 'event.task.name' => get_class($eventSubscriberMock)))
                 );
 
-        $logSubscriber = new LogSubscriber();
-        $logSubscriber->setLogger($loggerMock);
+        $logSubscriber = new LogSubscriber($loggerMock);
         $logSubscriber->onLogEvent($logEventMock);
     }
 
     /**
      * Tests if LogSubscriber::onLogEvent calls the log method on the logger.
      *
-     * @depends testSetLogger
+     * @depends testConstruct
      */
     public function testOnLogEventWithNamespacedEventSubscriber()
     {
@@ -96,8 +94,7 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
                     $this->equalTo(array('event.name' => 'accompli.test', 'event.task.name' => 'CreateWorkspaceTask'))
                 );
 
-        $logSubscriber = new LogSubscriber();
-        $logSubscriber->setLogger($loggerMock);
+        $logSubscriber = new LogSubscriber($loggerMock);
         $logSubscriber->onLogEvent($logEventMock);
     }
 }

@@ -50,7 +50,7 @@ class LogEvent extends Event
     private $context;
 
     /**
-     * Constructs a new LogEvent.
+     * Constructs a new LogEvent instance.
      *
      * @param string                        $level
      * @param string                        $message
@@ -65,8 +65,8 @@ class LogEvent extends Event
         }
 
         $this->level = $level;
-        $this->eventNameContext = $eventNameContext;
         $this->message = $message;
+        $this->eventNameContext = $eventNameContext;
         $this->eventSubscriberContext = $eventSubscriberContext;
         $this->context = $context;
     }
