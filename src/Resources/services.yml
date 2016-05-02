@@ -11,6 +11,7 @@ services:
         calls:
             - [addListener, [accompli.create_connection, ["@connection_manager", onCreateConnection]]]
             - [addSubscriber, ["@log_subscriber"]]
+            - [addSubscriber, ["@log_failure_subscriber"]]
     logger:
         class: Accompli\Console\Logger\ConsoleLogger
         arguments: ["%console.output_interface%"]
@@ -18,3 +19,6 @@ services:
         class: Accompli\EventDispatcher\Subscriber\LogSubscriber
         calls:
             - [setLogger, ["@logger"]]
+    log_failure_subscriber:
+        class: Accompli\EventDispatcher\Subscriber\LogFailureSubscriber
+        arguments: ["@logger"]
