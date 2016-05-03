@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class ConsoleLogger extends AbstractLogger
+class ConsoleLogger extends AbstractLogger implements ConsoleLoggerInterface
 {
     /**
      * ANSI code to move the cursor up by the specified number (%d) of lines without changing columns.
@@ -132,6 +132,27 @@ class ConsoleLogger extends AbstractLogger
     /**
      * {@inheritdoc}
      */
+    public function getVerbosity()
+    {
+        return $this->output->getVerbosity();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOutput($level = LogLevel::NOTICE)
+    {
+        $output = $this->output;
+        if ($this->output instanceof ConsoleOutputInterface && in_array($level, array(LogLevel::EMERGENCY, LogLevel::ALERT, LogLevel::CRITICAL, LogLevel::ERROR))) {
+            $output = $this->output->getErrorOutput();
+        }
+
+        return $output;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function log($level, $message, array $context = array())
     {
         if (isset($this->logLevelToVerbosityLevelMap[$level]) === false) {
@@ -182,23 +203,6 @@ class ConsoleLogger extends AbstractLogger
         }
 
         return $width;
-    }
-
-    /**
-     * Returns the instance handling the output to the console.
-     *
-     * @param string $level
-     *
-     * @return OutputInterface
-     */
-    private function getOutput($level)
-    {
-        $output = $this->output;
-        if ($this->output instanceof ConsoleOutputInterface && in_array($level, array(LogLevel::EMERGENCY, LogLevel::ALERT, LogLevel::CRITICAL, LogLevel::ERROR))) {
-            $output = $this->output->getErrorOutput();
-        }
-
-        return $output;
     }
 
     /**

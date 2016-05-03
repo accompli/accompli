@@ -53,6 +53,54 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if ConsoleLogger::getVerbosity returns the verbosity from the output instance.
+     */
+    public function testGetVerbosity()
+    {
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+
+        $logger = new ConsoleLogger($outputMock);
+
+        $this->assertSame(OutputInterface::VERBOSITY_NORMAL, $logger->getVerbosity());
+    }
+
+    /**
+     * Tests if ConsoleLogger::getOutput returns the output instance.
+     */
+    public function testGetOutput()
+    {
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+
+        $logger = new ConsoleLogger($outputMock);
+
+        $this->assertSame($outputMock, $logger->getOutput());
+    }
+
+    /**
+     * Tests if ConsoleLogger::getOutput returns the error output instance when the log level is an error log level.
+     */
+    public function testGetOutputReturnsErrorOutput()
+    {
+        $errorOutputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getErrorOutput')
+                ->willReturn($errorOutputMock);
+
+        $logger = new ConsoleLogger($outputMock);
+
+        $this->assertSame($errorOutputMock, $logger->getOutput(LogLevel::ERROR));
+    }
+
+    /**
      * Tests if ConsoleLogger::log with an invalid LogLevel throws an InvalidArgumentException.
      *
      * @expectedException        InvalidArgumentException
