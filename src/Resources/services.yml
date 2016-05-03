@@ -13,6 +13,7 @@ services:
             - [addSubscriber, ["@log_subscriber"]]
             - [addSubscriber, ["@log_failure_subscriber"]]
             - [addSubscriber, ["@data_collector_subscriber"]]
+            - [addSubscriber, ["@generate_report_subcriber"]]
     logger:
         class: Accompli\Console\Logger\ConsoleLogger
         arguments: ["%console.output_interface%"]
@@ -31,3 +32,6 @@ services:
     data_collector_subscriber:
         class: Accompli\EventDispatcher\Subscriber\DataCollectorSubscriber
         arguments: [["@event_data_collector", "@profiler_data_collector"]]
+    generate_report_subcriber:
+        class: Accompli\EventDispatcher\Subscriber\GenerateReportSubscriber
+        arguments: ["@logger", "@event_data_collector", ["@event_data_collector", "@profiler_data_collector"]]
