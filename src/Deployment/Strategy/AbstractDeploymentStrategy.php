@@ -4,8 +4,10 @@ namespace Accompli\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
 use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Console\Logger\ConsoleLoggerInterface;
 use Accompli\DependencyInjection\ConfigurationAwareInterface;
 use Accompli\DependencyInjection\EventDispatcherAwareInterface;
+use Accompli\DependencyInjection\LoggerAwareInterface;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\DeployReleaseEvent;
@@ -22,7 +24,7 @@ use Exception;
  *
  * @author Niels Nijens <niels@connectholland.nl>
  */
-abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface, ConfigurationAwareInterface, EventDispatcherAwareInterface
+abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface, ConfigurationAwareInterface, EventDispatcherAwareInterface, LoggerAwareInterface
 {
     /**
      * The configuration instance.
@@ -39,6 +41,13 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
     protected $eventDispatcher;
 
     /**
+     * The console logger instance.
+     *
+     * @var ConsoleLoggerInterface
+     */
+    protected $logger;
+
+    /**
      * {@inheritdoc}
      */
     public function setConfiguration(ConfigurationInterface $configuration)
@@ -52,6 +61,14 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLogger(ConsoleLoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**

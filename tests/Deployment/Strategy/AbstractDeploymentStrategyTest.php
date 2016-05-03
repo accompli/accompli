@@ -46,6 +46,21 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if AbstractDeploymentStrategy::setLogger sets the logger property of the class.
+     */
+    public function testSetLogger()
+    {
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')
+                ->getMockForAbstractClass();
+
+        $deploymentStrategyMock->setLogger($loggerMock);
+
+        $this->assertAttributeSame($loggerMock, 'logger', $deploymentStrategyMock);
+    }
+
+    /**
      * Tests if AbstractDeploymentStrategy::deploy dispatches all the events successfully.
      *
      * @depends testSetConfiguration
