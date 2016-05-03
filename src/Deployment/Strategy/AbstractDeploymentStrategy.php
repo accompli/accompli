@@ -4,6 +4,7 @@ namespace Accompli\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
 use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Console\Helper\Title;
 use Accompli\Console\Logger\ConsoleLoggerInterface;
 use Accompli\DependencyInjection\ConfigurationAwareInterface;
 use Accompli\DependencyInjection\EventDispatcherAwareInterface;
@@ -85,6 +86,9 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
             $deployEventName = AccompliEvents::DEPLOY_RELEASE;
             $deployCompleteEventName = AccompliEvents::DEPLOY_RELEASE_COMPLETE;
             $deployFailedEventName = AccompliEvents::DEPLOY_RELEASE_FAILED;
+
+            $title = new Title($this->logger->getOutput(), sprintf('Deploying release "%s" to "%s":', $version, $host->getHostname()));
+            $title->render();
 
             try {
                 $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));

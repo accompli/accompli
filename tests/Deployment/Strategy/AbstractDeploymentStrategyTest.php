@@ -110,9 +110,25 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
+        $strategyMock->setLogger($loggerMock);
 
         $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
@@ -192,9 +208,25 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->exactly(2))
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->exactly(2))
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
+        $strategyMock->setLogger($loggerMock);
 
         $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
@@ -244,9 +276,25 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
+        $strategyMock->setLogger($loggerMock);
 
         $this->assertFalse($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
@@ -300,9 +348,25 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
+        $strategyMock->setLogger($loggerMock);
 
         $this->assertFalse($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
@@ -356,9 +420,25 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
         $strategyMock->setConfiguration($configurationMock);
         $strategyMock->setEventDispatcher($eventDispatcherMock);
+        $strategyMock->setLogger($loggerMock);
 
         $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
     }
