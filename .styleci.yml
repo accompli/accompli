@@ -10,4 +10,4 @@ disabled:
 
 finder:
   not-name:
-    - "*.phar"
+    - composer.phar
