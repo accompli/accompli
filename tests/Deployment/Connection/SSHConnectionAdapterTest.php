@@ -76,6 +76,10 @@ class SSHConnectionAdapterTest extends ConnectedConnectionAdapterTestCase
      */
     public function testConnectWithAuthenticationTypeSSHAgentReturnsTrue()
     {
+        if (isset($_SERVER['SSH_AUTH_SOCK']) === false) {
+            $this->markTestSkipped('No running SSH agent found.');
+        }
+
         $this->connectionAdapter = new SSHConnectionAdapter('localhost', SSHConnectionAdapter::AUTHENTICATION_SSH_AGENT, $this->getSSHUsername());
 
         $this->assertTrue($this->connectionAdapter->connect());

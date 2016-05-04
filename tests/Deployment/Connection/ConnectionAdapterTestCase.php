@@ -45,7 +45,9 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
             $this->connectionAdapter->disconnect();
         }
 
-        $this->workspaceUtility->remove();
+        if ($this->workspaceUtility instanceof WorkspaceUtility) {
+            $this->workspaceUtility->remove();
+        }
     }
 
     /**
