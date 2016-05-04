@@ -67,37 +67,33 @@ class ComposerInstallTask extends AbstractConnectedTask
         $connection = $this->ensureConnection($host);
 
         $workspace = $event->getWorkspace();
-        if ($workspace instanceof Workspace) {
-            if ($connection->isFile($host->getPath().'/composer.phar') === false) {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Installing the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
-
-                $connection->changeWorkingDirectory($host->getPath());
-                $result = $connection->executeCommand('php -r "readfile(\'https://getcomposer.org/installer\');" | php');
-                if ($result->isSuccessful() && $connection->isFile($host->getPath().'/composer.phar')) {
-                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Installed the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
-                } else {
-                    throw new TaskCommandExecutionException('Failed installing the Composer binary.', $result, $this);
-                }
-
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
-            } else {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updating the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
-
-                $connection->changeWorkingDirectory($host->getPath());
-                $result = $connection->executeCommand('php composer.phar self-update');
-                if ($result->isSuccessful()) {
-                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updated the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
-                } else {
-                    $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed updating the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_FAILED)));
-                }
-
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
-            }
-
-            return;
+        if ($workspace instanceof Workspace === false) {
+            throw new TaskRuntimeException('The workspace of the host has not been created.', $this);
         }
 
-        throw new TaskRuntimeException('The workspace of the host has not been created.', $this);
+        if ($connection->isFile($host->getPath().'/composer.phar') === false) {
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Installing the Composer binary...', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
+
+            $connection->changeWorkingDirectory($host->getPath());
+            $connection->putFile(__DIR__.'/../Resources/Composer/composer.phar', $host->getPath().'/composer.phar');
+            if ($connection->isFile($host->getPath().'/composer.phar')) {
+                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Installed the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
+            } else {
+                throw new TaskRuntimeException('Failed installing the Composer binary.', $this);
+            }
+        }
+
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updating the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
+
+        $connection->changeWorkingDirectory($host->getPath());
+        $result = $connection->executeCommand('php composer.phar self-update');
+        if ($result->isSuccessful()) {
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updated the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
+        } else {
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed updating the Composer binary.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_FAILED)));
+        }
+
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::DEBUG, "{separator} Command output:{separator}\n{command.result}{separator}", $eventName, $this, array('command.result' => $result->getOutput(), 'separator' => "\n=================\n")));
     }
 
     /**
