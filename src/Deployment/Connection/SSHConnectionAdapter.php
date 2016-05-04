@@ -406,14 +406,7 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      */
     private function getCurrentUsername()
     {
-        if (function_exists('posix_getpwuid')) {
-            $username = posix_getpwuid(posix_geteuid())['name'];
-        } else {
-            // Fallback when POSIX functions are not available.
-            $username = get_current_user();
-        }
-
-        return $username;
+        return $_SERVER['USER'];
     }
 
     /**
