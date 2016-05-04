@@ -160,6 +160,8 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
         $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
         $event->setRelease($releaseMock);
 
+        $this->setExpectedException('Accompli\Exception\TaskRuntimeException', 'Failed to checkout version "0.1.0" from repository "https://github.com/accompli/accompli.git".');
+
         $task = new RepositoryCheckoutTask('https://github.com/accompli/accompli.git');
         $task->onPrepareReleaseCheckoutRepository($event, AccompliEvents::PREPARE_RELEASE, $eventDispatcherMock);
     }

@@ -2,8 +2,11 @@
 
 namespace Accompli\Test\EventDispatcher;
 
+use Accompli\AccompliEvents;
+use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcher;
 use PHPUnit_Framework_TestCase;
+use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -13,6 +16,38 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class EventDispatcherTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Tests if EventDispatcher::getLastDispatchedEventName returns null when no event has been dispatched.
+     */
+    public function testGetLastDispatchedEventNameReturnsNullWithoutDispatchCalled()
+    {
+        $eventDispatcher = new EventDispatcher();
+
+        $this->assertNull($eventDispatcher->getLastDispatchedEventName());
+    }
+
+    /**
+     * Tests if EventDispatcher::getLastDispatchedEventName returns the same event instance that was dispatched.
+     */
+    public function testGetLastDispatchedEventNameReturnsSameEventInstance()
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->dispatch('test', new Event());
+
+        $this->assertSame('test', $eventDispatcher->getLastDispatchedEventName());
+    }
+
+    /**
+     * Tests if EventDispatcher::getLastDispatchedEventName does not return a AccompliEvents::LOG event.
+     */
+    public function testGetLastDispatchedEventNameNeverReturnsLogEvent()
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'message', 'eventName'));
+
+        $this->assertNull($eventDispatcher->getLastDispatchedEventName());
+    }
+
     /**
      * Tests if EventDispatcher::getLastDispatchedEvent returns null when no event has been dispatched.
      */
@@ -33,8 +68,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->dispatch('test', $event);
 
-        $lastDispatchedEvent = $eventDispatcher->getLastDispatchedEvent();
-        $this->assertSame($event, $lastDispatchedEvent);
+        $this->assertSame($event, $eventDispatcher->getLastDispatchedEvent());
     }
 
     /**
@@ -45,7 +79,17 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->dispatch('test');
 
-        $lastDispatchedEvent = $eventDispatcher->getLastDispatchedEvent();
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $lastDispatchedEvent);
+        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $eventDispatcher->getLastDispatchedEvent());
+    }
+
+    /**
+     * Tests if EventDispatcher::getLastDispatchedEvent does not return a AccompliEvents::LOG event.
+     */
+    public function testGetLastDispatchedEventNeverReturnsLogEvent()
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'message', 'eventName'));
+
+        $this->assertNull($eventDispatcher->getLastDispatchedEvent());
     }
 }

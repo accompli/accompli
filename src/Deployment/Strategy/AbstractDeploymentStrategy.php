@@ -4,8 +4,11 @@ namespace Accompli\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
 use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Console\Helper\Title;
+use Accompli\Console\Logger\ConsoleLoggerInterface;
 use Accompli\DependencyInjection\ConfigurationAwareInterface;
 use Accompli\DependencyInjection\EventDispatcherAwareInterface;
+use Accompli\DependencyInjection\LoggerAwareInterface;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\DeployReleaseEvent;
@@ -22,7 +25,7 @@ use Exception;
  *
  * @author Niels Nijens <niels@connectholland.nl>
  */
-abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface, ConfigurationAwareInterface, EventDispatcherAwareInterface
+abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface, ConfigurationAwareInterface, EventDispatcherAwareInterface, LoggerAwareInterface
 {
     /**
      * The configuration instance.
@@ -37,6 +40,13 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
+
+    /**
+     * The console logger instance.
+     *
+     * @var ConsoleLoggerInterface
+     */
+    protected $logger;
 
     /**
      * {@inheritdoc}
@@ -57,6 +67,14 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
     /**
      * {@inheritdoc}
      */
+    public function setLogger(ConsoleLoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function deploy($version, $stage)
     {
         $successfulDeploy = true;
@@ -68,6 +86,9 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
             $deployEventName = AccompliEvents::DEPLOY_RELEASE;
             $deployCompleteEventName = AccompliEvents::DEPLOY_RELEASE_COMPLETE;
             $deployFailedEventName = AccompliEvents::DEPLOY_RELEASE_FAILED;
+
+            $title = new Title($this->logger->getOutput(), sprintf('Deploying release "%s" to "%s":', $version, $host->getHostname()));
+            $title->render();
 
             try {
                 $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
@@ -102,7 +123,7 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
 
             $successfulDeploy = false;
 
-            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
+            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEventName(), $this->eventDispatcher->getLastDispatchedEvent(), $exception);
             $this->eventDispatcher->dispatch($deployFailedEventName, $failedEvent);
         }
 

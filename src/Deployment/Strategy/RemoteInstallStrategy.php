@@ -3,6 +3,7 @@
 namespace Accompli\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
+use Accompli\Console\Helper\Title;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\FailedEvent;
@@ -34,6 +35,9 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
         foreach ($hosts as $host) {
             $exception = null;
 
+            $title = new Title($this->logger->getOutput(), sprintf('Installing release "%s" to "%s":', $version, $host->getHostname()));
+            $title->render();
+
             try {
                 $this->eventDispatcher->dispatch(AccompliEvents::CREATE_CONNECTION, new HostEvent($host));
 
@@ -60,7 +64,7 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
 
             $successfulInstall = false;
 
-            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEvent(), $exception);
+            $failedEvent = new FailedEvent($this->eventDispatcher->getLastDispatchedEventName(), $this->eventDispatcher->getLastDispatchedEvent(), $exception);
             $this->eventDispatcher->dispatch(AccompliEvents::INSTALL_RELEASE_FAILED, $failedEvent);
         }
 

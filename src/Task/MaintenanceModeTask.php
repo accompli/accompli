@@ -7,10 +7,10 @@ use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskRuntimeException;
 use Accompli\Utility\VersionCategoryComparator;
 use InvalidArgumentException;
 use Psr\Log\LogLevel;
-use RuntimeException;
 
 /**
  * MaintenanceModeTask.
@@ -123,7 +123,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
      * @param string                    $eventName
      * @param EventDispatcherInterface  $eventDispatcher
      *
-     * @throws RuntimeException when not able to link the maintenance page.
+     * @throws TaskRuntimeException when not able to link the maintenance page.
      */
     public function onPrepareDeployReleaseLinkMaintenancePageToStage(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
@@ -159,7 +159,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
 
             $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Linking "{linkTarget}" to maintenance page failed.', $eventName, $this, $context));
 
-            throw new RuntimeException(sprintf('Linking "%s" to maintenance page failed.', $context['linkTarget']));
+            throw new TaskRuntimeException(sprintf('Linking "%s" to maintenance page failed.', $context['linkTarget']), $this);
         }
     }
 }

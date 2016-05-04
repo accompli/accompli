@@ -20,6 +20,16 @@ final class AccompliEvents
     const CREATE_CONNECTION = 'accompli.create_connection';
 
     /**
+     * The DEPLOY_COMMAND_COMPLETE event is dispatched at the end of Accompli::deploy.
+     *
+     * The event listener recieves an
+     * Symfony\Component\EventDispatcher\Event instance.
+     *
+     * @var string
+     */
+    const DEPLOY_COMMAND_COMPLETE = 'accompli.deploy_command_complete';
+
+    /**
      * The DEPLOY_RELEASE event is dispatched when a Release is ready for deployment.
      *
      * The event listener receives an
@@ -68,6 +78,26 @@ final class AccompliEvents
      * @var string
      */
     const GET_WORKSPACE = 'accompli.get_workspace';
+
+    /**
+     * The INITIALIZE event is dispatched when the service container, configuration and event dispatcher are fully configured.
+     *
+     * The event listener recieves an
+     * Symfony\Component\EventDispatcher\Event instance.
+     *
+     * @var string
+     */
+    const INITIALIZE = 'accompli.initialize';
+
+    /**
+     * The INSTALL_COMMAND_COMPLETE event is dispatched at the end of Accompli::install.
+     *
+     * The event listener recieves an
+     * Symfony\Component\EventDispatcher\Event instance.
+     *
+     * @var string
+     */
+    const INSTALL_COMMAND_COMPLETE = 'accompli.install_command_complete';
 
     /**
      * The INSTALL_RELEASE event is dispatched when a Release requires installation.
@@ -178,11 +208,14 @@ final class AccompliEvents
     {
         return array(
             self::CREATE_CONNECTION,
+            self::DEPLOY_COMMAND_COMPLETE,
             self::DEPLOY_RELEASE,
             self::DEPLOY_RELEASE_COMPLETE,
             self::DEPLOY_RELEASE_FAILED,
             self::GATHER_FACTS,
             self::GET_WORKSPACE,
+            self::INITIALIZE,
+            self::INSTALL_COMMAND_COMPLETE,
             self::INSTALL_RELEASE,
             self::INSTALL_RELEASE_COMPLETE,
             self::INSTALL_RELEASE_FAILED,

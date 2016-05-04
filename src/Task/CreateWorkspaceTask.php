@@ -7,8 +7,8 @@ use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskRuntimeException;
 use Psr\Log\LogLevel;
-use RuntimeException;
 
 /**
  * CreateWorkspaceTask.
@@ -106,7 +106,7 @@ class CreateWorkspaceTask extends AbstractConnectedTask
      * @param string                   $eventName
      * @param EventDispatcherInterface $eventDispatcher
      *
-     * @throws RuntimeException
+     * @throws TaskRuntimeException when the workspace path doesn't exist and can't be created.
      */
     public function onPrepareWorkspaceCreateWorkspace(WorkspaceEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
@@ -115,7 +115,7 @@ class CreateWorkspaceTask extends AbstractConnectedTask
 
         $workspacePath = $workspace->getHost()->getPath();
         if ($connection->isDirectory($workspacePath) === false && $connection->createDirectory($workspacePath) === false) {
-            throw new RuntimeException(sprintf('The workspace path "%s" does not exist and could not be created.', $workspacePath));
+            throw new TaskRuntimeException(sprintf('The workspace path "%s" does not exist and could not be created.', $workspacePath), $this);
         }
 
         $directories = array_merge(

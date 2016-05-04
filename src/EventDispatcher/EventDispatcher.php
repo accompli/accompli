@@ -2,6 +2,7 @@
 
 namespace Accompli\EventDispatcher;
 
+use Accompli\AccompliEvents;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
 
@@ -12,6 +13,13 @@ use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
  */
 class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInterface
 {
+    /**
+     * The name of the last dispatched event.
+     *
+     * @var string
+     */
+    private $lastDispatchedEventName;
+
     /**
      * The instance of the last dispatched event.
      *
@@ -28,9 +36,20 @@ class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInte
             $event = new Event();
         }
 
-        $this->lastDispatchedEvent = $event;
+        if ($eventName !== AccompliEvents::LOG) {
+            $this->lastDispatchedEventName = $eventName;
+            $this->lastDispatchedEvent = $event;
+        }
 
         return parent::dispatch($eventName, $event);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastDispatchedEventName()
+    {
+        return $this->lastDispatchedEventName;
     }
 
     /**

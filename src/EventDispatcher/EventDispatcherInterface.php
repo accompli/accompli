@@ -13,6 +13,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as BaseEventDispa
 interface EventDispatcherInterface extends BaseEventDispatcherInterface
 {
     /**
+     * Returns the last dispatched event name.
+     *
+     * @return string
+     */
+    public function getLastDispatchedEventName();
+
+    /**
      * Returns the last dispatched Event instance.
      *
      * @return Event

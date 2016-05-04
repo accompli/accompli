@@ -19,15 +19,27 @@ class FailedEventTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider provideConstructSetsProperties
      *
+     * @param string    $eventName
      * @param Event     $event
      * @param Exception $exception
      */
-    public function testConstructSetsProperties($event, $exception)
+    public function testConstructSetsProperties($eventName, $event, $exception)
     {
-        $failedEvent = new FailedEvent($event, $exception);
+        $failedEvent = new FailedEvent($eventName, $event, $exception);
 
+        $this->assertAttributeSame($eventName, 'eventName', $failedEvent);
         $this->assertAttributeSame($event, 'event', $failedEvent);
         $this->assertAttributeSame($exception, 'exception', $failedEvent);
+    }
+
+    /**
+     * Tests if FailedEvent::getLastEventName returns the same value as during construction of FailedEvent.
+     */
+    public function testGetLastEventName()
+    {
+        $failedEvent = new FailedEvent('event', new Event());
+
+        $this->assertSame('event', $failedEvent->getLastEventName());
     }
 
     /**
@@ -37,7 +49,7 @@ class FailedEventTest extends PHPUnit_Framework_TestCase
     {
         $event = new Event();
 
-        $failedEvent = new FailedEvent($event);
+        $failedEvent = new FailedEvent('event', $event);
 
         $this->assertSame($event, $failedEvent->getLastEvent());
     }
@@ -47,7 +59,7 @@ class FailedEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetExceptionReturnsNullByDefault()
     {
-        $failedEvent = new FailedEvent(new Event());
+        $failedEvent = new FailedEvent('event', new Event());
 
         $this->assertNull($failedEvent->getException());
     }
@@ -59,7 +71,7 @@ class FailedEventTest extends PHPUnit_Framework_TestCase
     {
         $exception = new Exception();
 
-        $failedEvent = new FailedEvent(new Event(), $exception);
+        $failedEvent = new FailedEvent('event', new Event(), $exception);
 
         $this->assertSame($exception, $failedEvent->getException());
     }
@@ -72,8 +84,8 @@ class FailedEventTest extends PHPUnit_Framework_TestCase
     public function provideConstructSetsProperties()
     {
         return array(
-            array(new Event(), null),
-            array(new Event(), new Exception()),
+            array('event', new Event(), null),
+            array('event', new Event(), new Exception()),
         );
     }
 }

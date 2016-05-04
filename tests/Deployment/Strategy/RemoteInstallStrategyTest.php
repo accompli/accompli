@@ -104,9 +104,25 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
+        $strategy->setLogger($loggerMock);
 
         $this->assertTrue($strategy->install('0.1.0', Host::STAGE_TEST));
     }
@@ -185,9 +201,25 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->exactly(2))
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->exactly(2))
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
+        $strategy->setLogger($loggerMock);
 
         $this->assertTrue($strategy->install('0.1.0', Host::STAGE_TEST));
     }
@@ -241,9 +273,25 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
+        $strategy->setLogger($loggerMock);
 
         $this->assertFalse($strategy->install('0.1.0', Host::STAGE_TEST));
     }
@@ -293,9 +341,25 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
+        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+                ->getMock();
+
+        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+
+        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+                ->getMock();
+        $loggerMock->expects($this->once())
+                ->method('getOutput')
+                ->willReturn($outputMock);
+
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
         $strategy->setEventDispatcher($eventDispatcherMock);
+        $strategy->setLogger($loggerMock);
 
         $this->assertFalse($strategy->install('0.1.0', Host::STAGE_TEST));
     }

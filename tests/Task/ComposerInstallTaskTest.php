@@ -80,7 +80,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnPrepareWorkspaceInstallComposerFailsInstallingComposer()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(1))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())->method('isFile')->willReturn(false);
@@ -101,6 +101,8 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
 
         $event = new WorkspaceEvent($hostMock);
         $event->setWorkspace($workspaceMock);
+
+        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed installing the Composer binary.');
 
         $task = new ComposerInstallTask();
         $task->onPrepareWorkspaceInstallComposer($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -172,9 +174,6 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if ComposerInstallTask::onPrepareWorkspaceInstallComposer throws a RuntimeException when no Workspace instance is available.
-     *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage The workspace of the host has not been created.
      */
     public function testOnPrepareWorkspaceInstallComposerThrowsRuntimeExceptionWhenWorkspaceInstanceNotAvailable()
     {
@@ -189,6 +188,8 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
+
+        $this->setExpectedException('Accompli\Exception\TaskRuntimeException', 'The workspace of the host has not been created.');
 
         $task = new ComposerInstallTask();
         $task->onPrepareWorkspaceInstallComposer($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -286,7 +287,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
     public function testOnInstallReleaseExecuteComposerInstallFails()
     {
         $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
+        $eventDispatcherMock->expects($this->exactly(1))->method('dispatch');
 
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->once())
@@ -312,6 +313,8 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
         $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
 
         $event = new InstallReleaseEvent($releaseMock);
+
+        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed installing Composer dependencies.');
 
         $task = new ComposerInstallTask();
         $task->onInstallReleaseExecuteComposerInstall($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);

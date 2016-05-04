@@ -82,6 +82,8 @@ class Accompli
         $this->initializeStreamWrapper();
         $this->initializeContainer();
         $this->initializeEventListeners();
+
+        $this->dispatch(AccompliEvents::INITIALIZE);
     }
 
     /**
@@ -163,7 +165,11 @@ class Accompli
     {
         $deploymentStrategy = $this->getContainer()->get('deployment_strategy');
 
-        return $deploymentStrategy->install($version, $stage);
+        $result = $deploymentStrategy->install($version, $stage);
+
+        $this->dispatch(AccompliEvents::INSTALL_COMMAND_COMPLETE);
+
+        return $result;
     }
 
     /**
@@ -178,7 +184,11 @@ class Accompli
     {
         $deploymentStrategy = $this->getContainer()->get('deployment_strategy');
 
-        return $deploymentStrategy->deploy($version, $stage);
+        $result = $deploymentStrategy->deploy($version, $stage);
+
+        $this->dispatch(AccompliEvents::DEPLOY_COMMAND_COMPLETE);
+
+        return $result;
     }
 
     /**
@@ -196,5 +206,15 @@ class Accompli
         $loader->load('services.yml');
 
         return $container;
+    }
+
+    /**
+     * Dispatches an event to all registered listeners.
+     *
+     * @param string $eventName
+     */
+    private function dispatch($eventName)
+    {
+        $this->getContainer()->get('event_dispatcher')->dispatch($eventName);
     }
 }

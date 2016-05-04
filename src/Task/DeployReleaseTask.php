@@ -8,8 +8,8 @@ use Accompli\EventDispatcher\Event\DeployReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskRuntimeException;
 use Psr\Log\LogLevel;
-use RuntimeException;
 
 /**
  * DeployReleaseTask.
@@ -43,7 +43,7 @@ class DeployReleaseTask extends AbstractConnectedTask
      * @param string                    $eventName
      * @param EventDispatcherInterface  $eventDispatcher
      *
-     * @throws RuntimeException when the version selected for deployment is not installed within the workspace.
+     * @throws TaskRuntimeException when the version selected for deployment is not installed within the workspace.
      */
     public function onPrepareDeployReleaseConstructReleaseInstances(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
@@ -54,7 +54,7 @@ class DeployReleaseTask extends AbstractConnectedTask
         $release = new Release($event->getVersion());
         $workspace->addRelease($release);
         if ($connection->isDirectory($release->getPath()) === false) {
-            throw new RuntimeException(sprintf('The release "%s" is not installed within the workspace.', $release->getVersion()));
+            throw new TaskRuntimeException(sprintf('The release "%s" is not installed within the workspace.', $release->getVersion()), $this);
         }
         $event->setRelease($release);
 
@@ -108,7 +108,7 @@ class DeployReleaseTask extends AbstractConnectedTask
 
                 $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Linking "{linkTarget}" to release "{releaseVersion}" failed.', $eventName, $this, $context));
 
-                throw new RuntimeException(sprintf('Linking "%s" to release "%s" failed.', $context['linkTarget'], $context['releaseVersion']));
+                throw new TaskRuntimeException(sprintf('Linking "%s" to release "%s" failed.', $context['linkTarget'], $context['releaseVersion']), $this);
             }
         } else {
             $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
