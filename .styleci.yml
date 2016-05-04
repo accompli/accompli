@@ -1,0 +1,13 @@
+preset: symfony
+
+linting: true
+
+enabled:
+  - ordered_use
+
+disabled:
+  - unneeded_control_parentheses
+
+finder:
+  not-name:
+    - "*.phar"
