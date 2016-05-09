@@ -60,7 +60,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
     {
         return array(
             AccompliEvents::INSTALL_RELEASE => array(
-                array('onInstallReleaseCreateOrUpdateConfiguration', 0),
+                array('onInstallReleaseCreateOrUpdateConfiguration', 10),
             ),
         );
     }
