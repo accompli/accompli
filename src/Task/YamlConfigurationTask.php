@@ -33,6 +33,13 @@ class YamlConfigurationTask extends AbstractConnectedTask
     private $configuration;
 
     /**
+     * The stage-based configurations to be configured within the configuration file.
+     *
+     * @var array
+     */
+    private $stageSpecificConfigurations;
+
+    /**
      * The array of array paths to keys within the configuration that should have a generated hash.
      *
      * @var array
@@ -53,7 +60,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
     {
         return array(
             AccompliEvents::INSTALL_RELEASE => array(
-                array('onInstallReleaseCreateOrUpdateConfiguration', 0),
+                array('onInstallReleaseCreateOrUpdateConfiguration', 10),
             ),
         );
     }
@@ -63,11 +70,14 @@ class YamlConfigurationTask extends AbstractConnectedTask
      *
      * @param string $configurationFile
      * @param array  $configuration
+     * @param array  $stageSpecificConfigurations
+     * @param array  $generateValueForParameters
      */
-    public function __construct($configurationFile, array $configuration = array(), array $generateValueForParameters = array())
+    public function __construct($configurationFile, array $configuration = array(), array $stageSpecificConfigurations = array(), array $generateValueForParameters = array())
     {
         $this->configurationFile = $configurationFile;
         $this->configuration = $configuration;
+        $this->stageSpecificConfigurations = $stageSpecificConfigurations;
         $this->generateValueForParameters = $generateValueForParameters;
     }
 
@@ -95,7 +105,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
 
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, '{action} configuration file "{configurationFile}"...', $eventName, $this, $context));
 
-        $yamlConfiguration = $this->getYamlConfiguration($connection, $configurationFile, $configurationDistributionFile);
+        $yamlConfiguration = $this->getYamlConfiguration($connection, $release->getWorkspace()->getHost()->getStage(), $configurationFile, $configurationDistributionFile);
         if ($connection->putContents($configurationFile, $yamlConfiguration)) {
             $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
             if ($context['action'] === 'Creating') {
@@ -130,12 +140,13 @@ class YamlConfigurationTask extends AbstractConnectedTask
      * Returns the generated YAML content based on the existing configuration file, distribution configuration file and the configuration configured with this task.
      *
      * @param ConnectionAdapterInterface $connection
+     * @param string                     $stage
      * @param string                     $configurationFile
      * @param string                     $configurationDistributionFile
      *
      * @return string
      */
-    private function getYamlConfiguration(ConnectionAdapterInterface $connection, $configurationFile, $configurationDistributionFile)
+    private function getYamlConfiguration(ConnectionAdapterInterface $connection, $stage, $configurationFile, $configurationDistributionFile)
     {
         $configuration = array();
         if ($connection->isFile($configurationFile)) {
@@ -147,7 +158,12 @@ class YamlConfigurationTask extends AbstractConnectedTask
             $distributionConfiguration = Yaml::parse($connection->getContents($configurationDistributionFile));
         }
 
-        $configuration = array_replace_recursive($distributionConfiguration, $configuration, $this->configuration);
+        $stageSpecificConfiguration = array();
+        if (isset($this->stageSpecificConfigurations[$stage])) {
+            $stageSpecificConfiguration = $this->stageSpecificConfigurations[$stage];
+        }
+
+        $configuration = array_replace_recursive($distributionConfiguration, $configuration, $this->configuration, $stageSpecificConfiguration);
         foreach ($this->generateValueForParameters as $generateValueForParameter) {
             $this->findKeyAndGenerateValue($configuration, explode('.', $generateValueForParameter));
         }
