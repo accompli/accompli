@@ -23,7 +23,7 @@ use Exception;
 /**
  * AbstractDeploymentStrategy.
  *
- * @author Niels Nijens <niels@connectholland.nl>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface, ConfigurationAwareInterface, EventDispatcherAwareInterface, LoggerAwareInterface
 {
