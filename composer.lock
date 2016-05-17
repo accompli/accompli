@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5b44ef3dddb38f3efc04adb069c94445",
-    "content-hash": "51baddf399fb092634d3c48cf236aa6e",
+    "hash": "a339c455b173936c1bcdae97cc297137",
+    "content-hash": "ac8d3d61ebbd554832fe59c23cccec2c",
     "packages": [
         {
             "name": "accompli/chrono",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/accompli/chrono.git",
-                "reference": "7bfd10b40595aae846e391f675a76f1447c29507"
+                "reference": "116a704080af53c238dcf123d1e3fd1335870aac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/accompli/chrono/zipball/7bfd10b40595aae846e391f675a76f1447c29507",
-                "reference": "7bfd10b40595aae846e391f675a76f1447c29507",
+                "url": "https://api.github.com/repos/accompli/chrono/zipball/116a704080af53c238dcf123d1e3fd1335870aac",
+                "reference": "116a704080af53c238dcf123d1e3fd1335870aac",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.4 || ^7.0",
+                "php": "^5.5 || ^7.0",
                 "symfony/process": "^2.7 || ^3.0"
             },
             "require-dev": {
@@ -54,7 +54,7 @@
                 "svn",
                 "vcs"
             ],
-            "time": "2016-03-21 10:37:38"
+            "time": "2016-05-15 11:35:42"
         },
         {
             "name": "composer/semver",
