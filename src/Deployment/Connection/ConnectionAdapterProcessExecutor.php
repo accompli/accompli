@@ -19,6 +19,13 @@ class ConnectionAdapterProcessExecutor implements ProcessExecutorInterface
     private $connectionAdapter;
 
     /**
+     * The ProcessExecutionResult instance of the last executed command.
+     *
+     * @var ProcessExecutionResult
+     */
+    private $lastProcessExecutionResult;
+
+    /**
      * Constructs a new ConnectionAdapterProcessExecutor.
      *
      * @param ConnectionAdapterInterface $connectionAdapter
@@ -39,7 +46,7 @@ class ConnectionAdapterProcessExecutor implements ProcessExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($command, $workingDirectory = null)
+    public function execute($command, $workingDirectory = null, array $environmentVariables = null)
     {
         $previousWorkingDirectory = null;
         if ($workingDirectory !== null) {
@@ -48,12 +55,27 @@ class ConnectionAdapterProcessExecutor implements ProcessExecutorInterface
             $this->connectionAdapter->changeWorkingDirectory($workingDirectory);
         }
 
-        $result = $this->connectionAdapter->executeCommand($command);
+        $environment = '';
+        if (isset($environmentVariables)) {
+            foreach ($environmentVariables as $environmentVariableName => $environmentVariableValue) {
+                $environment .= sprintf('%s=%s ', $environmentVariableName, $environmentVariableValue);
+            }
+        }
+
+        $this->lastProcessExecutionResult = $this->connectionAdapter->executeCommand($environment.$command);
 
         if ($previousWorkingDirectory !== null) {
             $this->connectionAdapter->changeWorkingDirectory($previousWorkingDirectory);
         }
 
-        return $result;
+        return $this->lastProcessExecutionResult;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastProcessExecutionResult()
+    {
+        return $this->lastProcessExecutionResult;
     }
 }
