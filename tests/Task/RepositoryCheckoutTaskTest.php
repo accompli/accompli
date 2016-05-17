@@ -93,6 +93,10 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
         $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
+                ->withConsecutive(
+                    array($this->equalTo('git --version')),
+                    array($this->equalTo("GIT_TERMINAL_PROMPT=0 GIT_ASKPASS=echo git clone -b '0.1.0' --single-branch 'https://github.com/accompli/accompli.git' ''"))
+                )
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
         $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
@@ -123,9 +127,6 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
      * Tests if RepositoryCheckoutTask::onPrepareReleaseCheckoutRepository throws a RuntimeException when a Repository::checkout fails.
      *
      * @depends testOnPrepareReleaseConstructReleaseInstance
-     *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Checkout of repository "https://github.com/accompli/accompli.git" for version "0.1.0" failed.
      */
     public function testOnPrepareReleaseCheckoutRepositoryThrowsRuntimeException()
     {
@@ -160,7 +161,7 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
         $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
         $event->setRelease($releaseMock);
 
-        $this->setExpectedException('Accompli\Exception\TaskRuntimeException', 'Failed to checkout version "0.1.0" from repository "https://github.com/accompli/accompli.git".');
+        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed to checkout version "0.1.0" from repository "https://github.com/accompli/accompli.git".');
 
         $task = new RepositoryCheckoutTask('https://github.com/accompli/accompli.git');
         $task->onPrepareReleaseCheckoutRepository($event, AccompliEvents::PREPARE_RELEASE, $eventDispatcherMock);
