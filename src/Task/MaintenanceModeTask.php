@@ -34,6 +34,13 @@ class MaintenanceModeTask extends AbstractConnectedTask
     private $localMaintenanceDirectory;
 
     /**
+     * The document root subdirectory.
+     *
+     * @var string
+     */
+    private $documentRoot;
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
@@ -52,16 +59,18 @@ class MaintenanceModeTask extends AbstractConnectedTask
      * Constructs a new MaintenanceTask.
      *
      * @param string $strategy
+     * @param string $documentRoot
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($strategy = VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE)
+    public function __construct($strategy = VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE, $documentRoot = '')
     {
         if (in_array($strategy, array(VersionCategoryComparator::MATCH_MAJOR_DIFFERENCE, VersionCategoryComparator::MATCH_MINOR_DIFFERENCE, VersionCategoryComparator::MATCH_ALWAYS)) === false) {
             throw new InvalidArgumentException(sprintf('The strategy type "%s" is invalid.', $strategy));
         }
 
         $this->strategy = $strategy;
+        $this->documentRoot = $documentRoot;
         $this->localMaintenanceDirectory = realpath(__DIR__.'/../Resources/maintenance');
     }
 
@@ -77,7 +86,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
         $host = $event->getWorkspace()->getHost();
         $connection = $this->ensureConnection($host);
 
-        $directory = $host->getPath().'/maintenance/';
+        $directory = sprintf('%s/maintenance/%s', $host->getPath(), $this->documentRoot);
         $context = array('directory' => $directory, 'event.task.action' => TaskInterface::ACTION_IN_PROGRESS);
 
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Creating directory "{directory}".', $eventName, $this, $context));
@@ -107,7 +116,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
                 if (is_file($localFile)) {
                     $context = array('file' => $localFile, 'event.task.action' => TaskInterface::ACTION_COMPLETED);
 
-                    $uploaded = $connection->putFile($localFile, $directory.$file);
+                    $uploaded = $connection->putFile($localFile, $directory.'/'.$file);
                     if ($uploaded === true) {
                         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Uploaded file "{file}".', $eventName, $this, $context));
                     }
