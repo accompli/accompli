@@ -119,7 +119,7 @@ class ComposerInstallTask extends AbstractConnectedTask
         }
 
         $connection->changeWorkingDirectory($host->getPath());
-        $result = $connection->executeCommand(sprintf('php composer.phar install --working-dir="%s" --no-dev --no-scripts --optimize-autoloader', $release->getPath()));
+        $result = $connection->executeCommand(sprintf('php composer.phar install --no-interaction --working-dir="%s" --no-dev --no-scripts --optimize-autoloader', $release->getPath()));
 
         if ($connection->isFile($authenticationFile)) {
             $connection->delete($authenticationFile);

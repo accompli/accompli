@@ -249,7 +249,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
-                ->with('php composer.phar install --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
+                ->with('php composer.phar install --no-interaction --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
         $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
@@ -305,7 +305,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 );
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
-                ->with('php composer.phar install --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
+                ->with('php composer.phar install --no-interaction --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
         $connectionAdapterMock->expects($this->once())
                 ->method('isFile')
@@ -361,7 +361,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
-                ->with('php composer.phar install --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
+                ->with('php composer.phar install --no-interaction --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
                 ->willReturn(new ProcessExecutionResult(1, '', ''));
 
         $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
