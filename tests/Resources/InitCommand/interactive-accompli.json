@@ -1,0 +1,20 @@
+{
+    "$extend": "accompli://recipe/defaults.json",
+    "hosts": [
+        {
+            "stage": "production",
+            "connectionType": "ssh",
+            "hostname": "example.com",
+            "path": "/var/www/example.com"
+        }
+    ],
+    "events": {
+        "subscribers": [
+            {
+                "class": "Accompli\\Task\\ExecuteCommandTask",
+                "events": [],
+                "command": ""
+            }
+        ]
+    }
+}

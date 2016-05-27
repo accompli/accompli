@@ -4,6 +4,7 @@ namespace Accompli\Console;
 
 use Accompli\Accompli;
 use Accompli\Console\Command\DeployReleaseCommand;
+use Accompli\Console\Command\InitCommand;
 use Accompli\Console\Command\InstallReleaseCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 
@@ -40,6 +41,7 @@ class Application extends BaseApplication
     protected function getDefaultCommands()
     {
         $commands = parent::getDefaultCommands();
+        $commands[] = new InitCommand();
         $commands[] = new InstallReleaseCommand();
         $commands[] = new DeployReleaseCommand();
 

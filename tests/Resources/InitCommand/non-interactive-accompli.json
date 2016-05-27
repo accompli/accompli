@@ -1,0 +1,7 @@
+{
+    "$extend": "accompli://recipe/defaults.json",
+    "hosts": [],
+    "events": {
+        "subscribers": []
+    }
+}
