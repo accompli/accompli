@@ -81,6 +81,22 @@ class CommandTester
     }
 
     /**
+     * Injects a value into a property of the command.
+     *
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function injectIntoCommandProperty($property, $value)
+    {
+        $reflectionClass = new ReflectionClass(get_class($this->command));
+        if ($reflectionClass->hasProperty($property)) {
+            $reflectionProperty = $reflectionClass->getProperty($property);
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($this->command, $value);
+        }
+    }
+
+    /**
      * Executes the command.
      *
      * Available execution options:
