@@ -66,6 +66,11 @@ An example accompli.json:
 }
 ```
 
+By running the following command, Accompli will guide you in creating a basic accompli.json configuration:
+``` bash
+$ vendor/bin/accompli init
+```
+
 For more detailed information on how to configure your accompli.json, please see the [configuration](02-Configuration.md) documentation.
 
 See the [tasks](03-Tasks.md) documentation to learn what tasks are provided by Accompli and how to create your own tasks.

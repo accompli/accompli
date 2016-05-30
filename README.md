@@ -26,7 +26,12 @@ Accompli uses [Semantic Versioning 2](http://semver.org/) for new versions.
 ## Usage
 1. Create an accompli.json defining the hosts to deploy to and the tasks to run during install and deployment.
 
-  *Note that this example might not work for your project.*
+  By running the following command, Accompli will guide you in creating a basic accompli.json configuration:
+  ``` bash
+  $ vendor/bin/accompli init
+  ```
+
+  *Note that below example might not work for your project.*
 
   ``` json
   {
