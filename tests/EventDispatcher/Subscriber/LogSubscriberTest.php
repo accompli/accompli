@@ -3,10 +3,13 @@
 namespace Accompli\Test\EventDispatcher\Subscriber;
 
 use Accompli\AccompliEvents;
+use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\Subscriber\LogSubscriber;
 use Accompli\Task\CreateWorkspaceTask;
 use PHPUnit_Framework_TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * LogSubscriberTest.
@@ -29,7 +32,8 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $loggerMock = $this->getMockBuilder(LoggerInterface::class)
+                ->getMock();
 
         $logSubscriber = new LogSubscriber($loggerMock);
 
@@ -43,18 +47,30 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testOnLogEvent()
     {
-        $eventSubscriberMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')->getMock();
+        $eventSubscriberMock = $this->getMockBuilder(EventSubscriberInterface::class)
+                ->getMock();
 
-        $logEventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\LogEvent')
+        $logEventMock = $this->getMockBuilder(LogEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $logEventMock->expects($this->once())->method('getLevel')->willReturn(LogLevel::DEBUG);
-        $logEventMock->expects($this->once())->method('getMessage')->willReturn('Test');
-        $logEventMock->expects($this->once())->method('getEventNameContext')->willReturn('accompli.test');
-        $logEventMock->expects($this->once())->method('getEventSubscriberContext')->willReturn($eventSubscriberMock);
-        $logEventMock->expects($this->once())->method('getContext')->willReturn(array());
+        $logEventMock->expects($this->once())
+                ->method('getLevel')
+                ->willReturn(LogLevel::DEBUG);
+        $logEventMock->expects($this->once())
+                ->method('getMessage')
+                ->willReturn('Test');
+        $logEventMock->expects($this->once())
+                ->method('getEventNameContext')
+                ->willReturn('accompli.test');
+        $logEventMock->expects($this->once())
+                ->method('getEventSubscriberContext')
+                ->willReturn($eventSubscriberMock);
+        $logEventMock->expects($this->once())
+                ->method('getContext')
+                ->willReturn(array());
 
-        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $loggerMock = $this->getMockBuilder(LoggerInterface::class)
+                ->getMock();
         $loggerMock->expects($this->once())
                 ->method('log')
                 ->with(
@@ -76,16 +92,27 @@ class LogSubscriberTest extends PHPUnit_Framework_TestCase
     {
         $eventSubscriber = new CreateWorkspaceTask();
 
-        $logEventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\LogEvent')
+        $logEventMock = $this->getMockBuilder(LogEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $logEventMock->expects($this->once())->method('getLevel')->willReturn(LogLevel::DEBUG);
-        $logEventMock->expects($this->once())->method('getMessage')->willReturn('Test');
-        $logEventMock->expects($this->once())->method('getEventNameContext')->willReturn('accompli.test');
-        $logEventMock->expects($this->once())->method('getEventSubscriberContext')->willReturn($eventSubscriber);
-        $logEventMock->expects($this->once())->method('getContext')->willReturn(array());
+        $logEventMock->expects($this->once())
+                ->method('getLevel')
+                ->willReturn(LogLevel::DEBUG);
+        $logEventMock->expects($this->once())
+                ->method('getMessage')
+                ->willReturn('Test');
+        $logEventMock->expects($this->once())
+                ->method('getEventNameContext')
+                ->willReturn('accompli.test');
+        $logEventMock->expects($this->once())
+                ->method('getEventSubscriberContext')
+                ->willReturn($eventSubscriber);
+        $logEventMock->expects($this->once())
+                ->method('getContext')
+                ->willReturn(array());
 
-        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $loggerMock = $this->getMockBuilder(LoggerInterface::class)
+                ->getMock();
         $loggerMock->expects($this->once())
                 ->method('log')
                 ->with(

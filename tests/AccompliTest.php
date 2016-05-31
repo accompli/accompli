@@ -3,10 +3,18 @@
 namespace Accompli\Test;
 
 use Accompli\Accompli;
+use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Deployment\Connection\ConnectionManagerInterface;
 use Accompli\Deployment\Host;
+use Accompli\Deployment\Strategy\DeploymentStrategyInterface;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 use Nijens\ProtocolStream\StreamManager;
 use PHPUnit_Framework_TestCase;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * AccompliTest.
@@ -27,7 +35,8 @@ class AccompliTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $outputInterfaceMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
+        $outputInterfaceMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
 
         $this->serviceContainerParameters = array(
             'configuration.file' => __DIR__.'/Resources/accompli-with-mock-listeners.json',
@@ -71,7 +80,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
         $accompli = new Accompli(new ParameterBag($this->serviceContainerParameters));
         $accompli->initializeContainer();
 
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\ContainerInterface', $accompli->getContainer());
+        $this->assertInstanceOf(ContainerInterface::class, $accompli->getContainer());
     }
 
     /**
@@ -102,7 +111,7 @@ class AccompliTest extends PHPUnit_Framework_TestCase
         $accompli = new Accompli(new ParameterBag($this->serviceContainerParameters));
         $accompli->initializeContainer();
 
-        $this->assertInstanceOf('Accompli\Configuration\ConfigurationInterface', $accompli->getConfiguration());
+        $this->assertInstanceOf(ConfigurationInterface::class, $accompli->getConfiguration());
     }
 
     /**
@@ -128,7 +137,8 @@ class AccompliTest extends PHPUnit_Framework_TestCase
      */
     public function testInstall()
     {
-        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\DeploymentStrategyInterface')->getMock();
+        $deploymentStrategyMock = $this->getMockBuilder(DeploymentStrategyInterface::class)
+                ->getMock();
         $deploymentStrategyMock->expects($this->once())
                 ->method('install')
                 ->with(
@@ -137,12 +147,13 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->once())
                 ->method('dispatch');
 
-        $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
+        $containerMock = $this->getMockBuilder(ContainerInterface::class)
+                ->getMock();
         $containerMock->expects($this->exactly(2))
                 ->method('get')
                 ->withConsecutive(
@@ -154,9 +165,10 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                     $eventDispatcherMock
                 );
 
-        $parameterBagMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface')->getMock();
+        $parameterBagMock = $this->getMockBuilder(ParameterBagInterface::class)
+                ->getMock();
 
-        $accompli = $this->getMockBuilder('Accompli\Accompli')
+        $accompli = $this->getMockBuilder(Accompli::class)
                 ->setConstructorArgs(array($parameterBagMock))
                 ->setMethods(array('getContainer'))
                 ->getMock();
@@ -172,7 +184,8 @@ class AccompliTest extends PHPUnit_Framework_TestCase
      */
     public function testDeploy()
     {
-        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\DeploymentStrategyInterface')->getMock();
+        $deploymentStrategyMock = $this->getMockBuilder(DeploymentStrategyInterface::class)
+                ->getMock();
         $deploymentStrategyMock->expects($this->once())
                 ->method('deploy')
                 ->with(
@@ -181,12 +194,13 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->once())
                 ->method('dispatch');
 
-        $containerMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
+        $containerMock = $this->getMockBuilder(ContainerInterface::class)
+                ->getMock();
         $containerMock->expects($this->exactly(2))
                 ->method('get')
                 ->withConsecutive(
@@ -198,9 +212,10 @@ class AccompliTest extends PHPUnit_Framework_TestCase
                     $eventDispatcherMock
                 );
 
-        $parameterBagMock = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface')->getMock();
+        $parameterBagMock = $this->getMockBuilder(ParameterBagInterface::class)
+                ->getMock();
 
-        $accompli = $this->getMockBuilder('Accompli\Accompli')
+        $accompli = $this->getMockBuilder(Accompli::class)
                 ->setConstructorArgs(array($parameterBagMock))
                 ->setMethods(array('getContainer'))
                 ->getMock();
@@ -219,10 +234,10 @@ class AccompliTest extends PHPUnit_Framework_TestCase
     public function provideServiceContainerServices()
     {
         return array(
-            array('configuration', 'Accompli\Configuration\ConfigurationInterface'),
-            array('connection_manager', 'Accompli\Deployment\Connection\ConnectionManagerInterface'),
-            array('event_dispatcher', 'Accompli\EventDispatcher\EventDispatcherInterface'),
-            array('logger', 'Psr\Log\LoggerInterface'),
+            array('configuration', ConfigurationInterface::class),
+            array('connection_manager', ConnectionManagerInterface::class),
+            array('event_dispatcher', EventDispatcherInterface::class),
+            array('logger', LoggerInterface::class),
         );
     }
 }

@@ -4,8 +4,14 @@ namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\ReleaseEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskCommandExecutionException;
 use Accompli\Task\ExecuteCommandTask;
 use PHPUnit_Framework_TestCase;
 
@@ -45,23 +51,31 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnEventWithPrepareReleaseEvent()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(3))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->exactly(2))
+                ->method('changeWorkingDirectory');
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with($this->equalTo('echo'), $this->equalTo(array('test')))
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
@@ -79,30 +93,38 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnEventWithReleaseEvent()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(3))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(3))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->exactly(2))
+                ->method('changeWorkingDirectory');
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with($this->equalTo('echo'), $this->equalTo(array('test')))
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->once())
@@ -120,30 +142,38 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnEventFailure()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(1))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(1))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->exactly(2))->method('changeWorkingDirectory');
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->exactly(2))
+                ->method('changeWorkingDirectory');
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with($this->equalTo('echo'), $this->equalTo(array('test')))
                 ->willReturn(new ProcessExecutionResult(1, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->once())
@@ -152,7 +182,7 @@ class ExecuteCommandTaskTest extends PHPUnit_Framework_TestCase
 
         $event = new ReleaseEvent($releaseMock);
 
-        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed executing command "echo".');
+        $this->setExpectedException(TaskCommandExecutionException::class, 'Failed executing command "echo".');
 
         $task = new ExecuteCommandTask(array(AccompliEvents::INSTALL_RELEASE), 'echo', array('test'));
         $task->onEvent($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);

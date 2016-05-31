@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\Deployment\Connection;
 
+use Accompli\Chrono\Process\ProcessExecutionResult;
 use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Test\WorkspaceUtility;
 use PHPUnit_Framework_TestCase;
@@ -210,7 +211,7 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
         $this->connectionAdapter->connect();
 
         $result = $this->connectionAdapter->executeCommand('echo test');
-        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $result);
+        $this->assertInstanceOf(ProcessExecutionResult::class, $result);
         $this->assertSame(0, $result->getExitCode());
         $this->assertSame('test'.PHP_EOL, $result->getOutput());
         $this->assertSame('', $result->getErrorOutput());
@@ -226,7 +227,7 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
         $this->connectionAdapter->connect();
 
         $result = $this->connectionAdapter->executeCommand('echo', array('test'));
-        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $result);
+        $this->assertInstanceOf(ProcessExecutionResult::class, $result);
         $this->assertSame(0, $result->getExitCode());
         $this->assertSame('test'.PHP_EOL, $result->getOutput());
         $this->assertSame('', $result->getErrorOutput());

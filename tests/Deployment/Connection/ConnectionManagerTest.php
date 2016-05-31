@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\Deployment\Connection;
 
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Connection\ConnectionManager;
 use Accompli\Deployment\Host;
 use Accompli\EventDispatcher\Event\HostEvent;
@@ -19,7 +20,8 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testRegisterConnectionTypeAddsValidConnectionAdapter()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $connectionManager = new ConnectionManager();
         $connectionManager->registerConnectionAdapter('test', get_class($connectionAdapterMock));
@@ -32,7 +34,8 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testRegisterConnectionTypeDoesNotAddInvalidConnectionAdapter()
     {
-        $connectionManagerMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionManager')->getMock();
+        $connectionManagerMock = $this->getMockBuilder(ConnectionManager::class)
+                ->getMock();
 
         $connectionManager = new ConnectionManager();
         $connectionManager->registerConnectionAdapter('test', get_class($connectionManagerMock));
@@ -68,14 +71,15 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetConnectionAdapterReturnsConnectionAdapter()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $host = new Host('test', 'test', 'example.org', '');
 
         $connectionManager = new ConnectionManager();
         $connectionManager->registerConnectionAdapter('test', get_class($connectionAdapterMock));
 
-        $this->assertInstanceOf('Accompli\Deployment\Connection\ConnectionAdapterInterface', $connectionManager->getConnectionAdapter($host));
+        $this->assertInstanceOf(ConnectionAdapterInterface::class, $connectionManager->getConnectionAdapter($host));
     }
 
     /**
@@ -85,7 +89,8 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetConnectionAdapterAlwaysReturnsTheSameInstance()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $host = new Host('test', 'test', 'example.org', '');
 
@@ -104,7 +109,8 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetConnectionAdapterDoesNotReturnTheSameInstanceForDifferentHost()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $host = new Host('test', 'test', 'example.org', '');
         $hostTwo = new Host('test', 'test', 'example.org', '', array('connectionOption' => 'connectionOptionValue'));
@@ -122,7 +128,8 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testOnCreateConnection()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $connectionManager = new ConnectionManager();
         $connectionManager->registerConnectionAdapter('test', get_class($connectionAdapterMock));
@@ -132,6 +139,6 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
 
         $connectionManager->onCreateConnection($event);
 
-        $this->assertInstanceOf('Accompli\Deployment\Connection\ConnectionAdapterInterface', $host->getConnection());
+        $this->assertInstanceOf(ConnectionAdapterInterface::class, $host->getConnection());
     }
 }

@@ -4,6 +4,7 @@ namespace Accompli\Test\Exception;
 
 use Accompli\Exception\TaskRuntimeException;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * TaskRuntimeExceptionTest.
@@ -17,7 +18,7 @@ class TaskRuntimeExceptionTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $taskMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')
+        $taskMock = $this->getMockBuilder(EventSubscriberInterface::class)
                 ->getMock();
 
         $exception = new TaskRuntimeException('Test exception', $taskMock);
@@ -33,7 +34,7 @@ class TaskRuntimeExceptionTest extends PHPUnit_Framework_TestCase
      */
     public function testGetTask()
     {
-        $taskMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')
+        $taskMock = $this->getMockBuilder(EventSubscriberInterface::class)
                 ->getMock();
 
         $exception = new TaskRuntimeException('Test exception', $taskMock);

@@ -2,6 +2,8 @@
 
 namespace Accompli\Test\EventDispatcher\Event;
 
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use PHPUnit_Framework_TestCase;
 
@@ -17,11 +19,11 @@ class WorkspaceEventTest extends PHPUnit_Framework_TestCase
      */
     public function testSetWorkspace()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -38,11 +40,11 @@ class WorkspaceEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCurrentRelease()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

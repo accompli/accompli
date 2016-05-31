@@ -2,7 +2,11 @@
 
 namespace Accompli\Test\DependencyInjection;
 
+use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\ConfigurationServiceRegistrationCompilerPass;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Connection\ConnectionManagerInterface;
+use Accompli\Deployment\Strategy\DeploymentStrategyInterface;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -18,10 +22,14 @@ class ConfigurationServiceRegistrationCompilerPassTest extends PHPUnit_Framework
      */
     public function testProcessAddsConfiguredDeploymentStrategyService()
     {
-        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\DeploymentStrategyInterface')->getMock();
+        $deploymentStrategyMock = $this->getMockBuilder(DeploymentStrategyInterface::class)
+                ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
-        $configurationMock->expects($this->once())->method('getDeploymentStrategyClass')->willReturn(get_class($deploymentStrategyMock));
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
+        $configurationMock->expects($this->once())
+                ->method('getDeploymentStrategyClass')
+                ->willReturn(get_class($deploymentStrategyMock));
 
         $container = new ContainerBuilder();
         $container->set('configuration', $configurationMock);
@@ -37,13 +45,18 @@ class ConfigurationServiceRegistrationCompilerPassTest extends PHPUnit_Framework
      */
     public function testProcessAddsConfiguredConnectionClassesToConnectionManager()
     {
-        $connectionMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionMockClass = get_class($connectionMock);
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
-        $configurationMock->expects($this->once())->method('getDeploymentConnectionClasses')->willReturn(array('local' => $connectionMockClass));
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
+        $configurationMock->expects($this->once())
+                ->method('getDeploymentConnectionClasses')
+                ->willReturn(array('local' => $connectionMockClass));
 
-        $connectionManagerMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionManagerInterface')->getMock();
+        $connectionManagerMock = $this->getMockBuilder(ConnectionManagerInterface::class)
+                ->getMock();
         $connectionManagerMock->expects($this->once())
                 ->method('registerConnectionAdapter')
                 ->with($this->equalTo('local'), $this->equalTo($connectionMockClass));
@@ -61,8 +74,10 @@ class ConfigurationServiceRegistrationCompilerPassTest extends PHPUnit_Framework
      */
     public function testProcessDoesNothingWithoutRegisteredConfigurationService()
     {
-        $connectionManagerMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionManagerInterface')->getMock();
-        $connectionManagerMock->expects($this->never())->method('registerConnectionAdapter');
+        $connectionManagerMock = $this->getMockBuilder(ConnectionManagerInterface::class)
+                ->getMock();
+        $connectionManagerMock->expects($this->never())
+                ->method('registerConnectionAdapter');
 
         $container = new ContainerBuilder();
         $container->set('connection_manager', $connectionManagerMock);

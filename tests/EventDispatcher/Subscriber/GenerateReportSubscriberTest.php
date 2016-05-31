@@ -3,6 +3,8 @@
 namespace Accompli\Test\EventDispatcher\Subscriber;
 
 use Accompli\AccompliEvents;
+use Accompli\Console\Logger\ConsoleLoggerInterface;
+use Accompli\DataCollector\EventDataCollector;
 use Accompli\EventDispatcher\Subscriber\GenerateReportSubscriber;
 use PHPUnit_Framework_TestCase;
 
@@ -28,10 +30,10 @@ class GenerateReportSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
 
-        $eventDataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\EventDataCollector')
+        $eventDataCollectorMock = $this->getMockBuilder(EventDataCollector::class)
                 ->getMock();
 
         $subscriber = new GenerateReportSubscriber($loggerMock, $eventDataCollectorMock, array());

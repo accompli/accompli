@@ -4,7 +4,13 @@ namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskCommandExecutionException;
 use Accompli\Task\RepositoryCheckoutTask;
 use PHPUnit_Framework_TestCase;
 
@@ -41,17 +47,18 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareReleaseConstructReleaseInstance()
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('addRelease');
+        $workspaceMock->expects($this->once())
+                ->method('addRelease');
 
         $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
 
         $task = new RepositoryCheckoutTask('https://github.com/accompli/accompli.git');
         $task->onPrepareReleaseConstructReleaseInstance($event);
 
-        $this->assertInstanceOf('Accompli\Deployment\Release', $event->getRelease());
+        $this->assertInstanceOf(Release::class, $event->getRelease());
         $this->assertSame('0.1.0', $event->getRelease()->getVersion());
     }
 
@@ -62,12 +69,13 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareReleaseConstructReleaseInstanceDoesNothingWhenReleaseInstanceExists()
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->never())->method('addRelease');
+        $workspaceMock->expects($this->never())
+                ->method('addRelease');
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -77,7 +85,7 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
         $task = new RepositoryCheckoutTask('https://github.com/accompli/accompli.git');
         $task->onPrepareReleaseConstructReleaseInstance($event);
 
-        $this->assertInstanceOf('Accompli\Deployment\Release', $event->getRelease());
+        $this->assertInstanceOf(Release::class, $event->getRelease());
     }
 
     /**
@@ -87,10 +95,13 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareReleaseCheckoutRepository()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
                 ->withConsecutive(
@@ -99,22 +110,30 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
-        $releaseMock->expects($this->exactly(2))->method('getVersion')->willReturn('0.1.0');
+        $releaseMock->expects($this->once())
+                ->method('getWorkspace')
+                ->willReturn($workspaceMock);
+        $releaseMock->expects($this->exactly(2))
+                ->method('getVersion')
+                ->willReturn('0.1.0');
 
         $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
         $event->setRelease($releaseMock);
@@ -130,10 +149,13 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareReleaseCheckoutRepositoryThrowsRuntimeException()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->once())->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->once())
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
                 ->willReturnOnConsecutiveCalls(
@@ -141,27 +163,35 @@ class RepositoryCheckoutTaskTest extends PHPUnit_Framework_TestCase
                         new ProcessExecutionResult(1, '', '')
                 );
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $releaseMock->expects($this->once())->method('getWorkspace')->willReturn($workspaceMock);
-        $releaseMock->expects($this->exactly(3))->method('getVersion')->willReturn('0.1.0');
+        $releaseMock->expects($this->once())
+                ->method('getWorkspace')
+                ->willReturn($workspaceMock);
+        $releaseMock->expects($this->exactly(3))
+                ->method('getVersion')
+                ->willReturn('0.1.0');
 
         $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
         $event->setRelease($releaseMock);
 
-        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed to checkout version "0.1.0" from repository "https://github.com/accompli/accompli.git".');
+        $this->setExpectedException(TaskCommandExecutionException::class, 'Failed to checkout version "0.1.0" from repository "https://github.com/accompli/accompli.git".');
 
         $task = new RepositoryCheckoutTask('https://github.com/accompli/accompli.git');
         $task->onPrepareReleaseCheckoutRepository($event, AccompliEvents::PREPARE_RELEASE, $eventDispatcherMock);

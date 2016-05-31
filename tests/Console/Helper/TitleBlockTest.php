@@ -5,6 +5,7 @@ namespace Accompli\Test\Console\Helper;
 use Accompli\Console\Helper\TitleBlock;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * TitleBlockTest.
@@ -18,7 +19,7 @@ class TitleBlockTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
 
         $titleBlock = new TitleBlock($outputMock, 'Test message', TitleBlock::STYLE_SUCCESS);
@@ -41,7 +42,7 @@ class TitleBlockTest extends PHPUnit_Framework_TestCase
     {
         $outputFormatter = new OutputFormatter();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->exactly(3))
                 ->method('getFormatter')

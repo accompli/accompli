@@ -3,8 +3,12 @@
 namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 use Accompli\Task\YamlConfigurationTask;
 use PHPUnit_Framework_TestCase;
 
@@ -42,12 +46,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewConfigurationFile()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(3))
                 ->method('isFile')
@@ -62,7 +66,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'), $this->stringStartsWith("foo: bar\nbaz: "))
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -72,14 +76,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(3))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(3))
@@ -100,12 +104,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewConfigurationFileWithEnvironmentVariables()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(3))
                 ->method('isFile')
@@ -120,7 +124,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'), $this->equalTo("foo: bar_test\nbaz: 0.1.0\nbar:\n    baz: test_0.1.0\n"))
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -133,14 +137,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getStage')
                 ->willReturn(Host::STAGE_TEST);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(3))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(3))
@@ -164,12 +168,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCreateOrUpdateConfigurationUpdatesExistingConfigurationFile()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(3))
                 ->method('isFile')
@@ -191,7 +195,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -201,14 +205,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(3))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(3))
@@ -229,12 +233,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewConfigurationFileFromDistributionFile()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(3))
                 ->method('isFile')
@@ -256,7 +260,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -266,14 +270,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(3))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(3))
@@ -299,10 +303,10 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCreateOrUpdateConfigurationCreatesANewStageSpecificConfigurationFile($stage, $expectedConfiguration)
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(3))
                 ->method('isFile')
@@ -324,7 +328,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->exactly(2))
@@ -337,14 +341,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(3))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(3))
@@ -377,12 +381,12 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCreateOrUpdateConfigurationFailsCreatingANewConfigurationFile()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(3))
                 ->method('isFile')
@@ -397,7 +401,7 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo('{workspace}/releases/0.1.0/parameters.yml'), $this->stringStartsWith("foo: bar\nbaz: "))
                 ->willReturn(false);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -407,14 +411,14 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(3))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(3))

@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\EventDispatcher\Event;
 
+use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\ReleaseEvent;
 use PHPUnit_Framework_TestCase;
 
@@ -17,7 +18,7 @@ class ReleaseEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -33,7 +34,7 @@ class ReleaseEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRelease()
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

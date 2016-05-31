@@ -3,6 +3,7 @@
 namespace Accompli\Test\Deployment\Connection;
 
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Connection\ConnectionAdapterProcessExecutor;
 use PHPUnit_Framework_TestCase;
 
@@ -18,7 +19,8 @@ class ConnectionAdapterProcessExecutorTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $processExecutor = new ConnectionAdapterProcessExecutor($connectionAdapterMock);
 
@@ -32,8 +34,11 @@ class ConnectionAdapterProcessExecutorTest extends PHPUnit_Framework_TestCase
      */
     public function testIsDirectory()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->once())->method('isDirectory')->willReturn(true);
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->once())
+                ->method('isDirectory')
+                ->willReturn(true);
 
         $processExecutor = new ConnectionAdapterProcessExecutor($connectionAdapterMock);
 
@@ -47,12 +52,15 @@ class ConnectionAdapterProcessExecutorTest extends PHPUnit_Framework_TestCase
      */
     public function testExecute()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->once())->method('executeCommand')->willReturn(new ProcessExecutionResult(0, '', ''));
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->once())
+                ->method('executeCommand')
+                ->willReturn(new ProcessExecutionResult(0, '', ''));
 
         $processExecutor = new ConnectionAdapterProcessExecutor($connectionAdapterMock);
 
-        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $processExecutor->execute('echo test'));
+        $this->assertInstanceOf(ProcessExecutionResult::class, $processExecutor->execute('echo test'));
     }
 
     /**
@@ -62,15 +70,16 @@ class ConnectionAdapterProcessExecutorTest extends PHPUnit_Framework_TestCase
      */
     public function testExecuteWithWorkingDirectory()
     {
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('getWorkingDirectory')
                 ->willReturn('/previous/directory');
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('changeWorkingDirectory')
                 ->withConsecutive(
-                        array('/test/path'),
-                        array('/previous/directory')
+                    array('/test/path'),
+                    array('/previous/directory')
                 )
                 ->willReturn(true);
         $connectionAdapterMock->expects($this->once())
@@ -79,6 +88,6 @@ class ConnectionAdapterProcessExecutorTest extends PHPUnit_Framework_TestCase
 
         $processExecutor = new ConnectionAdapterProcessExecutor($connectionAdapterMock);
 
-        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $processExecutor->execute('echo test', '/test/path'));
+        $this->assertInstanceOf(ProcessExecutionResult::class, $processExecutor->execute('echo test', '/test/path'));
     }
 }

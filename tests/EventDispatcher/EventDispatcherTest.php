@@ -79,7 +79,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->dispatch('test');
 
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $eventDispatcher->getLastDispatchedEvent());
+        $this->assertInstanceOf(Event::class, $eventDispatcher->getLastDispatchedEvent());
     }
 
     /**

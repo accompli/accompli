@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\Deployment;
 
+use Accompli\Deployment\Host;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
 use PHPUnit_Framework_TestCase;
@@ -18,7 +19,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -32,7 +33,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetHost()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -46,7 +47,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testSetReleasesDirectory()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -61,7 +62,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testSetDataDirectory()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -76,7 +77,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testSetCacheDirectory()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -91,7 +92,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testSetOtherDirectories()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -108,7 +109,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetReleasesDirectory()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())->method('getPath')->willReturn('{host-base-path}');
@@ -126,7 +127,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDataDirectory()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())->method('getPath')->willReturn('{host-base-path}');
@@ -144,7 +145,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCacheDirectory()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())->method('getPath')->willReturn('{host-base-path}');
@@ -162,7 +163,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetOtherDirectories()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->exactly(2))->method('getPath')->willReturn('{host-base-path}');
@@ -178,7 +179,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testAddReleaseSetsWorkspaceOnRelease()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -196,7 +197,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetReleasesReturnsEmptyArray()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -213,7 +214,7 @@ class WorkspaceTest extends PHPUnit_Framework_TestCase
      */
     public function testGetReleasesReturnsArrayWithReleaseInstanceAfterAddRelease()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

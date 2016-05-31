@@ -3,14 +3,21 @@
 namespace Accompli\Test\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
+use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Console\Logger\ConsoleLoggerInterface;
 use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
 use Accompli\Deployment\Strategy\RemoteInstallStrategy;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\FailedEvent;
 use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -25,9 +32,13 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testInstallWithoutStageRetrievesHostsFromConfiguration()
     {
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
-        $configurationMock->expects($this->once())->method('getHosts')->willReturn(array());
-        $configurationMock->expects($this->never())->method('getHostsByStage');
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
+        $configurationMock->expects($this->once())
+                ->method('getHosts')
+                ->willReturn(array());
+        $configurationMock->expects($this->never())
+                ->method('getHostsByStage');
 
         $strategy = new RemoteInstallStrategy();
         $strategy->setConfiguration($configurationMock);
@@ -42,8 +53,11 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testInstallWithStageRetrievesHostsByStageFromConfiguration()
     {
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
-        $configurationMock->expects($this->once())->method('getHosts')->willReturn(array());
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
+        $configurationMock->expects($this->once())
+                ->method('getHosts')
+                ->willReturn(array());
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
@@ -62,17 +76,19 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testInstallDispatchesEventsSuccessfully()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->exactly(5))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -104,16 +120,16 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
@@ -134,16 +150,18 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testInstallDispatchesEventsSuccessfullyForMultipleHosts()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->willReturn(array($hostMock, $hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->exactly(10))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -201,16 +219,16 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->exactly(2))
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->exactly(2))
                 ->method('getOutput')
@@ -231,21 +249,22 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testInstallDispatchesEventsSuccessfullyUntillAfterPrepareWorkspaceEvent()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
-
         $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -273,16 +292,16 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
@@ -303,21 +322,22 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testInstallDispatchesEventsSuccessfullyUntillAfterPrepareReleaseEvent()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
-
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -341,16 +361,16 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
@@ -375,7 +395,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function provideDispatchCallbackForWorkspaceEvent(Event $event)
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->setConstructorArgs(array($event->getHost()))
                 ->getMock();
 
@@ -395,7 +415,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function provideDispatchCallbackForPrepareReleaseEvent(Event $event)
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->setConstructorArgs(array($event->getVersion()))
                 ->getMock();
 

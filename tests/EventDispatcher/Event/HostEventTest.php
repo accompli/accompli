@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\EventDispatcher\Event;
 
+use Accompli\Deployment\Host;
 use Accompli\EventDispatcher\Event\HostEvent;
 use PHPUnit_Framework_TestCase;
 
@@ -17,7 +18,7 @@ class HostEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -31,7 +32,7 @@ class HostEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetHost()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
