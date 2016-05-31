@@ -197,7 +197,7 @@ class Configuration implements ConfigurationInterface
     {
         if (empty($this->hosts) && isset($this->configuration['hosts'])) {
             foreach ($this->configuration['hosts'] as $host) {
-                $this->hosts[] = ObjectFactory::getInstance()->newInstance('Accompli\Deployment\Host', $host);
+                $this->hosts[] = ObjectFactory::getInstance()->newInstance(Host::class, $host);
             }
         }
 

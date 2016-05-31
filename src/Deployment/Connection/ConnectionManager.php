@@ -32,7 +32,7 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function registerConnectionAdapter($connectionType, $connectionAdapterClass)
     {
-        if (class_exists($connectionAdapterClass) && in_array('Accompli\Deployment\Connection\ConnectionAdapterInterface', class_implements($connectionAdapterClass))) {
+        if (class_exists($connectionAdapterClass) && in_array(ConnectionAdapterInterface::class, class_implements($connectionAdapterClass))) {
             $this->connectionAdapters[$connectionType] = $connectionAdapterClass;
         }
     }
