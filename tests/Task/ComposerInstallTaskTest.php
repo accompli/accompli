@@ -4,11 +4,17 @@ namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskCommandExecutionException;
+use Accompli\Exception\TaskRuntimeException;
 use Accompli\Task\ComposerInstallTask;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
  * ComposerInstallTaskTest.
@@ -43,12 +49,12 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInstallComposerInstallsComposer()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(5))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('isFile')
@@ -65,7 +71,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->with('php composer.phar self-update')
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -78,7 +84,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getPath')
                 ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -94,18 +100,18 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInstallComposerFailsInstallingComposer()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(1))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('isFile')
                 ->willReturn(false);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -115,14 +121,14 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $event = new WorkspaceEvent($hostMock);
         $event->setWorkspace($workspaceMock);
 
-        $this->setExpectedException('Accompli\Exception\TaskRuntimeException', 'Failed installing the Composer binary.');
+        $this->setExpectedException(TaskRuntimeException::class, 'Failed installing the Composer binary.');
 
         $task = new ComposerInstallTask();
         $task->onPrepareWorkspaceInstallComposer($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -133,12 +139,12 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInstallComposerUpdatesComposer()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isFile')
@@ -148,13 +154,17 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->with('php composer.phar self-update')
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -170,12 +180,12 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInstallComposerFailsUpdatingComposer()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isFile')
@@ -185,7 +195,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->with('php composer.phar self-update')
                 ->willReturn(new ProcessExecutionResult(1, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -195,7 +205,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -211,13 +221,13 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInstallComposerThrowsRuntimeExceptionWhenWorkspaceInstanceNotAvailable()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -229,7 +239,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
 
         $event = new WorkspaceEvent($hostMock);
 
-        $this->setExpectedException('Accompli\Exception\TaskRuntimeException', 'The workspace of the host has not been created.');
+        $this->setExpectedException(TaskRuntimeException::class, 'The workspace of the host has not been created.');
 
         $task = new ComposerInstallTask();
         $task->onPrepareWorkspaceInstallComposer($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
@@ -240,19 +250,19 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseExecuteComposerInstall()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with('php composer.phar install --no-interaction --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -262,14 +272,14 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(2))
@@ -290,12 +300,12 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseExecuteComposerInstallWithAuthentication()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('putContents')
@@ -314,7 +324,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
         $connectionAdapterMock->expects($this->once())
                 ->method('delete');
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -324,14 +334,14 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(2))
@@ -352,19 +362,19 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseExecuteComposerInstallFails()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(1))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with('php composer.phar install --no-interaction --working-dir="{workspace}/0.1.0" --no-dev --no-scripts --optimize-autoloader')
                 ->willReturn(new ProcessExecutionResult(1, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -374,14 +384,14 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(2))
@@ -393,7 +403,7 @@ class ComposerInstallTaskTest extends PHPUnit_Framework_TestCase
 
         $event = new InstallReleaseEvent($releaseMock);
 
-        $this->setExpectedException('Accompli\Exception\TaskCommandExecutionException', 'Failed installing Composer dependencies.');
+        $this->setExpectedException(TaskCommandExecutionException::class, 'Failed installing Composer dependencies.');
 
         $task = new ComposerInstallTask();
         $task->onInstallReleaseExecuteComposerInstall($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);

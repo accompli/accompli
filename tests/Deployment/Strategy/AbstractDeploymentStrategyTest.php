@@ -3,13 +3,21 @@
 namespace Accompli\Test\Deployment\Strategy;
 
 use Accompli\AccompliEvents;
+use Accompli\Configuration\ConfigurationInterface;
+use Accompli\Console\Logger\ConsoleLoggerInterface;
 use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Strategy\AbstractDeploymentStrategy;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\DeployReleaseEvent;
 use Accompli\EventDispatcher\Event\FailedEvent;
 use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -24,12 +32,14 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testSetConfiguration()
     {
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
-        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
 
-        $deploymentStrategyMock->setConfiguration($configurationMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setConfiguration($configurationMock);
 
-        $this->assertAttributeSame($configurationMock, 'configuration', $deploymentStrategyMock);
+        $this->assertAttributeSame($configurationMock, 'configuration', $deploymentStrategy);
     }
 
     /**
@@ -37,12 +47,14 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testSetEventDispatcher()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
 
-        $deploymentStrategyMock->setEventDispatcher($eventDispatcherMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setEventDispatcher($eventDispatcherMock);
 
-        $this->assertAttributeSame($eventDispatcherMock, 'eventDispatcher', $deploymentStrategyMock);
+        $this->assertAttributeSame($eventDispatcherMock, 'eventDispatcher', $deploymentStrategy);
     }
 
     /**
@@ -50,14 +62,14 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testSetLogger()
     {
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
-        $deploymentStrategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')
+
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
                 ->getMockForAbstractClass();
+        $deploymentStrategy->setLogger($loggerMock);
 
-        $deploymentStrategyMock->setLogger($loggerMock);
-
-        $this->assertAttributeSame($loggerMock, 'logger', $deploymentStrategyMock);
+        $this->assertAttributeSame($loggerMock, 'logger', $deploymentStrategy);
     }
 
     /**
@@ -68,17 +80,19 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testDeployDispatchesEventsSuccessfully()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->exactly(5))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -110,27 +124,28 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
                 ->willReturn($outputMock);
 
-        $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
-        $strategyMock->setConfiguration($configurationMock);
-        $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->setLogger($loggerMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setConfiguration($configurationMock);
+        $deploymentStrategy->setEventDispatcher($eventDispatcherMock);
+        $deploymentStrategy->setLogger($loggerMock);
 
-        $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
+        $this->assertTrue($deploymentStrategy->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -140,17 +155,19 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testDeployDispatchesEventsSuccessfullyForMultipleHosts()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock, $hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->exactly(10))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -208,27 +225,28 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->exactly(2))
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->exactly(2))
                 ->method('getOutput')
                 ->willReturn($outputMock);
 
-        $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
-        $strategyMock->setConfiguration($configurationMock);
-        $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->setLogger($loggerMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setConfiguration($configurationMock);
+        $deploymentStrategy->setEventDispatcher($eventDispatcherMock);
+        $deploymentStrategy->setLogger($loggerMock);
 
-        $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
+        $this->assertTrue($deploymentStrategy->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -238,17 +256,19 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testDeployDispatchesEventsSuccessfullyUntillAfterWorkspaceEvent()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
@@ -276,27 +296,28 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
                 ->willReturn($outputMock);
 
-        $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
-        $strategyMock->setConfiguration($configurationMock);
-        $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->setLogger($loggerMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setConfiguration($configurationMock);
+        $deploymentStrategy->setEventDispatcher($eventDispatcherMock);
+        $deploymentStrategy->setLogger($loggerMock);
 
-        $this->assertFalse($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
+        $this->assertFalse($deploymentStrategy->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -306,17 +327,19 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testDeployDispatchesEventsSuccessfullyUntillAfterPrepareDeployReleaseEvent()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
@@ -348,27 +371,28 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
                 ->willReturn($outputMock);
 
-        $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
-        $strategyMock->setConfiguration($configurationMock);
-        $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->setLogger($loggerMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setConfiguration($configurationMock);
+        $deploymentStrategy->setEventDispatcher($eventDispatcherMock);
+        $deploymentStrategy->setLogger($loggerMock);
 
-        $this->assertFalse($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
+        $this->assertFalse($deploymentStrategy->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -378,17 +402,19 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testDeployDispatchesRollbackEventsSuccessfully()
     {
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->setConstructorArgs(array(Host::STAGE_TEST, 'local', null, __DIR__))
                 ->getMock();
 
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
         $configurationMock->expects($this->once())
                 ->method('getHostsByStage')
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->exactly(5))
                 ->method('dispatch')
                 ->withConsecutive(
@@ -420,27 +446,28 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     )
                 );
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')
                 ->willReturn($outputFormatterMock);
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
                 ->willReturn($outputMock);
 
-        $strategyMock = $this->getMockBuilder('Accompli\Deployment\Strategy\AbstractDeploymentStrategy')->getMockForAbstractClass();
-        $strategyMock->setConfiguration($configurationMock);
-        $strategyMock->setEventDispatcher($eventDispatcherMock);
-        $strategyMock->setLogger($loggerMock);
+        $deploymentStrategy = $this->getMockBuilder(AbstractDeploymentStrategy::class)
+                ->getMockForAbstractClass();
+        $deploymentStrategy->setConfiguration($configurationMock);
+        $deploymentStrategy->setEventDispatcher($eventDispatcherMock);
+        $deploymentStrategy->setLogger($loggerMock);
 
-        $this->assertTrue($strategyMock->deploy('0.1.0', Host::STAGE_TEST));
+        $this->assertTrue($deploymentStrategy->deploy('0.1.0', Host::STAGE_TEST));
     }
 
     /**
@@ -454,7 +481,7 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function provideDispatchCallbackForWorkspaceEvent(Event $event)
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->setConstructorArgs(array($event->getHost()))
                 ->getMock();
 
@@ -474,7 +501,7 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function provideDispatchCallbackForPrepareDeployReleaseEvent(Event $event)
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->setConstructorArgs(array($event->getVersion()))
                 ->getMock();
 
@@ -494,14 +521,14 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function provideDispatchCallbackForRollbackPrepareDeployReleaseEvent(Event $event)
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->any())
                 ->method('getVersion')
                 ->willReturn($event->getVersion());
 
-        $currentReleaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $currentReleaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $currentReleaseMock->expects($this->any())

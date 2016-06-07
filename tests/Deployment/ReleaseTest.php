@@ -3,6 +3,7 @@
 namespace Accompli\Test\Deployment;
 
 use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -27,7 +28,7 @@ class ReleaseTest extends PHPUnit_Framework_TestCase
      */
     public function testSetWorkspace()
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -44,7 +45,7 @@ class ReleaseTest extends PHPUnit_Framework_TestCase
      */
     public function testGetWorkspace()
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -73,10 +74,12 @@ class ReleaseTest extends PHPUnit_Framework_TestCase
      */
     public function testGetPath()
     {
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getReleasesDirectory')->willReturn('{releases-directory}');
+        $workspaceMock->expects($this->once())
+                ->method('getReleasesDirectory')
+                ->willReturn('{releases-directory}');
 
         $release = new Release('0.1.0');
         $release->setWorkspace($workspaceMock);

@@ -3,8 +3,10 @@
 namespace Accompli\Test\EventDispatcher\Event;
 
 use Accompli\EventDispatcher\Event\LogEvent;
+use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LogLevel;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * LogEventTest.
@@ -18,7 +20,8 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructSetsProperties()
     {
-        $eventSubscriberMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')->getMock();
+        $eventSubscriberMock = $this->getMockBuilder(EventSubscriberInterface::class)
+                ->getMock();
 
         $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test', $eventSubscriberMock);
 
@@ -31,12 +34,11 @@ class LogEventTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if constructing a new LogEvent throws an InvalidArgumentException when the log level is invalid.
-     *
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The provided level "invalid" is not a valid log level.
      */
     public function testConstructThrowInvalidArgumentExceptionWhenLogLevelInvalid()
     {
+        $this->setExpectedException(InvalidArgumentException::class, 'The provided level "invalid" is not a valid log level.');
+
         new LogEvent('invalid', 'Test', 'accompli.test');
     }
 
@@ -75,7 +77,8 @@ class LogEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetEventSubscriberContext()
     {
-        $eventSubscriberMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')->getMock();
+        $eventSubscriberMock = $this->getMockBuilder(EventSubscriberInterface::class)
+                ->getMock();
 
         $logEvent = new LogEvent(LogLevel::DEBUG, 'Test', 'accompli.test', $eventSubscriberMock);
 

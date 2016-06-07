@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\EventDispatcher\Subscriber;
 
+use Accompli\DataCollector\DataCollectorInterface;
 use Accompli\EventDispatcher\Subscriber\DataCollectorSubscriber;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\EventDispatcher\Event;
@@ -38,7 +39,7 @@ class DataCollectorSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testAddDataCollector()
     {
-        $dataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\DataCollectorInterface')
+        $dataCollectorMock = $this->getMockBuilder(DataCollectorInterface::class)
                 ->getMock();
 
         $dataSubscriber = new DataCollectorSubscriber(array());
@@ -54,7 +55,7 @@ class DataCollectorSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testOnEvent()
     {
-        $dataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\DataCollectorInterface')
+        $dataCollectorMock = $this->getMockBuilder(DataCollectorInterface::class)
                 ->getMock();
         $dataCollectorMock->expects($this->once())
                 ->method('collect');

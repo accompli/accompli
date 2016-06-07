@@ -3,10 +3,18 @@
 namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
+use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
+use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\TaskRuntimeException;
 use Accompli\Task\MaintenanceModeTask;
 use Accompli\Utility\VersionCategoryComparator;
+use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
-use RuntimeException;
 
 /**
  * MaintenanceModeTaskTest.
@@ -38,12 +46,11 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if constructing a new MaintenanceTask with an invalid strategy throws an InvalidArgumentException.
-     *
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The strategy type "invalid" is invalid.
      */
     public function testConstructThrowsInvalidArgumentException()
     {
+        $this->setExpectedException(InvalidArgumentException::class, 'The strategy type "invalid" is invalid.');
+
         new MaintenanceModeTask('invalid');
     }
 
@@ -52,12 +59,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceUploadMaintenancePage()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->atLeast(4))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -73,7 +80,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('putFile')
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -86,14 +93,14 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getPath')
                 ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(1))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\WorkspaceEvent')
+        $eventMock = $this->getMockBuilder(WorkspaceEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->exactly(1))
@@ -109,12 +116,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceUploadMaintenancePageToDocumentRootSubdirectory()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->atLeast(4))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -131,7 +138,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->anything(), $this->stringStartsWith('{workspace}/maintenance/web/'))
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -144,14 +151,14 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getPath')
                 ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(1))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\WorkspaceEvent')
+        $eventMock = $this->getMockBuilder(WorkspaceEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->exactly(1))
@@ -167,12 +174,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceUploadMaintenancePageWhenMaintenanceExists()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->atLeast(4))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -186,7 +193,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('putFile')
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -196,14 +203,14 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(1))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\WorkspaceEvent')
+        $eventMock = $this->getMockBuilder(WorkspaceEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->exactly(1))
@@ -219,12 +226,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceUploadMaintenancePageFailure()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -239,7 +246,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('putFile')
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -252,14 +259,14 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getPath')
                 ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->exactly(1))
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\WorkspaceEvent')
+        $eventMock = $this->getMockBuilder(WorkspaceEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->exactly(1))
@@ -275,12 +282,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareDeployReleaseLinkMaintenancePageToStage()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -295,7 +302,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
         $connectionAdapterMock->expects($this->never())
                 ->method('delete');
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -311,18 +318,18 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getPath')
                 ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
+        $eventMock = $this->getMockBuilder(PrepareDeployReleaseEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
@@ -341,12 +348,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareDeployReleaseLinkMaintenancePageToStageWhenStageLinkExists()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(2))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -363,7 +370,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->with('{workspace}/test', false)
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -379,18 +386,18 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getPath')
                 ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
+        $eventMock = $this->getMockBuilder(PrepareDeployReleaseEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
@@ -409,12 +416,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareDeployReleaseLinkMaintenancePageToStageDoesNotExecuteWhenVersionCategoryDifferenceDoesNotMatchStrategy()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(1))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->never())
                 ->method('isConnected');
@@ -425,7 +432,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
         $connectionAdapterMock->expects($this->never())
                 ->method('delete');
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->never())
@@ -435,20 +442,20 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->never())
                 ->method('getStage');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->never())
                 ->method('getHost');
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $releaseMock->expects($this->exactly(2))
                 ->method('getVersion')
                 ->willReturn('0.1.0');
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
+        $eventMock = $this->getMockBuilder(PrepareDeployReleaseEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->never())
@@ -469,12 +476,12 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareDeployReleaseLinkMaintenancePageToStageFailure()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
                 ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
@@ -490,7 +497,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->with('/maintenance/', '/test')
                 ->willReturn(false);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $hostMock->expects($this->once())
@@ -503,18 +510,18 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getStage')
                 ->willReturn('test');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $workspaceMock->expects($this->once())
                 ->method('getHost')
                 ->willReturn($hostMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent')
+        $eventMock = $this->getMockBuilder(PrepareDeployReleaseEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
@@ -524,7 +531,7 @@ class MaintenanceModeTaskTest extends PHPUnit_Framework_TestCase
                 ->method('getRelease')
                 ->willReturn($releaseMock);
 
-        $this->setExpectedException('RuntimeException', 'Linking "/test" to maintenance page failed.');
+        $this->setExpectedException(TaskRuntimeException::class, 'Linking "/test" to maintenance page failed.');
 
         $task = new MaintenanceModeTask();
         $task->onPrepareDeployReleaseLinkMaintenancePageToStage($eventMock, AccompliEvents::PREPARE_DEPLOY_RELEASE, $eventDispatcherMock);

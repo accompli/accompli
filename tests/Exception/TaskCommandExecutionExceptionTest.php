@@ -2,8 +2,10 @@
 
 namespace Accompli\Test\Exception;
 
+use Accompli\Chrono\Process\ProcessExecutionResult;
 use Accompli\Exception\TaskCommandExecutionException;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * TaskCommandExecutionExceptionTest.
@@ -17,11 +19,11 @@ class TaskCommandExecutionExceptionTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $processExecutionResultMock = $this->getMockBuilder('Accompli\Chrono\Process\ProcessExecutionResult')
+        $processExecutionResultMock = $this->getMockBuilder(ProcessExecutionResult::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $taskMock = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventSubscriberInterface')
+        $taskMock = $this->getMockBuilder(EventSubscriberInterface::class)
                 ->getMock();
 
         $exception = new TaskCommandExecutionException('Test exception', $processExecutionResultMock, $taskMock);
@@ -38,7 +40,7 @@ class TaskCommandExecutionExceptionTest extends PHPUnit_Framework_TestCase
      */
     public function testGetProcessExecutionResult()
     {
-        $processExecutionResultMock = $this->getMockBuilder('Accompli\Chrono\Process\ProcessExecutionResult')
+        $processExecutionResultMock = $this->getMockBuilder(ProcessExecutionResult::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

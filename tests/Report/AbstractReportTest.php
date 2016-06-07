@@ -2,9 +2,14 @@
 
 namespace Accompli\Test\Report;
 
+use Accompli\Console\Logger\ConsoleLoggerInterface;
+use Accompli\DataCollector\DataCollectorInterface;
 use Accompli\DataCollector\EventDataCollector;
+use Accompli\Report\AbstractReport;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LogLevel;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * AbstractReportTest.
@@ -18,10 +23,10 @@ class AbstractReportTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $eventDataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\EventDataCollector')
+        $eventDataCollectorMock = $this->getMockBuilder(EventDataCollector::class)
                 ->getMock();
 
-        $report = $this->getMockBuilder('Accompli\Report\AbstractReport')
+        $report = $this->getMockBuilder(AbstractReport::class)
                 ->setConstructorArgs(array($eventDataCollectorMock, array($eventDataCollectorMock)))
                 ->getMockForAbstractClass();
 
@@ -40,19 +45,19 @@ class AbstractReportTest extends PHPUnit_Framework_TestCase
      */
     public function testGenerate(EventDataCollector $eventDataCollectorMock, $beforeAfterTitleBlockLine, $titleBlockLine)
     {
-        $dataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\DataCollectorInterface')
+        $dataCollectorMock = $this->getMockBuilder(DataCollectorInterface::class)
                 ->getMock();
         $dataCollectorMock->expects($this->once())
                 ->method('getData')
                 ->willReturn(array('Test item' => 'Test item data'));
 
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
         $outputFormatterMock->expects($this->any())
                 ->method('format')
                 ->willReturnArgument(0);
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->any())
                 ->method('getFormatter')
@@ -80,13 +85,13 @@ class AbstractReportTest extends PHPUnit_Framework_TestCase
                     array($this->equalTo(' '))
                 );
 
-        $loggerMock = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLoggerInterface')
+        $loggerMock = $this->getMockBuilder(ConsoleLoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('getOutput')
                 ->willReturn($outputMock);
 
-        $report = $this->getMockBuilder('Accompli\Report\AbstractReport')
+        $report = $this->getMockBuilder(AbstractReport::class)
                 ->setConstructorArgs(array($eventDataCollectorMock, array($eventDataCollectorMock, $dataCollectorMock)))
                 ->getMockForAbstractClass();
 
@@ -102,7 +107,7 @@ class AbstractReportTest extends PHPUnit_Framework_TestCase
     {
         $provide = array();
 
-        $eventDataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\EventDataCollector')
+        $eventDataCollectorMock = $this->getMockBuilder(EventDataCollector::class)
                 ->getMock();
         $eventDataCollectorMock->expects($this->once())
                 ->method('getData')
@@ -110,7 +115,7 @@ class AbstractReportTest extends PHPUnit_Framework_TestCase
 
         $provide[] = array($eventDataCollectorMock, '<fg=black;bg=green>', '<fg=black;bg=green> [OK]');
 
-        $eventDataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\EventDataCollector')
+        $eventDataCollectorMock = $this->getMockBuilder(EventDataCollector::class)
                 ->getMock();
         $eventDataCollectorMock->expects($this->once())
                 ->method('hasCountedFailedEvents')
@@ -121,7 +126,7 @@ class AbstractReportTest extends PHPUnit_Framework_TestCase
 
         $provide[] = array($eventDataCollectorMock, '<fg=white;bg=red>', '<fg=white;bg=red> [FAILURE]');
 
-        $eventDataCollectorMock = $this->getMockBuilder('Accompli\DataCollector\EventDataCollector')
+        $eventDataCollectorMock = $this->getMockBuilder(EventDataCollector::class)
                 ->getMock();
         $eventDataCollectorMock->expects($this->once())
                 ->method('hasCountedLogLevel')

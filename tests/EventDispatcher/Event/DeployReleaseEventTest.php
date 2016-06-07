@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\EventDispatcher\Event;
 
+use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\DeployReleaseEvent;
 use PHPUnit_Framework_TestCase;
 
@@ -17,7 +18,7 @@ class DeployReleaseEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -34,11 +35,11 @@ class DeployReleaseEventTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructWithCurrentRelease()
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $currentReleaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $currentReleaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -55,11 +56,11 @@ class DeployReleaseEventTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCurrentRelease()
     {
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $currentReleaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $currentReleaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

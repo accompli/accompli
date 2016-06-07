@@ -18,7 +18,7 @@ class AccompliEventsTest extends PHPUnit_Framework_TestCase
      */
     public function testGetEventNames()
     {
-        $reflectionClass = new ReflectionClass('Accompli\\AccompliEvents');
+        $reflectionClass = new ReflectionClass(AccompliEvents::class);
 
         $this->assertSame(array_values($reflectionClass->getConstants()), AccompliEvents::getEventNames());
     }

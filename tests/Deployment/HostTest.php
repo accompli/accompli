@@ -2,6 +2,7 @@
 
 namespace Accompli\Test\Deployment;
 
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Host;
 use PHPUnit_Framework_TestCase;
 use UnexpectedValueException;
@@ -9,7 +10,7 @@ use UnexpectedValueException;
 /**
  * HostTest.
  *
- * @author  Niels Nijens <nijens.niels@gmail.com>
+ * @author Niels Nijens <nijens.niels@gmail.com>
  */
 class HostTest extends PHPUnit_Framework_TestCase
 {
@@ -53,7 +54,8 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testSetConnectionSetsConnectionAndIsReturnedByGetConnection()
     {
-        $connectionMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $host = $this->createHostInstance();
         $host->setConnection($connectionMock);
@@ -76,7 +78,8 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testHasConnectionReturnsTrueWhenConnectionInstanceIsSet()
     {
-        $connectionMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
 
         $host = $this->createHostInstance();
         $host->setConnection($connectionMock);

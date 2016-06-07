@@ -5,6 +5,7 @@ namespace Accompli\Test\Console\Helper;
 use Accompli\Console\Helper\Title;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * TitleTest.
@@ -18,7 +19,7 @@ class TitleTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
 
         $title = new Title($outputMock, 'Test message');
@@ -34,7 +35,7 @@ class TitleTest extends PHPUnit_Framework_TestCase
     {
         $outputFormatter = new OutputFormatter();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getFormatter')

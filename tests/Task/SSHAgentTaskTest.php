@@ -4,8 +4,13 @@ namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Release;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 use Accompli\Task\SSHAgentTask;
 use PHPUnit_Framework_TestCase;
 
@@ -42,20 +47,27 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInitializeSSHAgent()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with($this->equalTo('eval $(ssh-agent)'))
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
@@ -70,20 +82,27 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInitializeSSHAgentFails()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('executeCommand')
                 ->with($this->equalTo('eval $(ssh-agent)'))
                 ->willReturn(new ProcessExecutionResult(1, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
@@ -98,10 +117,13 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInitializeSSHAgentAddSSHKey()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(4))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(4))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
                 ->withConsecutive(
@@ -122,17 +144,25 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo('{workspace}/tmp.key'))
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
-        $hostMock->expects($this->once())->method('getPath')->willReturn('{workspace}');
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('getPath')
+                ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+        $workspaceMock->expects($this->once())
+                ->method('getHost')
+                ->willReturn($hostMock);
 
         $event = new WorkspaceEvent($hostMock);
         $event->setWorkspace($workspaceMock);
@@ -148,10 +178,13 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceInitializeSSHAgentAddSSHKeyFails()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(4))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(4))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
                 ->withConsecutive(
@@ -172,17 +205,25 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo('{workspace}/tmp.key'))
                 ->willReturn(true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
-        $hostMock->expects($this->once())->method('getPath')->willReturn('{workspace}');
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('getPath')
+                ->willReturn('{workspace}');
 
-        $workspaceMock = $this->getMockBuilder('Accompli\Deployment\Workspace')
+        $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())->method('getHost')->willReturn($hostMock);
+        $workspaceMock->expects($this->once())
+                ->method('getHost')
+                ->willReturn($hostMock);
 
         $event = new WorkspaceEvent($hostMock);
         $event->setWorkspace($workspaceMock);
@@ -198,10 +239,12 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCompleteOrFailedShutdownSSHAgent()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
         $eventDispatcherMock->expects($this->exactly(4))->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
                 ->withConsecutive(
@@ -210,18 +253,22 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturn(new ProcessExecutionResult(0, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->exactly(2))->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->exactly(2))->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->exactly(2))
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->exactly(2))
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
         $task = new SSHAgentTask();
         $task->onPrepareWorkspaceInitializeSSHAgent($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -237,10 +284,13 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnInstallReleaseCompleteOrFailedShutdownSSHAgentFails()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(4))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(4))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->exactly(2))
                 ->method('executeCommand')
                 ->withConsecutive(
@@ -249,18 +299,22 @@ class SSHAgentTaskTest extends PHPUnit_Framework_TestCase
                 )
                 ->willReturnOnConsecutiveCalls(new ProcessExecutionResult(0, '', ''), new ProcessExecutionResult(1, '', ''));
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->exactly(2))->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->exactly(2))->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->exactly(2))
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->exactly(2))
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
         $task = new SSHAgentTask();
         $task->onPrepareWorkspaceInitializeSSHAgent($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
 
-        $releaseMock = $this->getMockBuilder('Accompli\Deployment\Release')
+        $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

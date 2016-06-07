@@ -2,7 +2,9 @@
 
 namespace Accompli\Test\DependencyInjection;
 
+use Accompli\Configuration\ConfigurationInterface;
 use Accompli\DependencyInjection\AwarenessCompilerPass;
+use Accompli\DependencyInjection\ConfigurationAwareInterface;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -20,8 +22,10 @@ class AwarenessCompilerPassTest extends PHPUnit_Framework_TestCase
      */
     public function testProcess()
     {
-        $configurationAwarenessMock = $this->getMockBuilder('Accompli\DependencyInjection\ConfigurationAwareInterface')->getMock();
-        $configurationMock = $this->getMockBuilder('Accompli\Configuration\ConfigurationInterface')->getMock();
+        $configurationAwarenessMock = $this->getMockBuilder(ConfigurationAwareInterface::class)
+                ->getMock();
+        $configurationMock = $this->getMockBuilder(ConfigurationInterface::class)
+                ->getMock();
 
         $container = new ContainerBuilder();
         $container->set('configuration', $configurationMock);

@@ -8,6 +8,8 @@ use PHPUnit_Framework_TestCase;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -22,7 +24,8 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
 
         $logger = new ConsoleLogger($outputMock);
 
@@ -34,13 +37,16 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructUpdatesTaskActionStatusMapBasedOnOperatingSystem()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
 
-        $logger = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLogger')
+        $logger = $this->getMockBuilder(ConsoleLogger::class)
                 ->disableOriginalConstructor()
                 ->setMethods(array('getOperatingSystemName'))
                 ->getMock();
-        $logger->expects($this->once())->method('getOperatingSystemName')->willReturn('WIN');
+        $logger->expects($this->once())
+                ->method('getOperatingSystemName')
+                ->willReturn('WIN');
         $logger->__construct($outputMock);
 
         $expectedValue = array(
@@ -57,7 +63,7 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetVerbosity()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getVerbosity')
@@ -73,7 +79,7 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetOutput()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
 
         $logger = new ConsoleLogger($outputMock);
@@ -86,10 +92,10 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetOutputReturnsErrorOutput()
     {
-        $errorOutputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
+        $errorOutputMock = $this->getMockBuilder(OutputInterface::class)
                 ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutputInterface')
+        $outputMock = $this->getMockBuilder(ConsoleOutputInterface::class)
                 ->getMock();
         $outputMock->expects($this->once())
                 ->method('getErrorOutput')
@@ -108,7 +114,8 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogWithInvalidLogLevelThrowsInvalidArgumentException()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
 
         $logger = new ConsoleLogger($outputMock);
         $logger->log('invalid', 'message');
@@ -125,11 +132,17 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogWritesLogLevelsToOutputBasedOnVerbosity($logLevel, $verbosityLevel, $output)
     {
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')->getMock();
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
+                ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $outputMock->expects($this->once())->method('getVerbosity')->willReturn($verbosityLevel);
-        $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getVerbosity')
+                ->willReturn($verbosityLevel);
+        $outputMock->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
 
         $callOccurence = $this->never();
         if ($output === true) {
@@ -151,17 +164,29 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogWritesLogLevelsToErrorOutput($logLevel)
     {
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')->getMock();
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
+                ->getMock();
 
-        $errorOutputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $errorOutputMock->expects($this->once())->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $errorOutputMock->expects($this->once())->method('writeln');
+        $errorOutputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $errorOutputMock->expects($this->once())
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+        $errorOutputMock->expects($this->once())
+                ->method('writeln');
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutputInterface')->getMock();
-        $outputMock->expects($this->once())->method('getErrorOutput')->willReturn($errorOutputMock);
-        $outputMock->expects($this->never())->method('getVerbosity');
-        $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
-        $outputMock->expects($this->never())->method('writeln');
+        $outputMock = $this->getMockBuilder(ConsoleOutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getErrorOutput')
+                ->willReturn($errorOutputMock);
+        $outputMock->expects($this->never())
+                ->method('getVerbosity');
+        $outputMock->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+        $outputMock->expects($this->never())
+                ->method('writeln');
 
         $logger = new ConsoleLogger($outputMock);
         $logger->log($logLevel, 'message');
@@ -172,12 +197,20 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogContextReplacements()
     {
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')->getMock();
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
+                ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $outputMock->expects($this->once())->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
-        $outputMock->expects($this->once())->method('writeln')->with($this->equalTo('  <notice>Message to Bob</notice>'));
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+        $outputMock->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
+        $outputMock->expects($this->once())
+                ->method('writeln')
+                ->with($this->equalTo('  <notice>Message to Bob</notice>'));
 
         $logger = new ConsoleLogger($outputMock);
         $logger->log(LogLevel::NOTICE, 'Message to {user}', array('user' => 'Bob'));
@@ -188,11 +221,17 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogMessageSections()
     {
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')->getMock();
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
+                ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $outputMock->expects($this->once())->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+        $outputMock->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
         $outputMock->expects($this->once())
                 ->method('writeln')
                 ->with($this->equalTo('[<event-name>accompli.test                     </event-name>][<event-task-name>TestTask                 </event-task-name>]  <notice>message</notice>'));
@@ -206,11 +245,17 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogMessageSectionsWithSameContextIndented()
     {
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')->getMock();
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
+                ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $outputMock->expects($this->exactly(2))->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->exactly(2))
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+        $outputMock->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
         $outputMock->expects($this->exactly(2))
                 ->method('writeln')
                 ->withConsecutive(
@@ -233,11 +278,17 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogTaskActionStatus($actionStatus, $expectedLogMessage)
     {
-        $outputFormatterMock = $this->getMockBuilder('Symfony\Component\Console\Formatter\OutputFormatterInterface')->getMock();
+        $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
+                ->getMock();
 
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $outputMock->expects($this->once())->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $outputMock->expects($this->any())->method('getFormatter')->willReturn($outputFormatterMock);
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->once())
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+        $outputMock->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($outputFormatterMock);
         $outputMock->expects($this->once())
                 ->method('writeln')
                 ->with($this->equalTo($expectedLogMessage));
@@ -251,9 +302,14 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testLogReplaceLine()
     {
-        $outputMock = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')->getMock();
-        $outputMock->expects($this->exactly(2))->method('getVerbosity')->willReturn(OutputInterface::VERBOSITY_NORMAL);
-        $outputMock->expects($this->exactly(5))->method('isDecorated')->willReturn(true);
+        $outputMock = $this->getMockBuilder(OutputInterface::class)
+                ->getMock();
+        $outputMock->expects($this->exactly(2))
+                ->method('getVerbosity')
+                ->willReturn(OutputInterface::VERBOSITY_NORMAL);
+        $outputMock->expects($this->exactly(5))
+                ->method('isDecorated')
+                ->willReturn(true);
         $outputMock->expects($this->exactly(3))
                 ->method('getFormatter')
                 ->willReturn(new OutputFormatter(true));
@@ -267,11 +323,13 @@ class ConsoleLoggerTest extends PHPUnit_Framework_TestCase
                     array($this->equalTo(" \e[1D <notice>message</notice>"))
                 );
 
-        $logger = $this->getMockBuilder('Accompli\Console\Logger\ConsoleLogger')
+        $logger = $this->getMockBuilder(ConsoleLogger::class)
                 ->setConstructorArgs(array($outputMock))
                 ->setMethods(array('getTerminalWidth'))
                 ->getMock();
-        $logger->expects($this->exactly(2))->method('getTerminalWidth')->willReturn(150);
+        $logger->expects($this->exactly(2))
+                ->method('getTerminalWidth')
+                ->willReturn(150);
 
         $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask'));
         $logger->log(LogLevel::NOTICE, 'message', array('event.name' => 'accompli.test', 'event.task.name' => 'TestTask', 'output.resetLine' => true));

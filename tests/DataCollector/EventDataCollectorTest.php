@@ -4,6 +4,8 @@ namespace Accompli\Test\DataCollector;
 
 use Accompli\AccompliEvents;
 use Accompli\DataCollector\EventDataCollector;
+use Accompli\EventDispatcher\Event\FailedEvent;
+use Accompli\EventDispatcher\Event\LogEvent;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LogLevel;
 
@@ -19,7 +21,7 @@ class EventDataCollectorTest extends PHPUnit_Framework_TestCase
      */
     public function testCollectLogEvent()
     {
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\LogEvent')
+        $eventMock = $this->getMockBuilder(LogEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
@@ -48,7 +50,7 @@ class EventDataCollectorTest extends PHPUnit_Framework_TestCase
      */
     public function testCollectFailedEvent()
     {
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\FailedEvent')
+        $eventMock = $this->getMockBuilder(FailedEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -81,7 +83,7 @@ class EventDataCollectorTest extends PHPUnit_Framework_TestCase
      */
     public function testHasCountedLogLevelReturnsTrueWhenCountedLogLevels()
     {
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\LogEvent')
+        $eventMock = $this->getMockBuilder(LogEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $eventMock->expects($this->once())
@@ -109,7 +111,7 @@ class EventDataCollectorTest extends PHPUnit_Framework_TestCase
      */
     public function testHasCountedFailedEventsReturnsTrueWhenCountedFailedEvents()
     {
-        $eventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\FailedEvent')
+        $eventMock = $this->getMockBuilder(FailedEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

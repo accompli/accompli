@@ -2,6 +2,8 @@
 
 namespace Accompli\Test\Deployment\Connection;
 
+use Accompli\Chrono\Process\ProcessExecutionResult;
+
 /**
  * ConnectedConnectionAdapterTestCase.
  *
@@ -81,7 +83,7 @@ abstract class ConnectedConnectionAdapterTestCase extends ConnectionAdapterTestC
     public function testExecuteCommandReturnsFalseWhenNotConnected()
     {
         $result = $this->connectionAdapter->executeCommand('echo test');
-        $this->assertInstanceOf('Accompli\Chrono\Process\ProcessExecutionResult', $result);
+        $this->assertInstanceOf(ProcessExecutionResult::class, $result);
         $this->assertSame(126, $result->getExitCode());
         $this->assertSame('', $result->getOutput());
         $this->assertSame("Connection adapter not connected.\n", $result->getErrorOutput());

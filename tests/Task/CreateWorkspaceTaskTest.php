@@ -3,7 +3,11 @@
 namespace Accompli\Test\Task;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
+use Accompli\Deployment\Host;
+use Accompli\Deployment\Workspace;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcherInterface;
 use Accompli\Task\CreateWorkspaceTask;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -58,10 +62,12 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceConstructWorkspaceInstance()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))
+                ->method('dispatch');
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -70,7 +76,7 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
 
-        $this->assertInstanceOf('Accompli\Deployment\Workspace', $event->getWorkspace());
+        $this->assertInstanceOf(Workspace::class, $event->getWorkspace());
         $this->assertSame('/releases/', $event->getWorkspace()->getReleasesDirectory());
         $this->assertSame('/data/', $event->getWorkspace()->getDataDirectory());
         $this->assertSame('/cache/', $event->getWorkspace()->getCacheDirectory());
@@ -80,30 +86,44 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
      * Tests if CreateWorkspaceTask::onPrepareWorkspaceCreateWorkspace throws a RuntimeException when the workspace path does not exist and cannot be created.
      *
      * @depends testOnPrepareWorkspaceConstructWorkspaceInstance
-     *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage The workspace path "" does not exist and could not be created.
      */
     public function testOnPrepareWorkspaceCreateWorkspaceThrowsRuntimeExceptionOnInaccessibleWorkspacePath()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(2))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->once())->method('isConnected')->willReturn(true);
-        $connectionAdapterMock->expects($this->once())->method('isDirectory')->willReturn(false);
-        $connectionAdapterMock->expects($this->once())->method('createDirectory')->with('')->willReturn(false);
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->once())
+                ->method('isConnected')
+                ->willReturn(true);
+        $connectionAdapterMock->expects($this->once())
+                ->method('isDirectory')
+                ->willReturn(false);
+        $connectionAdapterMock->expects($this->once())
+                ->method('createDirectory')
+                ->with('')
+                ->willReturn(false);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
         $task = new CreateWorkspaceTask();
         $task->onPrepareWorkspaceConstructWorkspaceInstance($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
+
+        $this->setExpectedException(RuntimeException::class, 'The workspace path "" does not exist and could not be created.');
+
         $task->onPrepareWorkspaceCreateWorkspace($event, AccompliEvents::PREPARE_WORKSPACE, $eventDispatcherMock);
     }
 
@@ -114,10 +134,13 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceCreateWorkspace()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(8))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(8))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
         $connectionAdapterMock->expects($this->once())
                 ->method('isConnected')
                 ->willReturn(true);
@@ -129,11 +152,15 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
                 ->withConsecutive(array('/releases/'), array('/data/'), array('/cache/'))
                 ->willReturnOnConsecutiveCalls(true, true, true);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
@@ -149,11 +176,16 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceCreateWorkspaceFailure()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(8))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(8))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->once())->method('isConnected')->willReturn(true);
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->once())
+                ->method('isConnected')
+                ->willReturn(true);
         $connectionAdapterMock->expects($this->exactly(4))
                 ->method('isDirectory')
                 ->willReturnOnConsecutiveCalls(true, false, false, false);
@@ -162,11 +194,15 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
                 ->withConsecutive(array('/releases/'), array('/data/'), array('/cache/'))
                 ->willReturn(false);
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 
@@ -182,19 +218,31 @@ class CreateWorkspaceTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnPrepareWorkspaceCreateWorkspaceExists()
     {
-        $eventDispatcherMock = $this->getMockBuilder('Accompli\EventDispatcher\EventDispatcherInterface')->getMock();
-        $eventDispatcherMock->expects($this->exactly(8))->method('dispatch');
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+                ->getMock();
+        $eventDispatcherMock->expects($this->exactly(8))
+                ->method('dispatch');
 
-        $connectionAdapterMock = $this->getMockBuilder('Accompli\Deployment\Connection\ConnectionAdapterInterface')->getMock();
-        $connectionAdapterMock->expects($this->once())->method('isConnected')->willReturn(true);
-        $connectionAdapterMock->expects($this->exactly(4))->method('isDirectory')->willReturn(true);
-        $connectionAdapterMock->expects($this->never())->method('createDirectory');
+        $connectionAdapterMock = $this->getMockBuilder(ConnectionAdapterInterface::class)
+                ->getMock();
+        $connectionAdapterMock->expects($this->once())
+                ->method('isConnected')
+                ->willReturn(true);
+        $connectionAdapterMock->expects($this->exactly(4))
+                ->method('isDirectory')
+                ->willReturn(true);
+        $connectionAdapterMock->expects($this->never())
+                ->method('createDirectory');
 
-        $hostMock = $this->getMockBuilder('Accompli\Deployment\Host')
+        $hostMock = $this->getMockBuilder(Host::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $hostMock->expects($this->once())->method('hasConnection')->willReturn(true);
-        $hostMock->expects($this->once())->method('getConnection')->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('hasConnection')
+                ->willReturn(true);
+        $hostMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($connectionAdapterMock);
 
         $event = new WorkspaceEvent($hostMock);
 

@@ -122,7 +122,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $configuration->getHosts());
         $this->assertNotEmpty($configuration->getHosts());
-        $this->assertInstanceOf('Accompli\Deployment\Host', current($configuration->getHosts()));
+        $this->assertInstanceOf(Host::class, current($configuration->getHosts()));
     }
 
     /**
@@ -172,7 +172,7 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $configuration->getHostsByStage(Host::STAGE_TEST));
         $this->assertNotEmpty($configuration->getHostsByStage(Host::STAGE_TEST));
-        $this->assertInstanceOf('Accompli\Deployment\Host', current($configuration->getHostsByStage(Host::STAGE_TEST)));
+        $this->assertInstanceOf(Host::class, current($configuration->getHostsByStage(Host::STAGE_TEST)));
     }
 
     /**

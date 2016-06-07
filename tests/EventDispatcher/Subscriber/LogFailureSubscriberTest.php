@@ -4,10 +4,12 @@ namespace Accompli\Test\EventDispatcher\Subscriber;
 
 use Accompli\AccompliEvents;
 use Accompli\Chrono\Process\ProcessExecutionResult;
+use Accompli\EventDispatcher\Event\FailedEvent;
 use Accompli\EventDispatcher\Subscriber\LogFailureSubscriber;
 use Accompli\Exception\TaskCommandExecutionException;
 use Accompli\Task\CreateWorkspaceTask;
 use PHPUnit_Framework_TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -33,7 +35,8 @@ class LogFailureSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $loggerMock = $this->getMockBuilder(LoggerInterface::class)
+                ->getMock();
 
         $logSubscriber = new LogFailureSubscriber($loggerMock);
 
@@ -47,14 +50,14 @@ class LogFailureSubscriberTest extends PHPUnit_Framework_TestCase
      */
     public function testOnFailedEventLogToLogger()
     {
-        $failedEventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\FailedEvent')
+        $failedEventMock = $this->getMockBuilder(FailedEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $failedEventMock->expects($this->once())
                 ->method('getLastEventName')
                 ->willReturn('accompli.test');
 
-        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
+        $loggerMock = $this->getMockBuilder(LoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('log')
@@ -79,7 +82,7 @@ class LogFailureSubscriberTest extends PHPUnit_Framework_TestCase
 
         $taskCommandExecutionException = new TaskCommandExecutionException('Test exception.', new ProcessExecutionResult(1, 'Command output.', ''), $task);
 
-        $failedEventMock = $this->getMockBuilder('Accompli\EventDispatcher\Event\FailedEvent')
+        $failedEventMock = $this->getMockBuilder(FailedEvent::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $failedEventMock->expects($this->once())
@@ -89,7 +92,7 @@ class LogFailureSubscriberTest extends PHPUnit_Framework_TestCase
                 ->method('getException')
                 ->willReturn($taskCommandExecutionException);
 
-        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
+        $loggerMock = $this->getMockBuilder(LoggerInterface::class)
                 ->getMock();
         $loggerMock->expects($this->exactly(2))
                 ->method('log')
