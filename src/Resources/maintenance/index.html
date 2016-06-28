@@ -4,7 +4,21 @@
         <title>In maintenance</title>
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
         <meta name='theme-color' content='#4884be'>
-        <script type='text/javascript' src='javascript.js'></script>
+        <script type='text/javascript'>
+            var check = setInterval(checkForMaintentance, 10000);
+
+            function checkForMaintentance() {
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (xhttp.readyState == 4 && xhttp.responseText.indexOf('Accompli') == -1) {
+                        window.location.reload(true);
+                    }
+                };
+
+                xhttp.open('GET', '/?' + Math.random(), true);
+                xhttp.send();
+            }
+        </script>
         <link rel='stylesheet' href='style.css'/>
     </head>
     <body>
