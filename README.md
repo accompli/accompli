@@ -12,6 +12,8 @@ An easy to use and extendable deployment tool for PHP projects.
 
 > *C'est fini. Accompli!*
 
+View the complete documentation of Accompli on [accompli.readme.io](https://accompli.readme.io/).
+
 ## Installation using Composer
 
 Run the following command to add the package to the composer.json of your project:
