@@ -7,7 +7,7 @@ A recipe is a set of pre-configured tasks defined in a separate accompli.json fi
 You can include a recipe by referencing it in the '$extend' key:
 ``` json
 {
-  "$extend": "vendor/accompli/accompli/src/Resources/accompli-defaults.json"
+  "$extend": "accompli://recipe/defaults.json"
 }
 ```
 
