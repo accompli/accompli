@@ -35,7 +35,7 @@ Accompli uses [Semantic Versioning 2](http://semver.org/) for new versions.
 
   ``` json
   {
-    "$extend": "vendor/accompli/accompli/src/Resources/accompli-defaults.json",
+    "$extend": "accompli://recipe/defaults.json",
     "hosts": [
       {
         "stage": "test",
