@@ -12,6 +12,8 @@ An easy to use and extendable deployment tool for PHP projects.
 
 > *C'est fini. Accompli!*
 
+View the complete documentation of Accompli on [accompli.readme.io](https://accompli.readme.io/).
+
 ## Installation using Composer
 
 Run the following command to add the package to the composer.json of your project:
@@ -22,9 +24,6 @@ $ composer require accompli/accompli --dev
 
 #### Versioning
 Accompli uses [Semantic Versioning 2](http://semver.org/) for new versions.
-
-#### Documentation
-View the complete documentation of Accompli on [accompli.readme.io](https://accompli.readme.io/).
 
 ## Usage
 1. Create an accompli.json defining the hosts to deploy to and the tasks to run during install and deployment.
