@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2a8330c0a457ec49ba39da58eb0d4a5e",
-    "content-hash": "65957edced6adea148a086100191adf7",
+    "hash": "b79197a2d8ebcee4b634b4b6a7f269cd",
+    "content-hash": "93f65938b9a975592a23b541dd1f4620",
     "packages": [
         {
             "name": "accompli/chrono",
@@ -117,6 +117,48 @@
                 "versioning"
             ],
             "time": "2016-03-30 13:16:03"
+        },
+        {
+            "name": "gisostallenberg/file-permission-calculator",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gisostallenberg/file-permission-calculator.git",
+                "reference": "6769bfeea5ae027c5b1e0f9e66621337cb493346"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gisostallenberg/file-permission-calculator/zipball/6769bfeea5ae027c5b1e0f9e66621337cb493346",
+                "reference": "6769bfeea5ae027c5b1e0f9e66621337cb493346",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GisoStallenberg\\FilePermissionCalculator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Giso Stallenberg",
+                    "email": "gisostallenberg@gmail.com"
+                }
+            ],
+            "description": "Library to convert file permissions from various formats to another",
+            "keywords": [
+                "chmod",
+                "file permissions",
+                "fileperms",
+                "permissions"
+            ],
+            "time": "2015-11-27 17:05:03"
         },
         {
             "name": "justinrainbow/json-schema",
