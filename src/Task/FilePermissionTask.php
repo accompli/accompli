@@ -91,11 +91,11 @@ class FilePermissionTask extends AbstractConnectedTask
     {
         $path = $releasePath.'/'.$path;
 
-        if (isset($pathSettings['permissions'])) {
-            $permissions = FilePermissionCalculator::fromStringRepresentation(str_pad($pathSettings['permissions'], 10, '-'))->getMode();
-        } else {
+        if (isset($pathSettings['permissions']) === false) {
             return false;
         }
+
+        $permissions = FilePermissionCalculator::fromStringRepresentation(str_pad($pathSettings['permissions'], 10, '-'))->getMode();
 
         $recursive = false;
         if (isset($pathSettings['recursive'])) {
