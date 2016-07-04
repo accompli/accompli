@@ -3,6 +3,7 @@
 namespace Accompli\Task;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
@@ -79,14 +80,14 @@ class FilePermissionTask extends AbstractConnectedTask
     /**
      * Update the file permissions per configured path.
      *
-     * @param mixed  $connection
+     * @param ConnectionAdapterInterface $connection
      * @param string $releasePath
      * @param string $path
      * @param string $pathSettings
      *
      * @return bool
      */
-    protected function updateFilePermissions($connection, $releasePath, $path, $pathSettings)
+    private function updateFilePermissions(ConnectionAdapterInterface $connection, $releasePath, $path, $pathSettings)
     {
         $path = $releasePath.'/'.$path;
 
