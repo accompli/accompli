@@ -6,7 +6,7 @@ use Accompli\AccompliEvents;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
-use Accompli\Exception\TaskCommandExecutionException;
+use Accompli\Exception\TaskRuntimeException;
 use GisoStallenberg\FilePermissionCalculator\FilePermissionCalculator;
 use Psr\Log\LogLevel;
 
@@ -50,82 +50,57 @@ class FilePermissionTask extends AbstractConnectedTask
      * Sets the correct permissions and group for the configured path.
      *
      * @param InstallReleaseEvent      $event
-     * @param string                   $eventName
+     * @param type                     $eventName
      * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @throws TaskRuntimeException
      */
     public function onInstallReleaseUpdateFilePermissions(InstallReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         $host = $event->getRelease()->getWorkspace()->getHost();
         $connection = $this->ensureConnection($host);
 
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Set correct permissions for configured paths...', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updating permissions for configured paths...', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
-        if ($connection->isConnected() === true && $connection->isDirectory($event->getRelease()->getPath())) {
-            foreach (array_keys($this->paths) as $configuredPath) {
-                $path = $this->getPath($configuredPath, $event);
-                $permissions = $this->getPermissionsForPath($configuredPath);
-                $recursive = $this->getRecursive();
-
-                $result = $connection->changePermissions($path, $permissions, $recursive);
-            }
-
-            if ($result === true) {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Permissions set for configured paths.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
-            } else {
-                $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::WARNING, 'Failed setting the correct permissions for configured paths.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_FAILED)));
-            }
-        }
-    }
-
-    /**
-     * Gets the directory for setting permissions.
-     *
-     * @param string              $configuredPath
-     * @param InstallReleaseEvent $event
-     *
-     * @return string
-     */
-    protected function getPath($configuredPath, $event)
-    {
         $releasePath = $event->getRelease()->getPath();
 
-        return $releasePath.'/'.$configuredPath;
-    }
+        $result = true;
+        foreach ($this->paths as $path => $pathSettings) {
+            $result = $result && $this->updateFilePermissions($connection, $releasePath, $path, $pathSettings);
+        }
 
-    /**
-     * Gets the calculated permissions based on the configuration.
-     *
-     * @param string $path
-     *
-     * @return int
-     *
-     * @throws TaskCommandExecutionException
-     */
-    protected function getPermissionsForPath($path)
-    {
-        if (array_key_exists('permissions', $this->paths[$path])) {
-            $configuredPermissions = array_column($this->paths, 'permissions')[0];
-            $permissions = FilePermissionCalculator::fromStringRepresentation(str_pad($configuredPermissions, 10, '-'))->getMode();
-
-            return $permissions;
+        if ($result === true) {
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updated permissions for configured paths.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
         } else {
-            throw new TaskCommandExecutionException(sprintf('Failed to set permissions".', $this));
+            throw new TaskRuntimeException('Failed updating the permissions for configured paths.', $this);
         }
     }
 
     /**
-     * Set recursive value if configured.
+     * Update the file permissions per configured path.
+     *
+     * @param mixed $connection
+     * @param string $releasePath
+     * @param string $path
+     * @param string $pathSettings
      *
      * @return bool
      */
-    protected function getRecursive()
+    protected function updateFilePermissions($connection, $releasePath, $path, $pathSettings)
     {
-        if (array_key_exists('recursive', $this->paths)) {
-            $configuredRecursive = array_column($this->paths, 'recursive')[0];
+        $path = $releasePath.'/'.$path;
 
-            return $configuredRecursive;
+        if (isset($pathSettings['permissions'])) {
+            $permissions = FilePermissionCalculator::fromStringRepresentation(str_pad($pathSettings['permissions'], 10, '-'))->getMode();
         } else {
             return false;
         }
+
+        $recursive = false;
+        if (isset($pathSettings['recursive'])) {
+            $recursive = $pathSettings['recursive'];
+        }
+
+        return $connection->changePermissions($path, $permissions, $recursive);
     }
 }
