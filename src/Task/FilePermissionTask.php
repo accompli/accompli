@@ -79,7 +79,7 @@ class FilePermissionTask extends AbstractConnectedTask
     /**
      * Update the file permissions per configured path.
      *
-     * @param mixed $connection
+     * @param mixed  $connection
      * @param string $releasePath
      * @param string $path
      * @param string $pathSettings
