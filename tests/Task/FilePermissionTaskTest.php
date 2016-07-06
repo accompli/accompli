@@ -34,7 +34,7 @@ class FilePermissionTaskTest extends PHPUnit_Framework_TestCase
      */
     public function testOnConstruct()
     {
-        $paths = array('paths' => 'var/cache');
+        $paths = array('var/cache');
         $task = new FilePermissionTask($paths);
 
         $this->assertAttributeSame($paths, 'paths', $task);
