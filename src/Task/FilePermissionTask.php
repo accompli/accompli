@@ -51,7 +51,7 @@ class FilePermissionTask extends AbstractConnectedTask
      * Sets the correct permissions and group for the configured path.
      *
      * @param InstallReleaseEvent      $event
-     * @param type                     $eventName
+     * @param string                   $eventName
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @throws TaskRuntimeException
