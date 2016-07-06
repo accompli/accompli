@@ -14,11 +14,11 @@ Example configuration:
 {
                 "class": "Accompli\\Task\\FilePermissionTask",
                 "paths": {
-                    "var/cache": {
+                    "directory/within/release": {
                         "recursive": true,
                         "permissions": "-rwxrwx---"
                     },
-                    "Windmill": {
+                    "another/directory/within/release": {
                         "recursive": true,
                         "permissions": "-rwxrwxrwx"
                     }
@@ -27,9 +27,9 @@ Example configuration:
 ```
 
 Foreach directory permissions can be set by adding a permissions key to the configured path. Serveral variations for the value are:
-``` -rwx ```, ``` rwxrwx ```, ``` -rwxrwxr ```. The ``` - ``` at the beginning is optional, so are the rest of the characters at the end.
+`-rwx`, `rwxrwx`, `-rwxrwxr`. The `-` at the beginning is optional, so are the rest of the characters at the end.
 
-Configuring ``` -rwx ``` will result in setting the following permissions ``` -rwx------ ```. It is advisible to configure the full 10 characters because this makes it easier for others to understand what permissions are set.
+Configuring `-rwx` will result in setting the following permissions `-rwx------`. It is advisible to configure the full 10 characters because this makes it easier for others to understand what permissions are set.
 
 ### Configure recursiveness
-It's also possible to set the permissions of all subdirectories of the configured path by setting the key ``` recursive ``` to true. This configuration setting is optional because the default setting is false.
+It's also possible to set the permissions of all subdirectories of the configured path by setting the key `recursive` to true. This configuration setting is optional because the default setting is false.
