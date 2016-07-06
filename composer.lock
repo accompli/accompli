@@ -120,20 +120,20 @@
         },
         {
             "name": "gisostallenberg/file-permission-calculator",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gisostallenberg/file-permission-calculator.git",
-                "reference": "6769bfeea5ae027c5b1e0f9e66621337cb493346"
+                "reference": "cc8051b683f3f0a7244d533d0956c3224eff7094"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gisostallenberg/file-permission-calculator/zipball/6769bfeea5ae027c5b1e0f9e66621337cb493346",
-                "reference": "6769bfeea5ae027c5b1e0f9e66621337cb493346",
+                "url": "https://api.github.com/repos/gisostallenberg/file-permission-calculator/zipball/cc8051b683f3f0a7244d533d0956c3224eff7094",
+                "reference": "cc8051b683f3f0a7244d533d0956c3224eff7094",
                 "shasum": ""
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.0"
+                "phpunit/phpunit": "^4.8 || ^5.4"
             },
             "type": "library",
             "autoload": {
@@ -158,7 +158,7 @@
                 "fileperms",
                 "permissions"
             ],
-            "time": "2015-11-27 17:05:03"
+            "time": "2016-07-05 08:25:30"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -1072,6 +1072,7 @@
                 "rest",
                 "web service"
             ],
+            "abandoned": "guzzlehttp/guzzle",
             "time": "2014-01-28 22:29:15"
         },
         {
