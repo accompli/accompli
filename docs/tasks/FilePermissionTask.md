@@ -12,18 +12,18 @@ Updates the permissions of the configured files and directories.
 Example configuration:
 ```json
 {
-                "class": "Accompli\\Task\\FilePermissionTask",
-                "paths": {
-                    "directory/within/release": {
-                        "recursive": true,
-                        "permissions": "-rwxrwx---"
-                    },
-                    "another/directory/within/release": {
-                        "recursive": true,
-                        "permissions": "-rwxrwxrwx"
-                    }
-                }
-            }
+    "class": "Accompli\\Task\\FilePermissionTask",
+    "paths": {
+        "directory/within/release": {
+            "recursive": true,
+            "permissions": "-rwxrwx---"
+        },
+        "another/directory/within/release": {
+            "recursive": true,
+            "permissions": "-rwxrwxrwx"
+        }
+    }
+}
 ```
 
 Foreach directory permissions can be set by adding a permissions key to the configured path. Serveral variations for the value are:
