@@ -33,3 +33,6 @@ Configuring `-rwx` will result in setting the following permissions `-rwx------`
 
 ### Configure recursiveness
 It's also possible to set the permissions of all subdirectories of the configured path by setting the key `recursive` to true. This configuration setting is optional because the default setting is false.
+
+# Event flow
+![Flowchart with highlighted events the FilePermissionTask is listening to](../images/event-flows/FilePermissionTask.png)
