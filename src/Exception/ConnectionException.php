@@ -2,8 +2,6 @@
 
 namespace Accompli\Exception;
 
-use RuntimeException;
-
 /**
  * ConnectionException.
  *
