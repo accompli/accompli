@@ -11,6 +11,7 @@ use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\Exception\RuntimeException;
 use Exception;
 
 /**
@@ -58,7 +59,11 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
 
                         continue;
                     }
+
+                    throw new RuntimeException(sprintf('No task configured to install or create release version "%s".', $version));
                 }
+
+                throw new RuntimeException('No task configured to initialize the workspace.');
             } catch (Exception $exception) {
             }
 

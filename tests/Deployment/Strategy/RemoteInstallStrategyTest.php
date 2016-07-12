@@ -15,6 +15,7 @@ use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\RuntimeException;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -283,7 +284,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     array(
                         $this->equalTo(AccompliEvents::INSTALL_RELEASE_FAILED),
                         $this->callback(function ($event) {
-                            return ($event instanceof FailedEvent);
+                            return ($event instanceof FailedEvent && $event->getException() instanceof RuntimeException && $event->getException()->getMessage() === 'No task configured to initialize the workspace.');
                         }),
                     )
                 );
@@ -356,7 +357,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     array(
                         $this->equalTo(AccompliEvents::INSTALL_RELEASE_FAILED),
                         $this->callback(function ($event) {
-                            return ($event instanceof FailedEvent);
+                            return ($event instanceof FailedEvent && $event->getException() instanceof RuntimeException && $event->getException()->getMessage() === 'No task configured to install or create release version "0.1.0".');
                         }),
                     )
                 );
