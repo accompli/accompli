@@ -15,6 +15,7 @@ use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\RuntimeException;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -265,7 +266,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
-        $eventDispatcherMock->expects($this->exactly(4))
+        $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch')
                 ->withConsecutive(
                     array(
@@ -276,18 +277,14 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
-                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
-                    ),
-                    array(
-                        $this->equalTo(AccompliEvents::PREPARE_RELEASE),
                         $this->callback(function ($event) {
-                            return ($event instanceof PrepareReleaseEvent);
+                            return ($event instanceof WorkspaceEvent);
                         }),
                     ),
                     array(
                         $this->equalTo(AccompliEvents::INSTALL_RELEASE_FAILED),
                         $this->callback(function ($event) {
-                            return ($event instanceof FailedEvent);
+                            return ($event instanceof FailedEvent && $event->getException() instanceof RuntimeException && $event->getException()->getMessage() === 'No task configured to initialize the workspace.');
                         }),
                     )
                 );
@@ -338,7 +335,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
-        $eventDispatcherMock->expects($this->exactly(3))
+        $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
                     array(
@@ -349,14 +346,18 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_RELEASE),
                         $this->callback(function ($event) {
-                            return ($event instanceof WorkspaceEvent);
+                            return ($event instanceof PrepareReleaseEvent);
                         }),
                     ),
                     array(
                         $this->equalTo(AccompliEvents::INSTALL_RELEASE_FAILED),
                         $this->callback(function ($event) {
-                            return ($event instanceof FailedEvent);
+                            return ($event instanceof FailedEvent && $event->getException() instanceof RuntimeException && $event->getException()->getMessage() === 'No task configured to install or create release version "0.1.0".');
                         }),
                     )
                 );

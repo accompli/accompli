@@ -3,7 +3,6 @@
 namespace Accompli\Exception;
 
 use Exception;
-use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -11,7 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class TaskRuntimeException extends RuntimeException // Change extend?
+class TaskRuntimeException extends RuntimeException
 {
     /**
      * The running task when the exception occurred.

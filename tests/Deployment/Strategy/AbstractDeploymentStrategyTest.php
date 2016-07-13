@@ -15,6 +15,7 @@ use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\RuntimeException;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -291,7 +292,7 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     array(
                         $this->equalTo(AccompliEvents::DEPLOY_RELEASE_FAILED),
                         $this->callback(function ($event) {
-                            return ($event instanceof FailedEvent);
+                            return ($event instanceof FailedEvent && $event->getException() instanceof RuntimeException && $event->getException()->getMessage() === 'No task configured to initialize the workspace.');
                         }),
                     )
                 );
@@ -366,7 +367,7 @@ class AbstractDeploymentStrategyTest extends PHPUnit_Framework_TestCase
                     array(
                         $this->equalTo(AccompliEvents::DEPLOY_RELEASE_FAILED),
                         $this->callback(function ($event) {
-                            return ($event instanceof FailedEvent);
+                            return ($event instanceof FailedEvent && $event->getException() instanceof RuntimeException && $event->getException()->getMessage() === 'No task configured to initialize release version "0.1.0" for deployment.');
                         }),
                     )
                 );

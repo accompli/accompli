@@ -17,6 +17,7 @@ use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Exception\RuntimeException;
 use Composer\Semver\Comparator;
 use Exception;
 
@@ -117,7 +118,11 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
 
                         continue;
                     }
+
+                    throw new RuntimeException(sprintf('No task configured to initialize release version "%s" for deployment.', $version));
                 }
+
+                throw new RuntimeException('No task configured to initialize the workspace.');
             } catch (Exception $exception) {
             }
 
