@@ -265,7 +265,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
-        $eventDispatcherMock->expects($this->exactly(4))
+        $eventDispatcherMock->expects($this->exactly(3))
                 ->method('dispatch')
                 ->withConsecutive(
                     array(
@@ -276,12 +276,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
-                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
-                    ),
-                    array(
-                        $this->equalTo(AccompliEvents::PREPARE_RELEASE),
                         $this->callback(function ($event) {
-                            return ($event instanceof PrepareReleaseEvent);
+                            return ($event instanceof WorkspaceEvent);
                         }),
                     ),
                     array(
@@ -338,7 +334,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
         $eventDispatcherMock->expects($this->once())
                 ->method('getLastDispatchedEvent')
                 ->willReturn(new Event());
-        $eventDispatcherMock->expects($this->exactly(3))
+        $eventDispatcherMock->expects($this->exactly(4))
                 ->method('dispatch')
                 ->withConsecutive(
                     array(
@@ -349,8 +345,12 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         $this->equalTo(AccompliEvents::PREPARE_WORKSPACE),
+                        $this->callback(array($this, 'provideDispatchCallbackForWorkspaceEvent')),
+                    ),
+                    array(
+                        $this->equalTo(AccompliEvents::PREPARE_RELEASE),
                         $this->callback(function ($event) {
-                            return ($event instanceof WorkspaceEvent);
+                            return ($event instanceof PrepareReleaseEvent);
                         }),
                     ),
                     array(
