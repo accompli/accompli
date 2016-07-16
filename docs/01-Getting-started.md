@@ -12,7 +12,7 @@ The French originates back to when Accompli was mainly meant to be a deployment 
 
 ## System Requirements
 
-Accompli requires PHP 5.4.0+ to run.
+Accompli requires PHP 5.5.0+ to run.
 
 The following extensions are suggested to speed up SSH related tasks:
 * mcrypt
