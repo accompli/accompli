@@ -6,6 +6,29 @@ This project adheres to [Semantic Versioning 2](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.3.0] - 2016-07-17
+
+### Added
+* More verbose logging / reporting, including failure reporting. (#140)
+* Verbosity to deployment strategy when failures occur. (#189)
+* `FilePermissionTask` to change the permissions of files and directories. (#186)
+* Init command to create an `accompli.json` file. (#169)
+* Support for a document root subdirectory in `MaintenanceModeTask`. (#163, #164)
+* Debug verbosity to `RepositoryCheckoutTask`. (#157)
+* Better documentation of the available connection adapters. (#191)
+
+### Changed
+* Composer binary installation to be more secure. (#145)
+* Upgraded to version 0.3 of Chrono. (#157)
+
+### Removed
+* PHP 5.4 support (#157, #175)
+
+### Fixed
+* `ComposerInstallTask` to be non-interactive. (#168)
+* `RepositoryCheckoutTask` to be non-interactive. (#157)
+
+
 ## [0.2.1] - 2016-04-13
 
 ### Fixed
@@ -43,6 +66,7 @@ This release adds Symfony application deployment support to Accompli.
 Initial Accompli release with basic tasks for installing and deploying a project on a local or remote location through SSH.
 
 
-[Unreleased]: https://github.com/accompli/accompli/compare/0.2.1...HEAD
+[Unreleased]: https://github.com/accompli/accompli/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/accompli/accompli/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/accompli/accompli/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/accompli/accompli/compare/0.1.0...0.2.0
