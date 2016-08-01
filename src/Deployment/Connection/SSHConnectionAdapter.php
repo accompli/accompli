@@ -316,28 +316,6 @@ class SSHConnectionAdapter extends AbstractSSHConnectionAdapter
     /**
      * {@inheritdoc}
      */
-    public function copy($remoteSource, $remoteDestination)
-    {
-        if ($this->isConnected()) {
-            $temporaryFile = tmpfile();
-
-            if ($this->getFile($remoteSource, $temporaryFile) === false) {
-                fclose($temporaryFile);
-
-                return false;
-            }
-
-            rewind($temporaryFile);
-
-            return $this->putContents($remoteDestination, $temporaryFile);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function changePermissions($remoteTarget, $fileMode, $recursive = false)
     {
         if ($this->isConnected()) {

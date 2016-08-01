@@ -24,6 +24,24 @@ abstract class AbstractSSHConnectionAdapter implements ConnectionAdapterInterfac
     protected $authenticationUsername;
 
     /**
+     * {@inheritdoc}
+     */
+    public function copy($remoteSource, $remoteDestination)
+    {
+        if ($this->isConnected()) {
+            $arguments = array(
+                '--recursive',
+                $remoteSource,
+                $remoteDestination,
+            );
+
+            return $this->executeCommand('cp', $arguments)->isSuccessful();
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the username of the user executing the script.
      *
      * @return string
