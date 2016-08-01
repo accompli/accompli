@@ -330,30 +330,6 @@ class SSHConnectionAdapter extends AbstractSSHConnectionAdapter
     /**
      * {@inheritdoc}
      */
-    public function putContents($destinationFilename, $data)
-    {
-        if ($this->isConnected()) {
-            return $this->connection->put($destinationFilename, $data, SFTP::SOURCE_STRING);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function putFile($sourceFilename, $destinationFilename)
-    {
-        if ($this->isConnected()) {
-            return $this->connection->put($destinationFilename, $sourceFilename, SFTP::SOURCE_LOCAL_FILE);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function delete($remoteTarget, $recursive = false)
     {
         if ($this->isConnected()) {

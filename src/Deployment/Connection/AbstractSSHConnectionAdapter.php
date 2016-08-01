@@ -42,6 +42,35 @@ abstract class AbstractSSHConnectionAdapter implements ConnectionAdapterInterfac
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function putContents($destinationFilename, $data)
+    {
+        if ($this->isConnected()) {
+            $data = preg_replace('/\n$/', '', $data);
+
+            return $this->executeCommand(sprintf("cat <<EOF > \"%s\"\n%s\nEOF\n", $destinationFilename, $data))->isSuccessful();
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function putFile($sourceFilename, $destinationFilename)
+    {
+        if ($this->isConnected()) {
+            $data = @file_get_contents($sourceFilename);
+            if ($data !== false) {
+                return $this->putContents($destinationFilename, $data);
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the username of the user executing the script.
      *
      * @return string

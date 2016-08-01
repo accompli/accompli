@@ -454,7 +454,21 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->connectionAdapter->putContents($this->workspaceUtility->getWorkspacePath().'/test.txt', 'test'));
         $this->assertFileExists($this->workspaceUtility->getWorkspacePath().'/test.txt');
-        $this->assertSame('test', file_get_contents($this->workspaceUtility->getWorkspacePath().'/test.txt'));
+        $this->assertSame("test\n", file_get_contents($this->workspaceUtility->getWorkspacePath().'/test.txt'));
+    }
+
+    /**
+     * Tests if ConnectionAdapterInterface::putContents puts data in a file.
+     *
+     * @depends testPutContents
+     */
+    public function testPutContentsWithNewline()
+    {
+        $this->connectionAdapter->connect();
+
+        $this->assertTrue($this->connectionAdapter->putContents($this->workspaceUtility->getWorkspacePath().'/test.txt', "test\n"));
+        $this->assertFileExists($this->workspaceUtility->getWorkspacePath().'/test.txt');
+        $this->assertSame("test\n", file_get_contents($this->workspaceUtility->getWorkspacePath().'/test.txt'));
     }
 
     /**
@@ -464,13 +478,13 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
      */
     public function testPutFile()
     {
-        $this->workspaceUtility->createFile('/test.txt', 'test');
+        $this->workspaceUtility->createFile('/test.txt', "test\n");
 
         $this->connectionAdapter->connect();
 
         $this->assertTrue($this->connectionAdapter->putFile($this->workspaceUtility->getWorkspacePath().'/test.txt', $this->workspaceUtility->getWorkspacePath().'/test2.txt'));
         $this->assertFileExists($this->workspaceUtility->getWorkspacePath().'/test2.txt');
-        $this->assertSame('test', file_get_contents($this->workspaceUtility->getWorkspacePath().'/test2.txt'));
+        $this->assertSame("test\n", file_get_contents($this->workspaceUtility->getWorkspacePath().'/test2.txt'));
     }
 
     /**
