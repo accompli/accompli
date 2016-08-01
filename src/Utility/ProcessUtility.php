@@ -17,7 +17,7 @@ class ProcessUtility
      *
      * @return string
      */
-    public static function escapeArguments(array $arguments, $command = null)
+    public static function escapeArguments(array $arguments, $command = null, $optionSeparator = '=')
     {
         $processedArguments = array();
         foreach ($arguments as $key => $value) {
@@ -30,7 +30,7 @@ class ProcessUtility
                     if ($optionValue === null) {
                         $processedArguments[] = $key;
                     } elseif (is_string($optionValue)) {
-                        $processedArguments[] = trim(sprintf('%s=%s', $key, $optionValue));
+                        $processedArguments[] = trim(sprintf('%s%s%s', $key, $optionSeparator, $optionValue));
                     }
                 }
             } elseif (is_scalar($value)) {
