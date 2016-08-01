@@ -338,6 +338,19 @@ abstract class ConnectionAdapterTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if ConnectionAdapterInterface::createDirectory creates a new directories recursively.
+     *
+     * @depends testCreateDirectory
+     */
+    public function testCreateDirectoryRecursive()
+    {
+        $this->connectionAdapter->connect();
+
+        $this->assertTrue($this->connectionAdapter->createDirectory($this->workspaceUtility->getWorkspacePath().'/existing-directory/subdirectory', 0770, true));
+        $this->assertTrue(is_dir($this->workspaceUtility->getWorkspacePath().'/existing-directory/subdirectory'));
+    }
+
+    /**
      * Tests if ConnectionAdapterInterface::createFile creates a new file.
      *
      * @depends testConnectReturnsTrue
