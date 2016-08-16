@@ -80,9 +80,10 @@ class FilePermissionTaskTest extends PHPUnit_Framework_TestCase
 
         $event = new InstallReleaseEvent($releaseMock);
 
-        $this->setExpectedException(TaskRuntimeException::class, 'Failed updating the permissions for configured paths.');
+        $this->setExpectedException(TaskRuntimeException::class, 'Failed updating the permissions for the configured paths.');
 
         $paths = array('invalid' => array());
+
         $task = new FilePermissionTask($paths);
         $task->onInstallReleaseUpdateFilePermissions($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
@@ -131,6 +132,7 @@ class FilePermissionTaskTest extends PHPUnit_Framework_TestCase
         $event = new InstallReleaseEvent($releaseMock);
 
         $paths = array('var/cache' => array('recursive' => true, 'permissions' => '-rwxrwx---'));
+
         $task = new FilePermissionTask($paths);
         $task->onInstallReleaseUpdateFilePermissions($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
@@ -178,9 +180,10 @@ class FilePermissionTaskTest extends PHPUnit_Framework_TestCase
 
         $event = new InstallReleaseEvent($releaseMock);
 
-        $this->setExpectedException(TaskRuntimeException::class, 'Failed updating the permissions for configured paths.');
+        $this->setExpectedException(TaskRuntimeException::class, 'Failed updating the permissions for the configured paths.');
 
         $paths = array('var/cache' => array('permissions' => '-rwxrwx'));
+
         $task = new FilePermissionTask($paths);
         $task->onInstallReleaseUpdateFilePermissions($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
