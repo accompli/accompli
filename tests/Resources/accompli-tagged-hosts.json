@@ -1,0 +1,28 @@
+{
+    "hosts": [
+        {
+            "stage": "test",
+            "connectionType": "local",
+            "hostname": "",
+            "path": "",
+            "tags": ["foo", "bar"]
+        }
+    ],
+    "events": {
+        "subscribers": [
+            "SetupTask",
+            {
+                "class": "ComposerTask",
+                "options": [
+                    "ignore-platform-reqs"
+                ]
+            }
+        ],
+        "listeners": {
+            "accompli.prepare_server": ["SomeTask::someAction"]
+        }
+    },
+    "deployment": {
+        "strategy": ""
+    }
+}
