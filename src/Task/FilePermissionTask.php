@@ -42,7 +42,7 @@ class FilePermissionTask extends AbstractConnectedTask
      *
      * @param array $paths
      */
-    public function __construct($paths)
+    public function __construct(array $paths)
     {
         $this->paths = $paths;
     }
@@ -61,7 +61,7 @@ class FilePermissionTask extends AbstractConnectedTask
         $host = $event->getRelease()->getWorkspace()->getHost();
         $connection = $this->ensureConnection($host);
 
-        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updating permissions for configured paths...', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
+        $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Updating permissions for the configured paths...', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_IN_PROGRESS)));
 
         $releasePath = $event->getRelease()->getPath();
 
@@ -71,9 +71,9 @@ class FilePermissionTask extends AbstractConnectedTask
         }
 
         if ($result === true) {
-            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'Updated permissions for configured paths.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
+            $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Updated permissions for the configured paths.', $eventName, $this, array('event.task.action' => TaskInterface::ACTION_COMPLETED, 'output.resetLine' => true)));
         } else {
-            throw new TaskRuntimeException('Failed updating the permissions for configured paths.', $this);
+            throw new TaskRuntimeException('Failed updating the permissions for the configured paths.', $this);
         }
     }
 
