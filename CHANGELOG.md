@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning 2](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.3.1] - 2016-08-16
+
+### Fixed
+* Output log level verbosity of `FilePermissionTask`. (#212)
+
+
 ## [0.3.0] - 2016-07-17
 
 ### Added
@@ -66,7 +72,8 @@ This release adds Symfony application deployment support to Accompli.
 Initial Accompli release with basic tasks for installing and deploying a project on a local or remote location through SSH.
 
 
-[Unreleased]: https://github.com/accompli/accompli/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/accompli/accompli/compare/0.3.1...HEAD
+[0.3.1]: https://github.com/accompli/accompli/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/accompli/accompli/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/accompli/accompli/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/accompli/accompli/compare/0.1.0...0.2.0
