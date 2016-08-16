@@ -64,7 +64,8 @@ Add a host with a tag, to indicate it's *special*.
             "path": "/var/www/my-project",
             "tags": ["special"]
         }
-    ],
+    ]
+}
 ```
 
 You can add as many tags as you like.
