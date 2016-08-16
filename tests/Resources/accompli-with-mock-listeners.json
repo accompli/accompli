@@ -9,7 +9,11 @@
     ],
     "events": {
         "subscribers": [
-            "Accompli\\Test\\Mock\\EventListenerSubscriberMock"
+            "Accompli\\Test\\Mock\\EventListenerSubscriberMock",
+            {
+                "class": "Accompli\\Test\\Mock\\EventListenerSubscriberMock",
+                "tags": ["foo", "bar"]
+            }
         ],
         "listeners": {
             "listener_event": ["Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener"]
