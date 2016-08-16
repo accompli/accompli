@@ -126,9 +126,15 @@ class Accompli
         }
 
         foreach ($configuration->getEventSubscribers() as $subscriber) {
+            $tags = array_key_exists('tags', $subscriber) ? $subscriber['tags'] : null;
+
             $subscriberInstance = ObjectFactory::getInstance()->newInstance($subscriber['class'], $subscriber);
             if ($subscriberInstance instanceof EventSubscriberInterface) {
-                $eventDispatcher->addSubscriber($subscriberInstance);
+                if (is_array($tags)) {
+                    $eventDispatcher->addTaggedSubscriber($subscriberInstance, $tags);
+                } else {
+                    $eventDispatcher->addSubscriber($subscriberInstance);
+                }
             }
         }
     }

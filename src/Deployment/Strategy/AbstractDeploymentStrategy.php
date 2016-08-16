@@ -16,6 +16,7 @@ use Accompli\EventDispatcher\Event\FailedEvent;
 use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\PrepareDeployReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcher;
 use Accompli\EventDispatcher\EventDispatcherInterface;
 use Accompli\Exception\RuntimeException;
 use Composer\Semver\Comparator;
@@ -82,6 +83,9 @@ abstract class AbstractDeploymentStrategy implements DeploymentStrategyInterface
 
         $hosts = $this->configuration->getHostsByStage($stage);
         foreach ($hosts as $host) {
+            if ($this->eventDispatcher instanceof EventDispatcher) {
+                $this->eventDispatcher->configureTaggedSubscribers($host);
+            }
             $exception = null;
 
             $deployEventName = AccompliEvents::DEPLOY_RELEASE;
