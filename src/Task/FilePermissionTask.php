@@ -42,7 +42,7 @@ class FilePermissionTask extends AbstractConnectedTask
      *
      * @param array $paths
      */
-    public function __construct($paths)
+    public function __construct(array $paths)
     {
         $this->paths = $paths;
     }
