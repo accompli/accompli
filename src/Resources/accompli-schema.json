@@ -53,6 +53,9 @@
                                 "type": "string"
                             }
                         },
+                        "tags": {
+                           "type": "array"
+                        },
                         "required": ["class"]
                     }
                 },
