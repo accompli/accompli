@@ -55,6 +55,7 @@ class NativeSSHConnectionAdapter extends AbstractSSHConnectionAdapter
 
         $arguments = array(
             $this->hostname,
+            '-tt' => null,
         );
 
         if (isset($this->authenticationUsername)) {
