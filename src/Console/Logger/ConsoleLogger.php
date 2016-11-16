@@ -2,12 +2,12 @@
 
 namespace Accompli\Console\Logger;
 
+use Accompli\Console\Application;
 use Accompli\Console\Formatter\OutputFormatter;
 use Accompli\Task\TaskInterface;
 use Psr\Log\AbstractLogger;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LogLevel;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -195,14 +195,8 @@ class ConsoleLogger extends AbstractLogger implements ConsoleLoggerInterface
     public function getTerminalWidth()
     {
         $application = new Application();
-        $terminalDimensions = $application->getTerminalDimensions();
 
-        $width = 120;
-        if (isset($terminalDimensions[0])) {
-            $width = $terminalDimensions[0];
-        }
-
-        return $width;
+        return $application->getTerminalWidth();
     }
 
     /**
