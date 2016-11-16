@@ -2,8 +2,8 @@
 
 namespace Accompli\Process;
 
+use ReflectionProperty;
 use Symfony\Component\Process\InputStream;
-use Symfony\Component\Process\Pipes\PipesInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -21,11 +21,11 @@ class InteractiveProcess extends Process
     protected $lastOutputTime;
 
     /**
-     * The instance containing the pipes used by the process.
+     * The reflection instance containing the pipes used by the process.
      *
-     * @var PipesInterface
+     * @var ReflectionProperty
      */
-    protected $processPipes;
+    private $processPipesReflection;
 
     /**
      * The InputStream instance.
@@ -53,6 +53,8 @@ class InteractiveProcess extends Process
     public function __construct($command, $cwd = null, array $env = null, $timeout = 60, array $options = array())
     {
         $this->inputStream = new InputStream();
+        $this->processPipesReflection = new ReflectionProperty(Process::class, 'processPipes');
+        $this->processPipesReflection->setAccessible(true);
 
         parent::__construct($command, $cwd, $env, $this->inputStream, $timeout, $options);
 
@@ -108,7 +110,9 @@ class InteractiveProcess extends Process
      */
     private function readIntoOutputBuffer()
     {
-        $result = $this->processPipes->readAndWrite(true, false);
+        $processPipes = $this->processPipesReflection->getValue($this);
+
+        $result = $processPipes->readAndWrite(true, false);
         foreach ($result as $type => $data) {
             if ($type !== 3) {
                 $this->lastOutputTime = microtime(true);
