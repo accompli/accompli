@@ -34,6 +34,23 @@ class Application extends BaseApplication
     }
 
     /**
+     * Returns the terminal width.
+     *
+     * @return int
+     */
+    public function getTerminalWidth()
+    {
+        $terminalDimensions = $this->getTerminalDimensions();
+
+        $width = 120;
+        if (isset($terminalDimensions[0]) && $terminalDimensions[0] > 0) {
+            $width = $terminalDimensions[0];
+        }
+
+        return $width;
+    }
+
+    /**
      * Returns the array with default commands.
      *
      * @return array
