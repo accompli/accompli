@@ -2,7 +2,7 @@
 
 namespace Accompli\Console\Helper;
 
-use Symfony\Component\Console\Application;
+use Accompli\Console\Application;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -103,13 +103,7 @@ class TitleBlock extends Title
     private function getTerminalWidth()
     {
         $application = new Application();
-        $terminalDimensions = $application->getTerminalDimensions();
 
-        $width = 120;
-        if (isset($terminalDimensions[0])) {
-            $width = $terminalDimensions[0];
-        }
-
-        return $width;
+        return $application->getTerminalWidth();
     }
 }
