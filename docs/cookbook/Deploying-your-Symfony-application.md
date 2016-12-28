@@ -73,6 +73,8 @@ See the following documentation to create and configure SSH deployment keys:
 * [GitHub - Deploy keys](https://developer.github.com/guides/managing-deploy-keys/#deploy-keys).
 * [GitLab - Deploy keys](http://doc.gitlab.com/ce/ssh/README.html#deploy-keys).
 
+On generating a SSH key you're prompted to enter the file in which to save the key in. The default for this is your own users directory. Save the key in a different directory to avoid overwriting your personal key.
+
 The generated private key can then be added to the `SSHAgentTask` in your Accompli configuration:
 
 ``` json
