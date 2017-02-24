@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning 2](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.4.0] - 2017-02-24
+
+### Added
+* Improved terminal width detection. (#221)
+
+
 ## [0.3.1] - 2016-08-16
 
 ### Fixed
@@ -72,7 +78,8 @@ This release adds Symfony application deployment support to Accompli.
 Initial Accompli release with basic tasks for installing and deploying a project on a local or remote location through SSH.
 
 
-[Unreleased]: https://github.com/accompli/accompli/compare/0.3.1...HEAD
+[Unreleased]: https://github.com/accompli/accompli/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/accompli/accompli/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/accompli/accompli/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/accompli/accompli/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/accompli/accompli/compare/0.2.0...0.2.1
