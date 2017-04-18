@@ -8,6 +8,8 @@ use Accompli\Deployment\Release;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
+use Accompli\Utility\SecretGenerator;
+use Accompli\Utility\ValueGeneratorInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Yaml\Yaml;
 
@@ -52,6 +54,13 @@ class YamlConfigurationTask extends AbstractConnectedTask
      * @var array
      */
     private $environmentVariables;
+
+    /**
+     * Generator to generate values.
+     *
+     * @var ValueGeneratorInterface
+     */
+    private $valueGenerator;
 
     /**
      * {@inheritdoc}
@@ -124,6 +133,31 @@ class YamlConfigurationTask extends AbstractConnectedTask
     }
 
     /**
+     * Sets a value generator.
+     *
+     * @param ValueGeneratorInterface
+     */
+    public function setValueGenerator(ValueGeneratorInterface $valueGenerator)
+    {
+        $this->valueGenerator = $valueGenerator;
+    }
+
+    /**
+     * Gets the value generator
+     * Defaults to SecretGenerator.
+     *
+     * @return ValueGeneratorInterface
+     */
+    private function getValueGenerator()
+    {
+        if (!$this->valueGenerator instanceof ValueGeneratorInterface) {
+            $this->valueGenerator = new SecretGenerator();
+        }
+
+        return $this->valueGenerator;
+    }
+
+    /**
      * Gathers environment variables to use in the YAML configuration.
      *
      * @param Release $release
@@ -188,7 +222,7 @@ class YamlConfigurationTask extends AbstractConnectedTask
 
                     $configuration[$key] = $value;
                 } elseif (is_scalar($value)) {
-                    $configuration[$key] = sha1(uniqid());
+                    $configuration[$key] = $this->getValueGenerator()->generate($key);
                 }
             }
         }

@@ -447,4 +447,16 @@ class YamlConfigurationTaskTest extends PHPUnit_Framework_TestCase
             array('production', "foo: bam\nbaz: ''\nbar:\n    baz: ''\n"),
         );
     }
+
+    /**
+     * Test setting a value generator.
+     */
+    public function testValueGeneratorSetter()
+    {
+        $task = new YamlConfigurationTask('/parameters.yml');
+        $generator = $this->getMockBuilder('Accompli\Utility\ValueGeneratorInterface')->getMock();
+        $task->setValueGenerator($generator);
+
+        $this->assertAttributeEquals($generator, 'valueGenerator', $task);
+    }
 }
