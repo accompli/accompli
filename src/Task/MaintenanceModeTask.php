@@ -132,7 +132,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
      * @param string                    $eventName
      * @param EventDispatcherInterface  $eventDispatcher
      *
-     * @throws TaskRuntimeException when not able to link the maintenance page.
+     * @throws TaskRuntimeException when not able to link the maintenance page
      */
     public function onPrepareDeployReleaseLinkMaintenancePageToStage(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
