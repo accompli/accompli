@@ -7,7 +7,7 @@ use Accompli\Deployment\Connection\ConnectionAdapterInterface;
 use Accompli\Deployment\Host;
 use Accompli\Deployment\Release;
 use Accompli\Deployment\Workspace;
-use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
+use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\EventDispatcherInterface;
 use Accompli\Exception\TaskRuntimeException;
 use Accompli\Task\LinkTask;
@@ -21,12 +21,12 @@ use PHPUnit_Framework_TestCase;
 class LinkTaskTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * Tests if LinkTask::getSubscribedEvents returns an array with a AccompliEvents::PREPARE_RELEASE key.
+     * Tests if LinkTask::getSubscribedEvents returns an array with a AccompliEvents::INSTALL_RELEASE key.
      */
     public function testGetSubscribedEvents()
     {
         $this->assertInternalType('array', LinkTask::getSubscribedEvents());
-        $this->assertArrayHasKey(AccompliEvents::PREPARE_RELEASE, LinkTask::getSubscribedEvents());
+        $this->assertArrayHasKey(AccompliEvents::INSTALL_RELEASE, LinkTask::getSubscribedEvents());
     }
 
     /**
@@ -43,7 +43,7 @@ class LinkTaskTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if LinkTask::onPrepareReleaseCreateLinks throws an exception if the result is false.
      */
-    public function testOnPrepareReleaseCreateLinksThrowsRuntimeException()
+    public function testOnInstallReleaseCreateLinksThrowsRuntimeException()
     {
         $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
                 ->getMock();
@@ -60,13 +60,19 @@ class LinkTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('getStage')
+                ->willReturn('test');
 
         $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())
+        $workspaceMock->expects($this->exactly(2))
                 ->method('getHost')
                 ->willReturn($hostMock);
+        $workspaceMock->expects($this->once())
+                ->method('getDataDirectory')
+                ->willReturn('/data/directory');
 
         $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
@@ -74,16 +80,21 @@ class LinkTaskTest extends PHPUnit_Framework_TestCase
         $releaseMock->expects($this->exactly(1))
                 ->method('getPath')
                 ->willReturn('{workspace}/0.1.0');
+        $releaseMock->expects($this->exactly(1))
+                ->method('getVersion')
+                ->willReturn('0.1.0');
+        $releaseMock->expects($this->exactly(3))
+                ->method('getWorkspace')
+                ->willReturn($workspaceMock);
 
-        $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
-        $event->setRelease($releaseMock);
+        $event = new InstallReleaseEvent($releaseMock);
 
-        $this->setExpectedException(TaskRuntimeException::class, 'Failed linking data directories for the configured paths.');
+        $this->setExpectedException(TaskRuntimeException::class, 'Failed linking paths.');
 
         $links = array('invalid' => false);
 
         $task = new LinkTask($links);
-        $task->onPrepareReleaseCreateLinks($event, AccompliEvents::PREPARE_RELEASE, $eventDispatcherMock);
+        $task->onInstallReleaseCreateLinks($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
 
     /**
@@ -112,13 +123,19 @@ class LinkTaskTest extends PHPUnit_Framework_TestCase
         $hostMock->expects($this->once())
                 ->method('getConnection')
                 ->willReturn($connectionAdapterMock);
+        $hostMock->expects($this->once())
+                ->method('getStage')
+                ->willReturn('test');
 
         $workspaceMock = $this->getMockBuilder(Workspace::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $workspaceMock->expects($this->once())
+        $workspaceMock->expects($this->exactly(2))
                 ->method('getHost')
                 ->willReturn($hostMock);
+        $workspaceMock->expects($this->once())
+                ->method('getDataDirectory')
+                ->willReturn('/data/directory');
 
         $releaseMock = $this->getMockBuilder(Release::class)
                 ->disableOriginalConstructor()
@@ -126,13 +143,18 @@ class LinkTaskTest extends PHPUnit_Framework_TestCase
         $releaseMock->expects($this->exactly(1))
                 ->method('getPath')
                 ->willReturn('{workspace}/0.1.0');
+        $releaseMock->expects($this->exactly(1))
+                ->method('getVersion')
+                ->willReturn('0.1.0');
+        $releaseMock->expects($this->exactly(3))
+                ->method('getWorkspace')
+                ->willReturn($workspaceMock);
 
-        $event = new PrepareReleaseEvent($workspaceMock, '0.1.0');
-        $event->setRelease($releaseMock);
+        $event = new InstallReleaseEvent($releaseMock);
 
         $links = array('var/log', 'log');
 
         $task = new LinkTask($links);
-        $task->onPrepareReleaseCreateLinks($event, AccompliEvents::PREPARE_RELEASE, $eventDispatcherMock);
+        $task->onInstallReleaseCreateLinks($event, AccompliEvents::INSTALL_RELEASE, $eventDispatcherMock);
     }
 }
