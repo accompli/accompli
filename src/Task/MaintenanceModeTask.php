@@ -91,7 +91,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
 
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::NOTICE, 'Creating directory "{directory}".', $eventName, $this, $context));
         if ($connection->isDirectory($directory) === false) {
-            if ($connection->createDirectory($directory)) {
+            if ($connection->createDirectory($directory, 0770, true)) {
                 $context['event.task.action'] = TaskInterface::ACTION_COMPLETED;
                 $context['output.resetLine'] = true;
 
@@ -132,7 +132,7 @@ class MaintenanceModeTask extends AbstractConnectedTask
      * @param string                    $eventName
      * @param EventDispatcherInterface  $eventDispatcher
      *
-     * @throws TaskRuntimeException when not able to link the maintenance page.
+     * @throws TaskRuntimeException when not able to link the maintenance page
      */
     public function onPrepareDeployReleaseLinkMaintenancePageToStage(PrepareDeployReleaseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
