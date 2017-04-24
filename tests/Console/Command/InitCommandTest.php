@@ -191,7 +191,7 @@ class InitCommandTest extends PHPUnit_Framework_TestCase
         $command = $application->find('init');
 
         $commandTester = new CommandTester($command);
-        $commandTester->setInputStream("3\n/path/to/alternate/recipe.json\n0\nexample.com\n/var/www/example.com\nssh\nn\nExecuteCommandTask\nn\n\n");
+        $commandTester->setInputStream("1\n/path/to/alternate/recipe.json\n0\nexample.com\n/var/www/example.com\nssh\nn\nExecuteCommandTask\nn\n\n");
 
         $input = new ArrayInput(
             array(
@@ -231,7 +231,7 @@ class InitCommandTest extends PHPUnit_Framework_TestCase
         $command = $application->find('init');
 
         $commandTester = new CommandTester($command);
-        $commandTester->setInputStream("4\n0\nexample.com\n/var/www/example.com\nssh\nn\nExecuteCommandTask\nn\n\n\n");
+        $commandTester->setInputStream("0\n0\nexample.com\n/var/www/example.com\nssh\nn\nExecuteCommandTask\nn\n\n\n");
 
         $input = new ArrayInput(
             array(

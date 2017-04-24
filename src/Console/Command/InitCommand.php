@@ -244,8 +244,8 @@ class InitCommand extends Command
     {
         $recipes = array_diff(scandir('accompli://recipe/'), array('.', '..'));
         sort($recipes);
-        $recipes[] = 'Other';
-        $recipes[] = 'None';
+        array_unshift($recipes, 'Other');
+        array_unshift($recipes, 'None');
 
         return $recipes;
     }

@@ -1,12 +1,3 @@
 {
-    "$extend": "accompli://recipe/symfony.json",
-    "events": {
-        "subscribers": [
-            {
-                "class": "Accompli\\Task\\ExecuteCommandTask",
-                "events": ["accompli.install_release"],
-                "command": "php bin/console assets:install --env=prod"
-            }
-        ]
-    }
+    "$extend": "accompli://recipe/symfony3-with-assets.json"
 }
