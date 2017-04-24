@@ -163,7 +163,7 @@ final class AccompliEvents
      * The PREPARE_WORKSPACE event is dispatched when a server or local path is being prepared for deployments.
      *
      * The event listener receives an
-     * Accompli\EventDispatcher\Event\PrepareWorkspaceEvent instance.
+     * Accompli\EventDispatcher\Event\WorkspaceEvent instance.
      *
      * @var string
      */
