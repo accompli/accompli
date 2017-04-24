@@ -79,6 +79,21 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if Configuration::load imports the configuration with tagged hosts.
+     */
+    public function testLoadWithTaggedHosts()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-tagged-hosts.json');
+
+        $config = $configuration->toArray();
+
+        $this->assertArrayHasKey('hosts', $config);
+        $this->assertEquals(1, count($config['hosts']));
+        $this->assertArrayHasKey('tags', $config['hosts'][0]);
+    }
+
+    /**
      * Tests if Configuration::load imports the configuration extend through the accompli stream wrapper.
      */
     public function testLoadWithExtendedConfigurationFromRecipe()
@@ -284,5 +299,21 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $configuration->getDeploymentConnectionClasses());
         $this->assertArrayHasKey('local', $configuration->getDeploymentConnectionClasses());
+    }
+
+    /**
+     * Tests if Configuration::load imports the configuration with tagged tasks.
+     */
+    public function testLoadWithTaggedTasks()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-tagged-tasks.json');
+
+        $config = $configuration->toArray();
+
+        $this->assertArrayHasKey('events', $config);
+        $this->assertArrayHasKey('subscribers', $config['events']);
+        $this->assertEquals(2, count($config['events']['subscribers']));
+        $this->assertArrayHasKey('tags', $config['events']['subscribers'][1]);
     }
 }

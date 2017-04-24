@@ -101,6 +101,17 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the hasTag method.
+     */
+    public function testHasTag()
+    {
+        $host = $this->createHostInstance(Host::STAGE_TEST, 'local', 'localhost', '/var/www', array(), array('foo'));
+
+        $this->assertTrue($host->hasTag('foo'));
+        $this->assertFalse($host->hasTag('bar'));
+    }
+
+    /**
      * Returns an array with testvalues for testGetterMethods.
      *
      * @return array
@@ -141,8 +152,8 @@ class HostTest extends PHPUnit_Framework_TestCase
      *
      * @return Host
      */
-    private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www', $connectionOptions = array('connectionOptionKey' => 'connectionOptionValue'))
+    private function createHostInstance($stage = Host::STAGE_TEST, $connectionType = 'local', $hostname = 'localhost', $path = '/var/www', $connectionOptions = array('connectionOptionKey' => 'connectionOptionValue'), $tags = array())
     {
-        return new Host($stage, $connectionType, $hostname, $path, $connectionOptions);
+        return new Host($stage, $connectionType, $hostname, $path, $connectionOptions, $tags);
     }
 }

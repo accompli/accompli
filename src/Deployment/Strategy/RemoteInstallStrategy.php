@@ -11,6 +11,7 @@ use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcher;
 use Accompli\Exception\RuntimeException;
 use Exception;
 
@@ -34,6 +35,9 @@ class RemoteInstallStrategy extends AbstractDeploymentStrategy
         }
 
         foreach ($hosts as $host) {
+            if ($this->eventDispatcher instanceof EventDispatcher) {
+                $this->eventDispatcher->configureTaggedSubscribers($host);
+            }
             $exception = null;
 
             $title = new Title($this->logger->getOutput(), sprintf('Installing release "%s" to "%s":', $version, $host->getHostname()));

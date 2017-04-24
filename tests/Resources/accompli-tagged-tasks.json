@@ -9,15 +9,15 @@
     ],
     "events": {
         "subscribers": [
-            "Accompli\\Test\\Mock\\EventListenerSubscriberMock",
+            "SetupTask",
             {
-                "class": "Accompli\\Test\\Mock\\EventListenerSubscriberMock",
+                "class": "ComposerTask",
+                "options": [
+                    "ignore-platform-reqs"
+                ],
                 "tags": ["foo", "bar"]
             }
-        ],
-        "listeners": {
-            "listener_event": ["Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener"]
-        }
+        ]
     },
     "deployment": {
         "strategy": ""

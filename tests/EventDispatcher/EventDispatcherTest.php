@@ -3,8 +3,10 @@
 namespace Accompli\Test\EventDispatcher;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Host;
 use Accompli\EventDispatcher\Event\LogEvent;
 use Accompli\EventDispatcher\EventDispatcher;
+use Accompli\Test\Mock\EventListenerSubscriberMock;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\Event;
@@ -91,5 +93,57 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $eventDispatcher->dispatch(AccompliEvents::LOG, new LogEvent(LogLevel::INFO, 'message', 'eventName'));
 
         $this->assertNull($eventDispatcher->getLastDispatchedEvent());
+    }
+
+    /**
+     * Tests subscribing tagged subsribers.
+     */
+    public function testSubscribeTaggedSubscribers()
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventSubscriber = new EventListenerSubscriberMock();
+        $eventDispatcher->addTaggedSubscriber($eventSubscriber, array('foo', 'bar'));
+
+        $this->assertAttributeEquals(array(array('subscriber' => $eventSubscriber, 'tags' => array('foo', 'bar'))), 'tagMap', $eventDispatcher);
+        $this->assertFalse($eventDispatcher->hasListeners('subscribed_event'));
+    }
+
+    /**
+     * Tests configuring the tagged subscribers.
+     *
+     * @dataProvider provideConfigureTaggedSubscribersTestData
+     *
+     * @param array $tags
+     * @param bool  $hostHasTag
+     */
+    public function testConfigureTaggedSubscribers(array $tags, $hostHasTag)
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventSubscriber = new EventListenerSubscriberMock();
+        $eventDispatcher->addTaggedSubscriber($eventSubscriber, $tags);
+
+        $hostMock = $this->getMockBuilder(Host::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $hostMock->expects($this->any())
+            ->method('hasTag')
+            ->willReturn($hostHasTag);
+
+        $eventDispatcher->configureTaggedSubscribers($hostMock);
+
+        $this->assertEquals($hostHasTag, $eventDispatcher->hasListeners('subscribed_event'));
+    }
+
+    /**
+     * Gets test data for testConfigureTaggedSubscribersTestData.
+     *
+     * @return array
+     */
+    public function provideConfigureTaggedSubscribersTestData()
+    {
+        return array(
+            array(array('foo', 'bar'), false),
+            array(array('foo', 'bar'), true),
+        );
     }
 }
