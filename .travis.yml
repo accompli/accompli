@@ -18,6 +18,7 @@ before_install: composer self-update
 install: composer install
 
 before_script:
+  - ssh-keyscan localhost >> ~/.ssh/known_hosts
   - ssh-keygen -q -f ~/.ssh/id_rsa -N ""
   - cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
   - eval $(ssh-agent)

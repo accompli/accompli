@@ -192,6 +192,10 @@ class LocalConnectionAdapter implements ConnectionAdapterInterface
      */
     public function putContents($remoteFilename, $data)
     {
+        if (substr($data, -1) !== "\n") {
+            $data .= "\n";
+        }
+
         $result = file_put_contents($remoteFilename, $data);
 
         return ($result !== false);

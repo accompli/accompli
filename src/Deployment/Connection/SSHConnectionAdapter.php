@@ -14,7 +14,7 @@ use UnexpectedValueException;
  *
  * @author Niels Nijens <nijens.niels@gmail.com>
  */
-class SSHConnectionAdapter implements ConnectionAdapterInterface
+class SSHConnectionAdapter extends AbstractSSHConnectionAdapter
 {
     /**
      * The password authentication type.
@@ -30,20 +30,6 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
      * The SSH agent authentication type.
      */
     const AUTHENTICATION_SSH_AGENT = 'agent';
-
-    /**
-     * The hostname to connect to.
-     *
-     * @var string
-     */
-    private $hostname;
-
-    /**
-     * The username used for authentication.
-     *
-     * @var string
-     */
-    private $authenticationUsername;
 
     /**
      * The authentication credentials.
@@ -330,58 +316,12 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function copy($remoteSource, $remoteDestination)
-    {
-        if ($this->isConnected()) {
-            $temporaryFile = tmpfile();
-
-            if ($this->getFile($remoteSource, $temporaryFile) === false) {
-                fclose($temporaryFile);
-
-                return false;
-            }
-
-            rewind($temporaryFile);
-
-            return $this->putContents($remoteDestination, $temporaryFile);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function changePermissions($remoteTarget, $fileMode, $recursive = false)
     {
         if ($this->isConnected()) {
             $result = $this->connection->chmod($fileMode, $remoteTarget, $recursive);
 
             return ($result !== false);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function putContents($destinationFilename, $data)
-    {
-        if ($this->isConnected()) {
-            return $this->connection->put($destinationFilename, $data, SFTP::SOURCE_STRING);
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function putFile($sourceFilename, $destinationFilename)
-    {
-        if ($this->isConnected()) {
-            return $this->connection->put($destinationFilename, $sourceFilename, SFTP::SOURCE_LOCAL_FILE);
         }
 
         return false;
@@ -397,88 +337,5 @@ class SSHConnectionAdapter implements ConnectionAdapterInterface
         }
 
         return false;
-    }
-
-    /**
-     * Returns the username of user executing the script.
-     *
-     * @return string
-     */
-    private function getCurrentUsername()
-    {
-        return $_SERVER['USER'];
-    }
-
-    /**
-     * Returns the 'home' directory for the user.
-     *
-     * @return string|null
-     */
-    private function getUserDirectory()
-    {
-        $userDirectory = null;
-        if (isset($_SERVER['HOME'])) {
-            $userDirectory = $_SERVER['HOME'];
-        } elseif (isset($_SERVER['USERPROFILE'])) {
-            $userDirectory = $_SERVER['USERPROFILE'];
-        }
-        $userDirectory = realpath($userDirectory.'/../');
-        $userDirectory .= '/'.$this->authenticationUsername;
-
-        return $userDirectory;
-    }
-
-    /**
-     * Returns the filtered output of the command.
-     * Removes the command echo and shell prompt from the output.
-     *
-     * @param string $output
-     * @param string $command
-     *
-     * @return string
-     */
-    private function getFilteredOutput($output, $command)
-    {
-        $output = str_replace(array("\r\n", "\r"), array("\n", ''), $output);
-
-        $matches = array();
-        if (preg_match($this->getOutputFilterRegex($command), $output, $matches) === 1) {
-            $output = ltrim($matches[1]);
-        }
-
-        return $output;
-    }
-
-    /**
-     * Returns the output filter regex to filter the output.
-     *
-     * @param string $command
-     *
-     * @return string
-     */
-    private function getOutputFilterRegex($command)
-    {
-        $commandCharacters = str_split(preg_quote($command, '/'));
-        $commandCharacterRegexWhitespaceFunction = function ($value) {
-            if ($value !== '\\') {
-                $value .= '\s?';
-            }
-
-            return $value;
-        };
-
-        $commandCharacters = array_map($commandCharacterRegexWhitespaceFunction, $commandCharacters);
-
-        return sprintf('/%s(.*)%s/s', implode('', $commandCharacters), substr($this->getShellPromptRegex(), 1, -1));
-    }
-
-    /**
-     * Returns the regex matching the shell prompt.
-     *
-     * @return string
-     */
-    private function getShellPromptRegex()
-    {
-        return sprintf('/%s@.*[$|#]/', $this->authenticationUsername);
     }
 }
