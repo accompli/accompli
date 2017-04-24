@@ -82,6 +82,8 @@ To install a release for deployment you'll need to run the following command fro
 $ vendor/bin/accompli install-release <version>
 ```
 
+To install a branch instead of a release, add the branch name for ```<version>```.
+
 Accompli will then run the configured installation tasks for all configured hosts.
 
 Optionally, you can install a release on hosts with a specific stage configured:
