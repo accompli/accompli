@@ -69,6 +69,13 @@ class Host
     private $connectionOptions;
 
     /**
+     * The array with the tags of this host.
+     *
+     * @var array
+     */
+    private $tags;
+
+    /**
      * The connection instance used to connect to and communicate with this Host.
      *
      * @var ConnectionAdapterInterface
@@ -83,10 +90,11 @@ class Host
      * @param string $hostname
      * @param string $path
      * @param array  $connectionOptions
+     * @param array  $tags
      *
      * @throws UnexpectedValueException when $stage is not a valid type
      */
-    public function __construct($stage, $connectionType, $hostname, $path, array $connectionOptions = array())
+    public function __construct($stage, $connectionType, $hostname, $path, array $connectionOptions = array(), array $tags = array())
     {
         if (self::isValidStage($stage) === false) {
             throw new UnexpectedValueException(sprintf("'%s' is not a valid stage.", $stage));
@@ -97,6 +105,7 @@ class Host
         $this->hostname = $hostname;
         $this->path = $path;
         $this->connectionOptions = $connectionOptions;
+        $this->tags = $tags;
     }
 
     /**
@@ -189,5 +198,17 @@ class Host
     public static function isValidStage($stage)
     {
         return in_array($stage, array(self::STAGE_TEST, self::STAGE_ACCEPTANCE, self::STAGE_PRODUCTION));
+    }
+
+    /**
+     * Tests if this host has $tag.
+     *
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public function hasTag($tag)
+    {
+        return in_array($tag, $this->tags);
     }
 }

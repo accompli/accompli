@@ -79,6 +79,21 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if Configuration::load imports the configuration with tagged hosts.
+     */
+    public function testLoadWithTaggedHosts()
+    {
+        $configuration = new Configuration();
+        $configuration->load(__DIR__.'/../Resources/accompli-tagged-hosts.json');
+
+        $config = $configuration->toArray();
+
+        $this->assertArrayHasKey('hosts', $config);
+        $this->assertEquals(1, count($config['hosts']));
+        $this->assertArrayHasKey('tags', $config['hosts'][0]);
+    }
+
+    /**
      * Tests if Configuration::load imports the configuration extend through the accompli stream wrapper.
      */
     public function testLoadWithExtendedConfigurationFromRecipe()
