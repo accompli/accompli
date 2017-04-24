@@ -31,6 +31,9 @@
                         "additionalProperties": true,
                         "properties": {
                         }
+                    },
+                    "tags": {
+                        "type": "array"
                     }
                 },
                 "required": ["stage", "connectionType", "hostname", "path"]
@@ -49,6 +52,9 @@
                             "class": {
                                 "type": "string"
                             }
+                        },
+                        "tags": {
+                           "type": "array"
                         },
                         "required": ["class"]
                     }

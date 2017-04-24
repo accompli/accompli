@@ -14,6 +14,7 @@ use Accompli\EventDispatcher\Event\HostEvent;
 use Accompli\EventDispatcher\Event\InstallReleaseEvent;
 use Accompli\EventDispatcher\Event\PrepareReleaseEvent;
 use Accompli\EventDispatcher\Event\WorkspaceEvent;
+use Accompli\EventDispatcher\EventDispatcher;
 use Accompli\EventDispatcher\EventDispatcherInterface;
 use Accompli\Exception\RuntimeException;
 use PHPUnit_Framework_TestCase;
@@ -88,7 +89,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->with($this->equalTo(Host::STAGE_TEST))
                 ->willReturn(array($hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcher::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(5))
                 ->method('dispatch')
@@ -120,6 +121,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                         }),
                     )
                 );
+        $eventDispatcherMock->expects($this->once())
+            ->method('configureTaggedSubscribers');
 
         $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();
@@ -161,7 +164,7 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                 ->method('getHostsByStage')
                 ->willReturn(array($hostMock, $hostMock));
 
-        $eventDispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)
+        $eventDispatcherMock = $this->getMockBuilder(EventDispatcher::class)
                 ->getMock();
         $eventDispatcherMock->expects($this->exactly(10))
                 ->method('dispatch')
@@ -219,6 +222,8 @@ class RemoteInstallStrategyTest extends PHPUnit_Framework_TestCase
                         }),
                     )
                 );
+        $eventDispatcherMock->expects($this->exactly(2))
+            ->method('configureTaggedSubscribers');
 
         $outputFormatterMock = $this->getMockBuilder(OutputFormatterInterface::class)
                 ->getMock();

@@ -4,19 +4,22 @@
             "stage": "test",
             "connectionType": "local",
             "hostname": "",
-            "path": ""
+            "path": "",
+            "tags": ["foo", "bar"]
         }
     ],
     "events": {
         "subscribers": [
-            "Accompli\\Test\\Mock\\EventListenerSubscriberMock",
+            "SetupTask",
             {
-                "class": "Accompli\\Test\\Mock\\EventListenerSubscriberMock",
-                "tags": ["foo", "bar"]
+                "class": "ComposerTask",
+                "options": [
+                    "ignore-platform-reqs"
+                ]
             }
         ],
         "listeners": {
-            "listener_event": ["Accompli\\Test\\Mock\\EventListenerSubscriberMock::eventListener"]
+            "accompli.prepare_server": ["SomeTask::someAction"]
         }
     },
     "deployment": {

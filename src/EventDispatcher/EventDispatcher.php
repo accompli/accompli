@@ -3,8 +3,10 @@
 namespace Accompli\EventDispatcher;
 
 use Accompli\AccompliEvents;
+use Accompli\Deployment\Host;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * EventDispatcher.
@@ -26,6 +28,13 @@ class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInte
      * @var Event
      */
     private $lastDispatchedEvent;
+
+    /**
+     * Mapping of subscribers and tags.
+     *
+     * @var array
+     */
+    private $tagMap = array();
 
     /**
      * {@inheritdoc}
@@ -58,5 +67,34 @@ class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInte
     public function getLastDispatchedEvent()
     {
         return $this->lastDispatchedEvent;
+    }
+
+    /**
+     * Adds a tagged subscriber (ie. a task that will run on hosts with the same tag only).
+     *
+     * @param EventSubscriberInterface $subscriber
+     * @param array                    $tags
+     */
+    public function addTaggedSubscriber(EventSubscriberInterface $subscriber, array $tags)
+    {
+        $this->tagMap[] = array('subscriber' => $subscriber, 'tags' => $tags);
+    }
+
+    /**
+     * Configure tagged subscribers for $host.
+     *
+     * @param Host $host
+     */
+    public function configureTaggedSubscribers(Host $host)
+    {
+        foreach ($this->tagMap as $taggedSubscriber) {
+            $this->removeSubscriber($taggedSubscriber['subscriber']);
+            foreach ($taggedSubscriber['tags'] as $tag) {
+                if ($host->hasTag($tag)) {
+                    $this->addSubscriber($taggedSubscriber['subscriber']);
+                    break;
+                }
+            }
+        }
     }
 }
