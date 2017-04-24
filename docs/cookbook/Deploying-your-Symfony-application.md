@@ -84,6 +84,8 @@ The generated private key can then be added to the `SSHAgentTask` in your Accomp
             }
 ```
 
+The whitelines in the generated private key should be replaced by ```\n```.
+
 **Warning!** Don't add private keys to public repositories.
 The next release of Accompli will feature a credentials store which will make this possible without exposing your keys and passwords.
 
